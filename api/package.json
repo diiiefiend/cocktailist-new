@@ -1,0 +1,19 @@
+{
+  "name": "cocktailist-api",
+  "version": "1.0.0",
+  "description": "Backend for the new version of Cocktailist",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diiiefiend/cocktailist-new.git"
+  },
+  "author": "Ariel",
+  "license": "ISC",
+  "homepage": "https://github.com/diiiefiend/cocktailist-new#readme",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

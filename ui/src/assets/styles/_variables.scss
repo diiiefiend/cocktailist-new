@@ -1,0 +1,54 @@
+// fonts
+$montserrat-path:         '/fonts/montserrat_reg.otf';
+$montserrat-bold-path:    '/fonts/montserrat_bold.otf';
+$baskerville-path:        '/fonts/LibreBaskerville-Regular.ttf';
+$baskerville-bold-path:   '/fonts/LibreBaskerville-Bold.ttf';
+$baskerville-italic-path:   '/fonts/LibreBaskerville-Italic.ttf';
+
+// images
+$body-path:     '/images/deco-header-bg.jpg';
+$footer-path:   '/images/deco-footer.jpg';
+$flourish-path: '/images/deco-flourish.jpg';
+$rating-path:   '/images/rating-empty.png';
+$napkin-path:   '/images/imgborderbg-black.png';
+
+// colors
+$light-percent: 10%;
+$white: #fff;
+$dark-gray: #1B1B1A; // background color
+$gold: #D8C263;
+$light-gold: lighten($gold, $light-percent);
+$emerald: #154C38;
+$light-emerald: lighten($emerald, $light-percent);
+$dark-green: #132A13; // context menu color
+$ruby: #53000c;       // tequila
+$light-ruby: lighten($ruby, $light-percent);
+$navy: #03242f;       // gin
+$light-navy: lighten($navy, $light-percent);
+$amethyst: #330928;   // vodka
+$light-amethyst: lighten($amethyst, $light-percent);
+$russet: #6f3d08;     // whiskey
+$light-russet: lighten($russet, $light-percent);
+$marigold: #a79112;   // (rum)
+$light-marigold: lighten($marigold, $light-percent);
+$black: #111;         // other
+$light-black: lighten($black, $light-percent);
+$lighter-black: lighten($black, 25%);
+
+// dimensions
+$app-width: 1000px;
+$app-min-width: 960px;  // prevents wrapping on the context-menu until I get around to addressing that
+$header-height: 50px;
+$context-menu-height: 90px;
+$footer-height: 150px;
+
+// fonts
+$font-xxl: 24px;
+$font-xl: 20px;
+$font-lg: 16px;
+$font-md: 14px;
+$font-baseline: 12px;
+$font-sm: 10px;
+
+// transitions
+$transition-fast: all 0.2s

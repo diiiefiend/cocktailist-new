@@ -1,0 +1,38 @@
+@import "../_variables.scss";
+
+header{
+  #logo{
+    grid-column-start: 1;
+    grid-column-end: span 3;
+  }
+
+  nav{
+    grid-column-start: 6;
+    grid-column-end: span 5;
+    // the internal nav grid
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    place-items: stretch;
+
+    list-style: none;
+
+    a {
+      color: $gold;
+      display: block;
+      font: $font-lg "LibreBaskerville", "Garamond", serif;
+      padding: 15px 0;
+      text-align: center;
+      text-decoration: none;
+
+      &:hover {
+        color: $white;
+      }
+
+      &.router-link-exact-active{
+        background: $dark-green;
+        color: $white;
+        font-weight: bold;
+      }
+    }
+  }
+}
