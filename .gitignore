@@ -2,7 +2,7 @@
 
 # ui
 ui/node_modules
-ui/dist
+ui-vue2/node_modules
 
 # server
 api/node_modules

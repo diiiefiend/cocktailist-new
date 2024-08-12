@@ -1,0 +1,41 @@
+@import "../_variables.scss";
+
+.cocktail-box {
+  grid-column-end: span 2;
+  background: $white;
+  min-height: 200px;
+
+  a:hover {
+    text-decoration: none;
+  }
+
+  h3 {
+    color: $black;
+    font-size: $font-xl;
+    margin: 10px;
+    min-height: 80px;
+    transition: $transition-fast;
+
+    &.hovered {
+      color: $lighter-black;
+    }
+  }
+
+  .details {
+    color: $white;
+    font: $font-md "Montserrat", sans-serif;
+    list-style: none;
+    min-height: 80px;
+    padding: 10px;
+    position: relative;
+    margin: 0;
+
+    .label {
+      font: $font-xl "LibreBaskerville", "Garamond", serif;
+      opacity: 0.3;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+  }
+}

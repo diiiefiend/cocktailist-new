@@ -1,41 +1,23 @@
-import Vue from "vue";
-import VueRouter, { RouteConfig } from "vue-router";
-import Browse from "../views/Browse.vue";
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../views/HomeView.vue'
 
-Vue.use(VueRouter);
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: HomeView
+    },
+    {
+      path: '/about',
+      name: 'about',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/AboutView.vue')
+    }
+  ]
+})
 
-const routes: Array<RouteConfig> = [
-  {
-    path: "/",
-    name: "Browse", // make the default view "browse"
-    component: Browse
-  },
-  {
-    path: "/login",
-    name: "Log In",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "login" */ "../views/LogIn.vue")
-  },
-  {
-    path: "/lists/:id?",
-    props: true,
-    name: "List",
-    component: () => import(/* webpackChunkName: "list" */ "../views/List.vue")
-  },
-  {
-    path: "/cocktail/:id",
-    props: true,
-    name: "Cocktail",
-    component: () =>
-      import(/* webpackChunkName: "cocktail" */ "../views/Cocktail.vue")
-  }
-];
-
-const router = new VueRouter({
-  routes
-});
-
-export default router;
+export default router
