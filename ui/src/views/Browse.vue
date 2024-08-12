@@ -1,3 +1,12 @@
+<script setup lang="ts">
+  import { mockCocktailData } from "../mocks.js";
+  import ContextMenu from "../components/ContextMenu.vue";
+  import LayoutContainer from "../components/LayoutContainer.vue";
+  import CocktailBox from "../components/CocktailBox.vue";
+
+  const cocktails = mockCocktailData;
+</script>
+
 <template>
   <div id="browse">
     <context-menu>
@@ -32,26 +41,3 @@
     </layout-container>
   </div>
 </template>
-
-<script lang="ts">
-import { mockCocktailData } from "../mocks.js";
-import ContextMenu from "../components/ContextMenu.vue";
-import LayoutContainer from "../components/LayoutContainer.vue";
-import CocktailBox from "../components/CocktailBox.vue";
-// import GridBox from "@/components/GridBox.vue";
-
-export default {
-  name: "Browse",
-  components: {
-    ContextMenu,
-    LayoutContainer,
-    CocktailBox
-    // GridBox,
-  },
-  data: function() {
-    return {
-      cocktails: mockCocktailData
-    };
-  }
-};
-</script>
