@@ -15,11 +15,11 @@
       </a>
     </div>
     <nav>
-      <li><router-link to='/'>Cocktails</router-link></li>
-      <li><router-link to='/feed'>Activity</router-link></li>
-      <li><router-link to='/lists'>Lists</router-link></li>
-      <li><router-link to='/data'>Data</router-link></li>
-      <li><router-link to='/login'>Login</router-link></li>
+      <li><RouterLink to='/'>Cocktails</RouterLink></li>
+      <li><RouterLink to='/feed'>Activity</RouterLink></li>
+      <li><RouterLink to='/lists'>Lists</RouterLink></li>
+      <li><RouterLink to='/data'>Data</RouterLink></li>
+      <li><RouterLink to='/login'>Login</RouterLink></li>
     </nav>
   </header>
 </template>

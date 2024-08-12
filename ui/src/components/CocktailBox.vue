@@ -1,11 +1,12 @@
 <script setup lang="ts">
   import { CocktailBoxItem } from "../models";
+  import { ref } from 'vue';
 
   defineProps<{
     cocktail: CocktailBoxItem,
   }>();
 
-  const hovered = false;
+  const hovered = ref(false);
 </script>
 
 <template>
@@ -14,8 +15,8 @@
     @mouseover="hovered = true"
     @mouseleave="hovered = false"
   >
-    <router-link :to="'/cocktail/' + cocktail.id">
-      <h3 :class="{ hovered }">
+    <RouterLink :to="{ name: 'Cocktail', params: {id: cocktail.id} }">
+      <h3 :class="{hovered}">
         {{ cocktail.name }}
       </h3>
       <ul
@@ -26,7 +27,7 @@
         <li>{{ cocktail.rating }}</li>
         <li class="label">{{ cocktail.type }}</li>
       </ul>
-    </router-link>
+    </RouterLink>
   </div>
 </template>
 
