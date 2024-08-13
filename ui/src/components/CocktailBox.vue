@@ -11,7 +11,7 @@ const hovered = ref(false);
 
 <template>
   <div class="cocktail-box" @mouseover="hovered = true" @mouseleave="hovered = false">
-    <RouterLink :to="{ name: 'Cocktail', params: { id: props.cocktail.id } }">
+    <router-link :to="{ name: 'Cocktail', params: { id: props.cocktail.id } }">
       <h3 :class="{ hovered }">
         {{ props.cocktail.name }}
       </h3>
@@ -19,11 +19,11 @@ const hovered = ref(false);
         class="details colored-by-type"
         :class="[hovered ? `hovered ${props.cocktail.type}` : props.cocktail.type]"
       >
-        <li>{{ props.cocktail.bar }}</li>
+        <li>{{ props.cocktail.bar.name }}</li>
         <li>{{ props.cocktail.rating }}</li>
         <li class="label">{{ props.cocktail.type }}</li>
       </ul>
-    </RouterLink>
+    </router-link>
   </div>
 </template>
 

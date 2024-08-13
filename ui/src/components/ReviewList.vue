@@ -5,13 +5,6 @@ import RatingItem from './RatingItem.vue';
 const props = defineProps<{
   reviews: ReviewItem[];
 }>();
-
-// @Component({
-//   components: { Rating }
-// })
-// export default class ReviewList extends Vue {
-//   @Prop() private reviews!: ReviewItem[];
-// }
 </script>
 
 <template>

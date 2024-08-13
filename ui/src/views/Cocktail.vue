@@ -13,47 +13,13 @@ const props = defineProps<{
   id: string;
 }>();
 
-const bar = mockBarData;
 const reviews = mockReviewData;
 const cocktail = props.id === '1' ? mockCocktailDetailData[0] : mockCocktailDetailData[1];
+const bar = mockBarData.find((bar) => bar.id === cocktail.bar.id);
 const scatterChartData = {
   xValues: mockReviewData.map((review: ReviewItem) => review.spiritedRating),
   yValues: mockReviewData.map((review: ReviewItem) => review.innovationRating),
 };
-
-// export default {
-//   name: 'Cocktail',
-//   components: {
-//     ContextMenu,
-//     LayoutContainer,
-//     GridBox,
-//     CocktailDetail,
-//     ReviewList,
-//     Rating,
-//     ScatterChart
-//   },
-//   props: {
-//     id: {
-//       type: String
-//     }
-//   },
-//   data: (): any => {
-//     return {
-//       bar: mockBarData,
-//       cocktail:
-//         this.id === '1' ? mockCocktailDetailData[0] : mockCocktailDetailData[1],
-//       reviews: mockReviewData,
-//       scatterChartData: {
-//         xValues: mockReviewData.map(
-//           (review: ReviewItem) => review.spiritedRating
-//         ),
-//         yValues: mockReviewData.map(
-//           (review: ReviewItem) => review.innovationRating
-//         )
-//       }
-//     };
-//   }
-// };
 </script>
 
 <template>
@@ -110,7 +76,11 @@ const scatterChartData = {
             <h2>{{ bar.name }}</h2>
             {{ bar.address }}
             <div class="placeholder-box"></div>
-            <div class="teaser-link"><a href="#!">View all drinks</a></div>
+            <div class="teaser-link">
+              <router-link :to="{ name: 'Bar', params: { id: cocktail.bar.id } }"
+                >View all drinks</router-link
+              >
+            </div>
           </grid-box>
         </layout-container>
       </grid-box>

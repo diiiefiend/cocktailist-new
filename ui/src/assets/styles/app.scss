@@ -103,7 +103,7 @@ button {
 
 .placeholder-box { // will prob become its own component soon
   width: 200px;
-  height: 200px;
+  height: 180px;
   background: rgb(238,238,238);
   // eee -> transparent
   background: radial-gradient(circle, rgba(238,238,238,1) 50%, rgba(255,255,255,0) 100%);

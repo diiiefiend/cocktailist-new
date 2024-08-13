@@ -20,7 +20,10 @@ const props = defineProps<{
       <img :src="props.cocktail.imgUrl" :alt="props.cocktail.name + ' image'" />
     </div>
     <h2>
-      from <a href="">{{ props.cocktail.bar }}</a>
+      from
+      <router-link :to="{ name: 'Bar', params: { id: props.cocktail.bar.id } }">{{
+        props.cocktail.bar.name
+      }}</router-link>
     </h2>
     <h2>Ingredients:</h2>
     <ul class="ingredients">

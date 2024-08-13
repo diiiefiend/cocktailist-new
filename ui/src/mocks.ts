@@ -3,7 +3,11 @@ export const mockCocktailData = [
     id: 1,
     name: "The Last Word",
     imgUrl: "/images/test-drinks/fairlady.jpg",
-    bar: "The Nomad Bar",
+    // bar: "The Nomad Bar",
+    bar: {
+      name: "The Nomad Bar",
+      id: 1,
+    },
     rating: 4,
     type: "gin"
   },
@@ -12,7 +16,10 @@ export const mockCocktailData = [
     name: "Vodka Drink",
     imgUrl:
       "https://s3.amazonaws.com/cocktailist-pro/cocktails/imgs/000/000/008/small/queensparkswizzle.jpg",
-    bar: "wherever",
+    bar: {
+      name: "wherever",
+      id: 2,
+    },
     rating: 2.2,
     type: "vodka"
   },
@@ -21,7 +28,10 @@ export const mockCocktailData = [
     name: "Tequila Drink",
     imgUrl:
       "https://s3.amazonaws.com/cocktailist-pro/cocktails/imgs/000/000/008/small/queensparkswizzle.jpg",
-    bar: "wherever",
+    bar: {
+      name: "wherever",
+      id: 2,
+    },
     rating: 3.8,
     type: "tequila"
   },
@@ -30,7 +40,10 @@ export const mockCocktailData = [
     name: "Whiskey Drink",
     imgUrl:
       "https://s3.amazonaws.com/cocktailist-pro/cocktails/imgs/000/000/008/small/queensparkswizzle.jpg",
-    bar: "wherever",
+    bar: {
+      name: "wherever",
+      id: 2,
+    },
     rating: 4.3,
     type: "whiskey"
   },
@@ -39,7 +52,10 @@ export const mockCocktailData = [
     name: "Rum Drink",
     imgUrl:
       "https://s3.amazonaws.com/cocktailist-pro/cocktails/imgs/000/000/008/small/queensparkswizzle.jpg",
-    bar: "wherever",
+    bar: {
+      name: "wherever",
+      id: 2,
+    },
     rating: 5,
     type: "rum"
   },
@@ -47,7 +63,10 @@ export const mockCocktailData = [
     id: 6,
     name: "The Red Dragon",
     imgUrl: "/images/test-drinks/red-dragon.jpg",
-    bar: "The Third Man",
+    bar: {
+      name: "The Third Man",
+      id: 3,
+    },
     rating: 3,
     type: "baijiu"
   },
@@ -56,7 +75,10 @@ export const mockCocktailData = [
     name: "Really Long Name Vodka Drink",
     imgUrl:
       "https://s3.amazonaws.com/cocktailist-pro/cocktails/imgs/000/000/008/small/queensparkswizzle.jpg",
-    bar: "wherever",
+    bar: {
+      name: "wherever",
+      id: 2,
+    },
     rating: 5,
     type: "vodka"
   }
@@ -75,11 +97,23 @@ export const mockCocktailDetailData = [
   }
 ];
 
-export const mockBarData = {
+export const mockBarData = [
+  {
   id: 1,
   name: "The Nomad Bar",
   address: "123 Alphabet St, New York, NY 10016"
-};
+  },
+  {
+    id: 2,
+    name: "wherever",
+    address: "doop doop street, Brooklyn, NY 11216"
+  },
+  {
+    id: 3,
+    name: "The Third Man",
+    address: "999 Ave C, New York, NY 10001",
+  },
+];
 
 export const mockReviewData = [
   {

@@ -2,7 +2,10 @@ export interface CocktailBoxItem {
   id: number;
   name: string;
   imgUrl: string;
-  bar: string;
+  bar: {
+    name: string;
+    id: number;
+  };
   rating: number;
   type: string;
 }

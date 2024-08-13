@@ -28,7 +28,7 @@ header{
         color: $white;
       }
 
-      &.router-link-exact-active{
+      &.router-link-active, &.router-link-fuzzy-active {
         background: $dark-green;
         color: $white;
         font-weight: bold;
