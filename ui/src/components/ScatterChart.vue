@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { nextTick } from 'vue';
 import Chart from 'chart.js/auto';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { type ChartData } from '../models';
-import { nextTick } from 'vue';
 
 const props = withDefaults(
   defineProps<{
@@ -20,79 +20,71 @@ const props = withDefaults(
   },
 );
 
+// $emerald color
 const tickColor = '#154C38';
-
-const labelFontOptions = {
-  fontFamily: 'LibreBaskerville, serif',
-  fontSize: 10,
-  fontColor: tickColor,
-};
+// $navy color
+const tooltipLabelColor = '#03242f';
 
 const sharedScaleOptions = {
-  suggestedMin: 1,
-  suggestedMax: 10,
-  display: !props.isDrinkStats,
+  min: 0,
+  max: 10,
+  position: 'center',
+  grid: {
+    display: true,
+    drawTicks: false,
+  },
+  ticks: {
+    stepSize: 1,
+    maxRotation: 0,
+    display: false,
+  },
+  border: {
+    display: true,
+    width: 2,
+    color: tickColor,
+  },
 };
 
 const drinkAnnotationLabels = {
-  enabled: true,
-  backgroundColor: 'rgba(0, 0, 0, 0)',
-  ...labelFontOptions,
+  type: 'label',
+  font: {
+    family: 'LibreBaskerville, serif',
+    size: 10,
+    color: tickColor,
+  },
 };
 
 const drinkAnnotations = {
   // a bit counterintuitive, but these are annotations for the y-axis
-  traditionalToInnovative: {
-    drawTime: 'afterDatasetsDraw',
-    type: 'line',
-    mode: 'vertical',
-    scaleID: 'xAxis',
-    value: 5,
-    borderColor: tickColor,
-    borderWidth: 2,
-  },
   traditionalLabel: {
-    type: 'label',
     ...drinkAnnotationLabels,
     content: 'traditional',
-    yScaleId: 'yAxis',
+    yScaleId: 'y',
     xAdjust: -35,
-    yAdjust: +70,
+    yAdjust: +80,
   },
   innovativeLabel: {
-    type: 'label',
     ...drinkAnnotationLabels,
     content: 'innovative',
-    yScaleId: 'yAxis',
+    yScaleId: 'y',
     xAdjust: -35,
-    yAdjust: -70,
+    yAdjust: -80,
   },
 
   // ... and these are the annotations for the x-axis
-  refreshingToSpirited: {
-    drawTime: 'afterDatasetsDraw',
-    type: 'line',
-    mode: 'horizontal',
-    scaleID: 'yAxis',
-    value: 5,
-    borderColor: tickColor,
-    borderWidth: 2,
-  },
   refreshingLabel: {
-    type: 'label',
     ...drinkAnnotationLabels,
     content: 'refreshing',
-    xScaleId: 'xAxis',
-    xAdjust: -45,
-    yAdjust: 0,
+    xScaleId: 'x',
+    xAdjust: -60,
+    yAdjust: +10,
   },
   spiritedLabel: {
-    type: 'label',
     ...drinkAnnotationLabels,
     content: 'spirited',
-    xScaleId: 'xAxis',
-    xAdjust: +50,
-    yAdjust: 0,
+    xScaleId: 'x',
+    xAdjust: +60,
+    yAdjust: +10,
   },
 };
 
@@ -137,23 +129,16 @@ const renderChart = (
           },
         },
         scales: {
-          xAxis: {
+          x: {
             ...sharedScaleOptions,
-            position: 'bottom',
             title: {
-              ...labelFontOptions,
               display: !!xLabel && !isDrinkStats,
               text: xLabel,
             },
-            grid: {
-              display: true,
-            },
           },
-          yAxis: {
+          y: {
             ...sharedScaleOptions,
-            position: 'left',
             title: {
-              ...labelFontOptions,
               display: !!yLabel && !isDrinkStats,
               text: yLabel,
             },
@@ -164,6 +149,20 @@ const renderChart = (
             display: !!dataLabel,
           },
           annotation: isDrinkStats ? { annotations: drinkAnnotations } : {},
+          tooltip: {
+            displayColors: false,
+            yAlign: 'bottom',
+            backgroundColor: tooltipLabelColor,
+            bodyFont: {
+              family: 'LibreBaskerville, serif',
+              size: 10,
+            },
+            callbacks: {
+              label: (context) => {
+                return `${xLabel}: ${context.parsed.x}, ${yLabel}: ${context.parsed.y}`;
+              },
+            },
+          },
         },
       },
     },
@@ -181,8 +180,6 @@ nextTick().then(() => {
   });
 
   const label = props.showLabel ? props.label : undefined;
-
-  console.log(props.isDrinkStats);
 
   renderChart(chartData, label, props.xLabel, props.yLabel, props.isDrinkStats);
 });
