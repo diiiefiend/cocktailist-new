@@ -1,18 +1,18 @@
-<script setup lang='ts'>
-  import Header from "./components/Header.vue";
-  import Footer from "./components/Footer.vue";
+<script setup lang="ts">
+import SiteHeader from './components/SiteHeader.vue';
+import SiteFooter from './components/SiteFooter.vue';
 </script>
 
 <template>
-  <Header />
+  <site-header />
 
   <main id="content">
-    <RouterView />
+    <router-view />
   </main>
 
-  <Footer />
+  <site-footer />
 </template>
 
 <style lang="scss">
-  @import "./assets/styles/index.scss";
+@import './assets/styles/index.scss';
 </style>

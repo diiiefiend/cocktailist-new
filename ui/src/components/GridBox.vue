@@ -1,21 +1,25 @@
-<script setup lang='ts'>
+<script setup lang="ts">
+const props = withDefaults(
   defineProps<{
-    width?: number,
-    startCol?: number,
-    applyBoxStyle: boolean,
-  }>();
+    width?: number;
+    startCol?: number;
+    applyBoxStyle?: boolean;
+  }>(),
+  {
+    applyBoxStyle: true,
+  },
+);
 
-  const gridStyle = `grid-column: ${startCol || 'auto'} / span ${width ||
-        1};`;
+const gridStyle = `grid-column: ${props.startCol || 'auto'} / span ${props.width || 1};`;
 </script>
 
 <template>
-  <div :class='{ box: this.applyBoxStyle }' :style='gridStyle'>
+  <div :class="{ box: props.applyBoxStyle, 'grid-box': true }" :style="gridStyle">
     <slot></slot>
   </div>
 </template>
 
-<!-- Add 'scoped' attribute to limit CSS to this component only -->
-<style scoped lang='scss'>
-  @import '../assets/styles/components/grid-box.scss';
+<!-- not scoped bc then styles won't apply to "slot" children -->
+<style lang="scss">
+@import '../assets/styles/components/grid-box.scss';
 </style>

@@ -1,33 +1,35 @@
 @import "../_variables.scss";
 
-.box {
-  background: $white;
-  line-height: 2em;
-  padding: 20px;
-}
+.grid-box {
+  & .box {
+      background: $white;
+      line-height: 2em;
+      padding: 20px;
+    }
 
-h1 {
-  color: $white;
-  font-size: $font-xxl;
-  font-weight: normal;
-  margin: -20px -20px 20px -20px;
-  padding: 20px;
-
-  &.reviews {
-    background-color: $gold;
-  }
-}
-
-h2 {
-  font-size: $font-xl;
-  font-weight: normal;
-  margin-top: 0;
-}
-
-ul {
-  list-style: none;
-}
-
-.teaser-link {
-  text-align: right;
+  h1 {
+      color: $white;
+      font-size: $font-xxl;
+      font-weight: normal;
+      margin: -20px -20px 20px -20px;
+      padding: 20px;
+  
+      &.reviews {
+        background-color: $gold;
+      }
+    }
+  
+    h2 {
+      font-size: $font-xl;
+      font-weight: normal;
+      margin-top: 0;
+    }
+  
+    ul {
+      list-style: none;
+    }
+  
+    .teaser-link {
+      text-align: right;
+    }
 }

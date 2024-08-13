@@ -25,7 +25,7 @@ const router = createRouter({
     component: () => import('../views/LogIn.vue')
   },
   {
-    path: '/lists/:id?',
+    path: '/lists/:id',
     props: true,
     name: 'List',
     component: () => import('../views/List.vue')
@@ -36,6 +36,10 @@ const router = createRouter({
     name: 'Cocktail',
     component: () => import('../views/Cocktail.vue')
   },
+  {
+    path: '/:pathMatch(.*)*',
+    component: () => import('../views/LogIn.vue')
+  }
   ]
 });
 
