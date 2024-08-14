@@ -21,9 +21,9 @@
 
 .modal-container {
   position: relative;
-  width: 300px;
+  width: $modal-width;
   margin: 0px auto;
-  padding: 20px 30px;
+  padding: 20px;
   background-color: $white;
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
@@ -45,10 +45,45 @@ button.close-modal {
 
 .modal-header {
   margin-top: 0;
+
+  ::v-deep h2 {
+    margin: -20px -20px 20px -20px;
+    padding: 20px;
+    color: $light-black;
+    background-color: $gold;
+  }
 }
 
 .modal-body {
   margin: 20px 0;
+
+  ::v-deep {
+    .form-row {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      align-items: center;
+      margin-bottom: 10px;
+    
+      label {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          width: 20%;
+          margin-right: 10px;
+          padding: 10px 10px 5px 10px;
+          border-bottom: 2px solid $light-gold;
+          font-style: italic;
+        }
+      
+      label + * {
+        flex: 1;
+        
+      }
+    }
+  }
 }
 
 // thanks Vue!

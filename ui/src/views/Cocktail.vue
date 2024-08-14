@@ -100,6 +100,7 @@ const showReviewModal = ref(false);
     <review-modal
       v-if="showReviewModal"
       :cocktailId="cocktail.id"
+      :cocktailName="cocktail.name"
       :userId="2"
       @close="showReviewModal = false"
     />
