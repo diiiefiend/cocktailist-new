@@ -4,6 +4,7 @@ import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
 import GridBox from '../components/GridBox.vue';
 import CocktailBox from '../components/CocktailBox.vue';
+import RatingItem from '../components/RatingItem.vue';
 
 const props = withDefaults(
   defineProps<{
@@ -45,6 +46,12 @@ const barDetails = mockBarData.find((bar) => bar.id === +props.id)!;
     <layout-container>
       <grid-box :width="3" :startCol="1" :applyBoxStyle="true" class="bar-details-box">
         <h2>{{ barDetails.name }}</h2>
+        <rating-item
+          :rating-value="4"
+          :show-total="true"
+          :total-ratings="10"
+          :show-divider="true"
+        ></rating-item>
         <h3>{{ barDetails.address }}</h3>
       </grid-box>
       <grid-box :width="4" :startCol="4" :applyBoxStyle="true" class="map-box">

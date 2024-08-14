@@ -1,6 +1,7 @@
 @import "../_variables.scss";
 
 .cocktail-box {
+  position: relative;
   grid-column-end: span 2;
   background: $white;
   min-height: 200px;
@@ -30,12 +31,32 @@
     position: relative;
     margin: 0;
 
+    .list-info {
+      margin-top: 10px;
+      font-size: $font-sm;
+      font-style: italic;
+    }
+
     .label {
       font: $font-xl "LibreBaskerville", "Garamond", serif;
       opacity: 0.3;
       position: absolute;
       bottom: 0;
       right: 0;
+    }
+  }
+
+  button.delete-button {
+    position: absolute;
+    display: block;
+    bottom: 0;
+    background: none;
+    padding: 0 5px;
+    margin: 0;
+
+    svg {
+      width: 20px;
+      height: 20px;
     }
   }
 }

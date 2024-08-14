@@ -15,7 +15,7 @@ const props = defineProps<{
 
 const reviews = mockReviewData;
 const cocktail = props.id === '1' ? mockCocktailDetailData[0] : mockCocktailDetailData[1];
-const bar = mockBarData.find((bar) => bar.id === cocktail.bar.id);
+const bar = mockBarData.find((bar) => bar.id === cocktail.bar.id)!;
 const scatterChartData = {
   xValues: mockReviewData.map((review: ReviewItem) => review.spiritedRating),
   yValues: mockReviewData.map((review: ReviewItem) => review.innovationRating),

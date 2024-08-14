@@ -18,20 +18,6 @@ const flourishImg = '/images/deco-flourish.jpg';
 
 const fullValue = Math.floor(props.ratingValue);
 const partialValueWidth = Math.floor(18 * (props.ratingValue % 1));
-
-// @Component
-// export default class Rating extends Vue {
-//   @Prop() private ratingValue!: number;
-//   @Prop({ default: false }) private showTotal!: boolean;
-//   @Prop({ default: 0 }) private totalRatings!: number;
-//   @Prop({ default: false }) private showDivider!: boolean;
-
-//   img = '/images/rating-full.png';
-//   flourishImg = '/images/deco-flourish.jpg';
-
-//   fullValue = Math.floor(this.ratingValue);
-//   partialValueWidth = Math.floor(18 * (this.ratingValue % 1));
-// }
 </script>
 
 <template>

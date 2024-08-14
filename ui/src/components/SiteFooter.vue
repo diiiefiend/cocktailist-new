@@ -4,12 +4,20 @@
   <footer class="grid">
     <ul class="credits">
       <li>
-        <a href="http://github.com/diiiefiend/cocktailist-ui" target="_blank"> repo </a>
+        <a href="http://github.com/diiiefiend/cocktailist-new" target="_blank">repo</a>
       </li>
       <li>
-        <a href="http://projects.lukehaas.me/css-loaders" target="_blank"> loader </a>
-        |
-        <a href="https://thenounproject.com/" target="_blank"> vector </a>
+        <a href="http://projects.lukehaas.me/css-loaders" target="_blank">loader</a>
+      </li>
+      <li>
+        <a href="https://thenounproject.com/" target="_blank">logo,</a>
+        <a
+          href="https://thenounproject.com/icon/delete-3029748/"
+          target="_blank"
+          title="Delete Icon"
+        >
+          icon
+        </a>
       </li>
     </ul>
     <div class="quicklinks">

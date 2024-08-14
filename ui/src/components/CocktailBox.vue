@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import { type CocktailBoxItem } from '../models';
+import TrashIcon from './TrashIcon.vue';
 import { ref } from 'vue';
 
-const props = defineProps<{
-  cocktail: CocktailBoxItem;
-}>();
+const props = withDefaults(
+  defineProps<{
+    cocktail: CocktailBoxItem;
+    addedToListDate?: string;
+    deleteCallback?: (id: number) => void;
+  }>(),
+  {},
+);
 
 const hovered = ref(false);
 </script>
@@ -20,10 +26,20 @@ const hovered = ref(false);
         :class="[hovered ? `hovered ${props.cocktail.type}` : props.cocktail.type]"
       >
         <li>{{ props.cocktail.bar.name }}</li>
-        <li>{{ props.cocktail.rating }}</li>
+        <li>
+          {{ props.cocktail.rating }}
+        </li>
+        <li v-show="!!addedToListDate" class="list-info">Added on {{ props.addedToListDate }}</li>
         <li class="label">{{ props.cocktail.type }}</li>
       </ul>
     </router-link>
+    <button
+      v-show="!!deleteCallback"
+      class="delete-button"
+      @click.stop="deleteCallback!(cocktail.id)"
+    >
+      <trash-icon />
+    </button>
   </div>
 </template>
 
