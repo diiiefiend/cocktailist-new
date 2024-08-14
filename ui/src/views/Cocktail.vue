@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { type ReviewItem } from '../models';
-import { mockCocktailDetailData, mockReviewData, mockBarData } from '../mocks';
+import { ref } from 'vue';
+
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
 import GridBox from '../components/GridBox.vue';
@@ -8,6 +8,11 @@ import CocktailDetail from '../components/CocktailDetail.vue';
 import ReviewList from '../components/ReviewList.vue';
 import RatingItem from '../components/RatingItem.vue';
 import ScatterChart from '../components/ScatterChart.vue';
+
+import ReviewModal from './modals/ReviewModal.vue';
+
+import { type ReviewItem } from '../models';
+import { mockCocktailDetailData, mockReviewData, mockBarData } from '../mocks';
 
 const props = defineProps<{
   id: string;
@@ -20,6 +25,8 @@ const scatterChartData = {
   xValues: mockReviewData.map((review: ReviewItem) => review.spiritedRating),
   yValues: mockReviewData.map((review: ReviewItem) => review.innovationRating),
 };
+
+const showReviewModal = ref(false);
 </script>
 
 <template>
@@ -27,7 +34,7 @@ const scatterChartData = {
     <context-menu>
       <div class="row-gap-1"></div>
       <div class="span-3 justify-left">
-        <button class="primary">Add Review</button>
+        <button class="primary" @click.stop="showReviewModal = true">Add Review</button>
         <button class="primary">Modify Lists</button>
       </div>
       <div class="span-4">Listed in: <a href="">Done and Done</a></div>
@@ -86,4 +93,15 @@ const scatterChartData = {
       </grid-box>
     </layout-container>
   </div>
+
+  <!-- modals -->
+
+  <transition name="modal">
+    <review-modal
+      v-if="showReviewModal"
+      :cocktailId="cocktail.id"
+      :userId="2"
+      @close="showReviewModal = false"
+    />
+  </transition>
 </template>

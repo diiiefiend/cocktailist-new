@@ -29,12 +29,12 @@ const hovered = ref(false);
         <li>
           {{ props.cocktail.rating }}
         </li>
-        <li v-show="!!addedToListDate" class="list-info">Added on {{ props.addedToListDate }}</li>
+        <li v-if="!!addedToListDate" class="list-info">Added on {{ props.addedToListDate }}</li>
         <li class="label">{{ props.cocktail.type }}</li>
       </ul>
     </router-link>
     <button
-      v-show="!!deleteCallback"
+      v-if="!!deleteCallback"
       class="delete-button"
       @click.stop="deleteCallback!(cocktail.id)"
     >
