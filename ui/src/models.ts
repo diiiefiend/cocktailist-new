@@ -24,7 +24,7 @@ export interface CocktailDetailItem extends CocktailBoxItem {
 export interface ReviewSubmission {
   rating: number;
   spiritedRating: null | number;
-  innovationRating: null | number;
+  innovativeRating: null | number;
   comment: null | string;
 }
 
@@ -34,7 +34,7 @@ export interface ReviewItem {
   user_id: number;
   rating: number;
   spiritedRating: number;
-  innovationRating: number;
+  innovativeRating: number;
   comment: string | null;
   reviewer: string;
   timestamp: string;

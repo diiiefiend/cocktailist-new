@@ -14,7 +14,7 @@ const props = defineProps<{
       Spirited:
       <span class="rating number">{{ review.spiritedRating }}</span>
       ; Innovative:
-      <span class="rating number">{{ review.innovationRating }}</span>
+      <span class="rating number">{{ review.innovativeRating }}</span>
       <br />
       <p>{{ review.comment }}</p>
       <div class="reviewer">{{ review.reviewer }}</div>

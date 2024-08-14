@@ -124,7 +124,7 @@ export const mockReviewData = [
     timestamp: "October 15th, 2020",
     rating: 4,
     spiritedRating: 4,
-    innovationRating: 5,
+    innovativeRating: 5,
     comment:
       "That refreshing (cough cough) baijiu taste! I'm always curious about baijiu cocktails but so far haven't found one that particularly works well with the flavor."
   },
@@ -136,7 +136,7 @@ export const mockReviewData = [
     timestamp: "September 10th, 2016",
     rating: 3,
     spiritedRating: 6,
-    innovationRating: 7,
+    innovativeRating: 7,
     comment:
       "I am such a lightweight now. Normally I can drink 5 or 6 of these drinks but nowadays even one makes me feel tipsy. Pretty sad."
   }

@@ -1,0 +1,12 @@
+@import "../_variables.scss";
+
+textarea {
+  // can change this in the future, in which case put this override in modal.scss
+  width: $modal-input-width;
+  resize: none;
+  outline: none;
+  padding: 5px;
+  border: 1px solid $light-emerald;
+
+  font: $font-baseline "LibreBaskerville", "Garamond",  serif;
+}

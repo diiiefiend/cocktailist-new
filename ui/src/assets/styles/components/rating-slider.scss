@@ -18,7 +18,7 @@ input[type="range"] {
   position: relative;
   background: #fff0;
   overflow: hidden;
-  width: 200px;
+  width: $modal-input-width;
 
   &.spirited {
     color: $light-amethyst;

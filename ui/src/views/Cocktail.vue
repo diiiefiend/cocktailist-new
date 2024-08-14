@@ -11,7 +11,7 @@ import ScatterChart from '../components/ScatterChart.vue';
 
 import ReviewModal from './modals/ReviewModal.vue';
 
-import { type ReviewItem, type ReviewSubmission } from '../models';
+import { type ReviewItem } from '../models';
 import { mockCocktailDetailData, mockReviewData, mockBarData } from '../mocks';
 
 const props = defineProps<{
@@ -23,7 +23,7 @@ const cocktail = props.id === '1' ? mockCocktailDetailData[0] : mockCocktailDeta
 const bar = mockBarData.find((bar) => bar.id === cocktail.bar.id)!;
 const scatterChartData = {
   xValues: mockReviewData.map((review: ReviewItem) => review.spiritedRating),
-  yValues: mockReviewData.map((review: ReviewItem) => review.innovationRating),
+  yValues: mockReviewData.map((review: ReviewItem) => review.innovativeRating),
 };
 
 const showReviewModal = ref(false);
@@ -34,6 +34,7 @@ const showReviewModal = ref(false);
     <context-menu>
       <div class="row-gap-1"></div>
       <div class="span-3 justify-left">
+        <!-- TODO: if user is not logged in, these 2 buttons should be disabled (with a tooltip?) -->
         <!-- TODO: if a review exists, then this should say "edit review" -->
         <button class="primary" @click.stop="showReviewModal = true">Add Review</button>
         <button class="primary">Modify Lists</button>

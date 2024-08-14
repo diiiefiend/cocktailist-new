@@ -1,10 +1,14 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { mockCocktailData, mockListsData, mockListItemsData } from '../mocks.js';
+
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
 import GridBox from '../components/GridBox.vue';
 import CocktailBox from '../components/CocktailBox.vue';
+import CreateListModal from './modals/CreateListModal.vue';
+
+import { mockCocktailData, mockListsData, mockListItemsData } from '../mocks.js';
 
 const mockUserId = '2';
 
@@ -30,8 +34,9 @@ const cocktails = mockCocktailData.filter((cocktail) =>
   listedItems.some((item) => item.cocktail_id === cocktail.id),
 );
 
+let showCreateListModal = ref(false);
+
 const deleteItemFromList = (cocktailId: number) => {
-  // event.preventDefault();
   console.log(cocktailId);
 };
 </script>
@@ -41,7 +46,7 @@ const deleteItemFromList = (cocktailId: number) => {
     <context-menu>
       <div class="row-gap-1"></div>
       <div class="span-2 justify-left">
-        <button class="primary">Create List</button>
+        <button class="primary" @click.stop="showCreateListModal = true">Create List</button>
       </div>
       <div class="span-2">
         <select>
@@ -78,6 +83,16 @@ const deleteItemFromList = (cocktailId: number) => {
       </cocktail-box>
     </layout-container>
   </div>
+
+  <!-- modals -->
+
+  <transition name="modal">
+    <create-list-modal
+      v-if="showCreateListModal"
+      :userId="2"
+      @close="showCreateListModal = false"
+    />
+  </transition>
 </template>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

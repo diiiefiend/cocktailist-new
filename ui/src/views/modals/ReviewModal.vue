@@ -6,6 +6,7 @@ import { type ReviewSubmission, RATING_TYPES } from '../../models';
 import SiteModal from '../../components/SiteModal.vue';
 import RatingItem from '../../components/RatingItem.vue';
 import RatingSlider from '../../components/RatingSlider.vue';
+import TextAreaInput from '../../components/TextAreaInput.vue';
 
 const props = defineProps<{
   cocktailId: number;
@@ -17,30 +18,34 @@ const emit = defineEmits(['close']);
 
 const defaultPayload: ReviewSubmission = {
   rating: 0,
-  spiritedRating: 5,
-  innovationRating: 0,
+  spiritedRating: 0,
+  innovativeRating: 0,
   comment: null,
 };
 
 // TODO: if a review exists, then this should be prepopulated with the old review
 let payload = ref(defaultPayload);
 
-const updateRating = (rating: number, ratingType: RATING_TYPES) => {
+const updateRating = (rating: number | string, ratingType: RATING_TYPES) => {
   switch (ratingType) {
     case RATING_TYPES.RATING:
-      payload.value.rating = rating;
+      payload.value.rating = +rating;
       break;
     case RATING_TYPES.SPIRITED_SLIDER:
-      payload.value.spiritedRating = rating;
+      payload.value.spiritedRating = +rating;
       break;
     case RATING_TYPES.INNOVATION_SLIDER:
-      payload.value.innovationRating = rating;
+      payload.value.innovativeRating = +rating;
       break;
   }
 };
 
+const updateComment = (comment: string) => {
+  payload.value.comment = comment;
+};
+
 const onSubmit = () => {
-  // TODO: submit review
+  // TODO: validate and submit review
   // and share feedback on submission success/failure
   // reset
   console.log('hello ', payload);
@@ -67,7 +72,7 @@ const onSubmit = () => {
         <div class="form-row">
           <label>Spirited</label>
           <rating-slider
-            :slider-value="payload.spiritedRating"
+            :slider-value="'' + payload.spiritedRating"
             type="spirited"
             @rating-set="(val) => updateRating(val, RATING_TYPES.SPIRITED_SLIDER)"
           />
@@ -75,14 +80,14 @@ const onSubmit = () => {
         <div class="form-row">
           <label>Innovative</label>
           <rating-slider
-            :slider-value="payload.innovationRating"
+            :slider-value="'' + payload.innovativeRating"
             type="innovation"
             @rating-set="(val) => updateRating(val, RATING_TYPES.INNOVATION_SLIDER)"
           />
         </div>
         <div class="form-row">
           <label>Comments</label>
-          <textarea> </textarea>
+          <text-area-input @comment-set="updateComment" />
         </div>
       </form>
     </template>
