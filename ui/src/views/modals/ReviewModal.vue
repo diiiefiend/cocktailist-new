@@ -1,7 +1,9 @@
 <script setup lang="ts">
-// import { mockCocktailData, mockBarData } from '../mocks.js';
-// import GridBox from '../components/GridBox.vue';
-import Modal from '../../components/Modal.vue';
+import { ref } from 'vue';
+
+import { type ReviewSubmission } from '../../models';
+
+import SiteModal from '../../components/SiteModal.vue';
 import RatingItem from '../../components/RatingItem.vue';
 
 const props = defineProps<{
@@ -9,18 +11,38 @@ const props = defineProps<{
   cocktailName: string;
   userId: number;
 }>();
+
+const emit = defineEmits(['close']);
+
+const defaultPayload: ReviewSubmission = {
+  rating: 0,
+  spiritedRating: 0,
+  innovationRating: 0,
+  comment: null,
+};
+
+// TODO: if a review exists, then this should be prepopulated with the old review
+let payload = ref(defaultPayload);
+
+const onSubmit = () => {
+  // submit review
+  // and share feedback on submission success/failure
+  // reset
+  console.log('hello ', payload);
+  payload.value = defaultPayload;
+};
 </script>
 
 <template>
-  <modal>
+  <site-modal>
     <template #header>
       <h2>Review {{ cocktailName }}</h2>
     </template>
     <template #body>
-      <form>
+      <form @submit.prevent>
         <div class="form-row">
           <label>Rating</label>
-          <rating-item :rating-value="3" />
+          <rating-item :rating-value="payload.rating" :is-interactive="true" />
         </div>
         <div class="form-row">
           <label>Spirited</label>
@@ -36,8 +58,11 @@ const props = defineProps<{
         </div>
       </form>
     </template>
-    <template #footer> footy foot foot </template>
-  </modal>
+    <template #footer>
+      <button type="submit" class="primary" @click.stop="onSubmit">Submit</button>
+      <button type="reset" class="cancel" @click="$emit('close')">Cancel</button>
+    </template>
+  </site-modal>
 </template>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

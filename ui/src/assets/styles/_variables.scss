@@ -34,6 +34,7 @@ $light-marigold: lighten($marigold, $light-percent);
 $black: #111;         // other
 $light-black: lighten($black, $light-percent);
 $lighter-black: lighten($black, 25%);
+$light-gray: rgb(224, 224, 224);
 
 // dimensions
 $app-width: 1000px;

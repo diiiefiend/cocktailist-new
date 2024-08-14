@@ -11,7 +11,7 @@ import ScatterChart from '../components/ScatterChart.vue';
 
 import ReviewModal from './modals/ReviewModal.vue';
 
-import { type ReviewItem } from '../models';
+import { type ReviewItem, type ReviewSubmission } from '../models';
 import { mockCocktailDetailData, mockReviewData, mockBarData } from '../mocks';
 
 const props = defineProps<{
@@ -34,6 +34,7 @@ const showReviewModal = ref(false);
     <context-menu>
       <div class="row-gap-1"></div>
       <div class="span-3 justify-left">
+        <!-- TODO: if a review exists, then this should say "edit review" -->
         <button class="primary" @click.stop="showReviewModal = true">Add Review</button>
         <button class="primary">Modify Lists</button>
       </div>

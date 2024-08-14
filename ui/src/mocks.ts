@@ -8,7 +8,7 @@ export const mockCocktailData = [
       name: "The Nomad Bar",
       id: 1,
     },
-    rating: 4,
+    rating: 3.5,
     type: "gin"
   },
   {
@@ -122,7 +122,7 @@ export const mockReviewData = [
     user_id: 2,
     reviewer: "Ariel",
     timestamp: "October 15th, 2020",
-    rating: 4.5,
+    rating: 4,
     spiritedRating: 4,
     innovationRating: 5,
     comment:

@@ -99,6 +99,16 @@ button {
       background: $light-emerald;
     }
   }
+
+  &.cancel {
+    background: $light-gray;
+    color: $light-black;
+
+    &:hover {
+      background: $light-ruby;
+      color: $white;
+    }
+  }
 }
 
 .placeholder-box { // will prob become its own component soon

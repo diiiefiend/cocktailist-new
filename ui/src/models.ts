@@ -15,6 +15,13 @@ export interface CocktailDetailItem extends CocktailBoxItem {
   totalRatings: number;
 }
 
+export interface ReviewSubmission {
+  rating: number;
+  spiritedRating: null | number;
+  innovationRating: null | number;
+  comment: null | string;
+}
+
 export interface ReviewItem {
   id: number;
   cocktail_id: number;
@@ -22,7 +29,7 @@ export interface ReviewItem {
   rating: number;
   spiritedRating: number;
   innovationRating: number;
-  comment: string;
+  comment: string | null;
   reviewer: string;
   timestamp: string;
 }
