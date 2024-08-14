@@ -1,5 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{}>();
+
+const emit = defineEmits(['close']);
 </script>
 
 <template>

@@ -17,9 +17,12 @@ const props = withDefaults(
   },
 );
 
+const emit = defineEmits(['ratingSet']);
+
 const HIGHEST_VALUE = 5;
 let rating = ref(props.ratingValue);
 let fullValue = ref(Math.floor(props.ratingValue));
+let stableFullValue = ref(Math.floor(props.ratingValue));
 // doesn't need to be ref bc interactive mode doesn't allow partial values
 const partialValueWidth = Math.floor(18 * (props.ratingValue % 1));
 
@@ -27,11 +30,23 @@ const emptyImg = '/images/rating-empty.png';
 const fullImg = '/images/rating-full.png';
 const flourishImg = '/images/deco-flourish.jpg';
 
+const onMouseover = (val: number) => {
+  if (props.isInteractive) {
+    fullValue.value = val;
+  }
+};
+
+const onMouseleave = () => {
+  if (props.isInteractive) {
+    fullValue.value = stableFullValue.value;
+  }
+};
+
 const onClick = (ratingValue: number) => {
   if (props.isInteractive) {
     rating.value = ratingValue;
-    fullValue.value = ratingValue;
-    console.log('hi', rating.value);
+    stableFullValue.value = ratingValue;
+    emit('ratingSet', ratingValue);
   }
 };
 </script>
@@ -39,7 +54,13 @@ const onClick = (ratingValue: number) => {
 <template>
   <div :class="{ centered: props.showTotal }">
     <div class="rating">
-      <span v-for="val in HIGHEST_VALUE" @click.stop="onClick(val)" :key="val">
+      <span
+        v-for="val in HIGHEST_VALUE"
+        @mouseover.stop="onMouseover(val)"
+        @mouseleave.stop="onMouseleave"
+        @click.stop="onClick(val)"
+        :key="val"
+      >
         <span v-if="val <= fullValue">
           <img :src="fullImg" alt="*" />
         </span>

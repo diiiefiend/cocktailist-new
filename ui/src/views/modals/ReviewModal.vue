@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import { type ReviewSubmission } from '../../models';
+import { type ReviewSubmission, RATING_TYPES } from '../../models';
 
 import SiteModal from '../../components/SiteModal.vue';
 import RatingItem from '../../components/RatingItem.vue';
+import RatingSlider from '../../components/RatingSlider.vue';
 
 const props = defineProps<{
   cocktailId: number;
@@ -16,7 +17,7 @@ const emit = defineEmits(['close']);
 
 const defaultPayload: ReviewSubmission = {
   rating: 0,
-  spiritedRating: 0,
+  spiritedRating: 5,
   innovationRating: 0,
   comment: null,
 };
@@ -24,8 +25,22 @@ const defaultPayload: ReviewSubmission = {
 // TODO: if a review exists, then this should be prepopulated with the old review
 let payload = ref(defaultPayload);
 
+const updateRating = (rating: number, ratingType: RATING_TYPES) => {
+  switch (ratingType) {
+    case RATING_TYPES.RATING:
+      payload.value.rating = rating;
+      break;
+    case RATING_TYPES.SPIRITED_SLIDER:
+      payload.value.spiritedRating = rating;
+      break;
+    case RATING_TYPES.INNOVATION_SLIDER:
+      payload.value.innovationRating = rating;
+      break;
+  }
+};
+
 const onSubmit = () => {
-  // submit review
+  // TODO: submit review
   // and share feedback on submission success/failure
   // reset
   console.log('hello ', payload);
@@ -34,7 +49,8 @@ const onSubmit = () => {
 </script>
 
 <template>
-  <site-modal>
+  <!-- bubble up the close event bc emits don't naturally bubble -->
+  <site-modal @close="$emit('close')">
     <template #header>
       <h2>Review {{ cocktailName }}</h2>
     </template>
@@ -42,15 +58,27 @@ const onSubmit = () => {
       <form @submit.prevent>
         <div class="form-row">
           <label>Rating</label>
-          <rating-item :rating-value="payload.rating" :is-interactive="true" />
+          <rating-item
+            :rating-value="payload.rating"
+            :is-interactive="true"
+            @rating-set="(val) => updateRating(val, RATING_TYPES.RATING)"
+          />
         </div>
         <div class="form-row">
           <label>Spirited</label>
-          slider dood-dad
+          <rating-slider
+            :slider-value="payload.spiritedRating"
+            type="spirited"
+            @rating-set="(val) => updateRating(val, RATING_TYPES.SPIRITED_SLIDER)"
+          />
         </div>
         <div class="form-row">
           <label>Innovative</label>
-          slider dood-dad
+          <rating-slider
+            :slider-value="payload.innovationRating"
+            type="innovation"
+            @rating-set="(val) => updateRating(val, RATING_TYPES.INNOVATION_SLIDER)"
+          />
         </div>
         <div class="form-row">
           <label>Comments</label>

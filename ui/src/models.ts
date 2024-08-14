@@ -1,3 +1,9 @@
+export enum RATING_TYPES {
+  RATING,
+  SPIRITED_SLIDER,
+  INNOVATION_SLIDER,
+}
+
 export interface CocktailBoxItem {
   id: number;
   name: string;
