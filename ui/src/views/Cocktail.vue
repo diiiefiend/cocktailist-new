@@ -8,11 +8,13 @@ import CocktailDetail from '../components/CocktailDetail.vue';
 import ReviewList from '../components/ReviewList.vue';
 import RatingItem from '../components/RatingItem.vue';
 import ScatterChart from '../components/ScatterChart.vue';
+import SearchBox from '../components/SearchBox.vue';
 
 import ReviewModal from './modals/ReviewModal.vue';
+import ListsModal from './modals/ListsModal.vue';
 
 import { type ReviewItem } from '../models';
-import { mockCocktailDetailData, mockReviewData, mockBarData } from '../mocks';
+import { mockCocktailDetailData, mockReviewData, mockBarData, mockListsData } from '../mocks';
 
 const props = defineProps<{
   id: string;
@@ -25,8 +27,11 @@ const scatterChartData = {
   xValues: mockReviewData.map((review: ReviewItem) => review.spiritedRating),
   yValues: mockReviewData.map((review: ReviewItem) => review.innovativeRating),
 };
+const lists = mockListsData;
+const selectedLists = [mockListsData[1]];
 
 const showReviewModal = ref(false);
+const showListsModal = ref(false);
 </script>
 
 <template>
@@ -37,13 +42,16 @@ const showReviewModal = ref(false);
         <!-- TODO: if user is not logged in, these 2 buttons should be disabled (with a tooltip?) -->
         <!-- TODO: if a review exists, then this should say "edit review" -->
         <button class="primary" @click.stop="showReviewModal = true">Add Review</button>
-        <button class="primary">Modify Lists</button>
+        <button class="primary" @click.stop="showListsModal = true">Modify Lists</button>
       </div>
-      <div class="span-4">Listed in: <a href="">Done and Done</a></div>
-      <div class="span-2 justify-right emerald">Last updated: 09.04.2020</div>
+      <div class="span-2">
+        Listed in: <a href="">{{ selectedLists.map((list) => list.name).join(', ') }}</a>
+      </div>
       <div class="span-1 justify-right">
+        <!-- TODO: if user is not logged in, this button should be disabled (with a tooltip?) -->
         <button class="secondary">Edit Entry</button>
       </div>
+      <search-box />
     </context-menu>
     <layout-container>
       <!-- main content -->
@@ -105,6 +113,17 @@ const showReviewModal = ref(false);
       :cocktailName="cocktail.name"
       :userId="2"
       @close="showReviewModal = false"
+    />
+  </transition>
+  <transition name="modal">
+    <lists-modal
+      v-if="showListsModal"
+      :cocktailId="cocktail.id"
+      :cocktailName="cocktail.name"
+      :userId="2"
+      :lists="lists"
+      :selectedLists="selectedLists"
+      @close="showListsModal = false"
     />
   </transition>
 </template>

@@ -7,26 +7,14 @@ const props = defineProps<{}>();
 
 const emit = defineEmits(['close']);
 
-// const defaultPayload: ReviewSubmission = {
-//   rating: 0,
-//   spiritedRating: 0,
-//   innovativeRating: 0,
-//   comment: null,
-// };
-
-// TODO: if a review exists, then this should be prepopulated with the old review
-// let payload = ref(defaultPayload);
-
-// const updateComment = (comment: string) => {
-//   payload.value.comment = comment;
-// };
+let listName = ref(null);
 
 const onSubmit = () => {
   // TODO: validate and submit review
   // and share feedback on submission success/failure
-  // reset
-  // console.log('hello ', payload);
-  // payload.value = defaultPayload;
+  // reset state if success
+  console.log(listName.value);
+  listName.value = null;
 };
 </script>
 
@@ -34,14 +22,14 @@ const onSubmit = () => {
   <!-- bubble up the close event bc emits don't naturally bubble -->
   <site-modal @close="$emit('close')">
     <template #header>
-      <h2>Create List</h2>
+      <h2>Create New List</h2>
     </template>
     <template #body>
       <form @submit.prevent>
-        <div class="form-row">
+        <fieldset>
           <label>List Name</label>
-          <input type="text" />
-        </div>
+          <input v-model="listName" type="text" />
+        </fieldset>
       </form>
     </template>
     <template #footer>

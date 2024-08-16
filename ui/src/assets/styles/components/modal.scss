@@ -58,14 +58,17 @@ button.close-modal {
   margin: 20px 0;
 
   ::v-deep {
-    .form-row {
+    fieldset {
       width: 100%;
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
       justify-content: flex-start;
       align-items: baseline;
-      margin-bottom: 10px;
+
+      border: 0;
+      margin: 0;
+      padding: 0;
     
       label {
           display: flex;
@@ -80,7 +83,71 @@ button.close-modal {
       
       label + * {
         flex: 1;
-        
+      }
+
+      input, textarea {
+        font: $font-baseline "LibreBaskerville", "Garamond", serif;
+      }
+
+      input[type="text"] {
+        border-bottom: 1px solid $light-emerald;
+        padding: 10px 10px 5px 10px;
+        outline: none;
+      }
+
+    }
+
+    // if we end up using checkboxes elsewhere, can make this a checkbox component
+    .checkbox-field {
+      display: block;
+
+      legend {
+        border-bottom: 2px solid $light-gold;
+        font-style: italic;
+        font-size: $font-md;
+      }
+
+      label {
+        display: grid;
+        grid-template-columns: 4em auto;
+        gap: 0.5em;
+        width: auto;
+
+        font-style: normal;
+        border-bottom: 0;
+        padding-top: 1em;
+      }
+      
+      input[type="checkbox"] {
+        -webkit-appearance: none;
+        appearance: none;
+        margin-left: 2.5em;
+
+        width: 1.15em;
+        height: 1.15em;
+        border: 0.15em solid $russet;
+        border-radius: 0.15em;
+
+        display: grid;
+        place-content: center;
+
+        // checked custom styling
+        &::before {
+          content: '';
+          width: 0.65em;
+          height: 0.65em;
+          transform: scale(0);
+          transition: 120ms transform ease-in-out;
+          box-shadow: inset 1em 1em $russet;
+        }
+
+        &:checked::before {
+          transform: scale(1);
+        }
+
+        &:focus {
+          outline: max(2px, 0.15em) solid $light-russet;
+        }
       }
     }
   }

@@ -5,6 +5,7 @@ import LayoutContainer from '../components/LayoutContainer.vue';
 import GridBox from '../components/GridBox.vue';
 import CocktailBox from '../components/CocktailBox.vue';
 import RatingItem from '../components/RatingItem.vue';
+import SearchBox from '../components/SearchBox.vue';
 
 const props = withDefaults(
   defineProps<{
@@ -36,12 +37,7 @@ const barDetails = mockBarData.find((bar) => bar.id === +props.id)!;
           <option>All spirits</option>
         </select>
       </div>
-      <div class="span-3 justify-right">
-        <input id="search" placeholder="I have something in mind" />
-      </div>
-      <div class="span-1 justify-right">
-        <button class="secondary">Search</button>
-      </div>
+      <search-box />
     </context-menu>
     <layout-container>
       <grid-box :width="3" :startCol="1" :applyBoxStyle="true" class="bar-details-box">

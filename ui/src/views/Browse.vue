@@ -3,6 +3,7 @@ import { mockCocktailData } from '../mocks.js';
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
 import CocktailBox from '../components/CocktailBox.vue';
+import SearchBox from '../components/SearchBox.vue';
 
 const cocktails = mockCocktailData;
 </script>
@@ -24,12 +25,7 @@ const cocktails = mockCocktailData;
           <option>All spirits</option>
         </select>
       </div>
-      <div class="span-3 justify-right">
-        <input id="search" placeholder="I have something in mind" />
-      </div>
-      <div class="span-1 justify-right">
-        <button class="secondary">Search</button>
-      </div>
+      <search-box />
     </context-menu>
     <layout-container>
       <cocktail-box v-for="cocktail in cocktails" :key="cocktail.id" :cocktail="cocktail">

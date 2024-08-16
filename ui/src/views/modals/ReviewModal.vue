@@ -48,7 +48,7 @@ const onSubmit = () => {
   // TODO: validate and submit review
   // and share feedback on submission success/failure
   // reset
-  console.log('hello ', payload);
+  console.log('hello ', payload.value);
   payload.value = defaultPayload;
 };
 </script>
@@ -61,34 +61,34 @@ const onSubmit = () => {
     </template>
     <template #body>
       <form @submit.prevent>
-        <div class="form-row">
+        <fieldset>
           <label>Rating</label>
           <rating-item
             :rating-value="payload.rating"
             :is-interactive="true"
             @rating-set="(val) => updateRating(val, RATING_TYPES.RATING)"
           />
-        </div>
-        <div class="form-row">
+        </fieldset>
+        <fieldset>
           <label>Spirited</label>
           <rating-slider
             :slider-value="'' + payload.spiritedRating"
             type="spirited"
             @rating-set="(val) => updateRating(val, RATING_TYPES.SPIRITED_SLIDER)"
           />
-        </div>
-        <div class="form-row">
+        </fieldset>
+        <fieldset>
           <label>Innovative</label>
           <rating-slider
             :slider-value="'' + payload.innovativeRating"
             type="innovation"
             @rating-set="(val) => updateRating(val, RATING_TYPES.INNOVATION_SLIDER)"
           />
-        </div>
-        <div class="form-row">
+        </fieldset>
+        <fieldset>
           <label>Comments</label>
           <text-area-input @comment-set="updateComment" />
-        </div>
+        </fieldset>
       </form>
     </template>
     <template #footer>

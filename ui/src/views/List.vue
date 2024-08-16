@@ -6,6 +6,8 @@ import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
 import GridBox from '../components/GridBox.vue';
 import CocktailBox from '../components/CocktailBox.vue';
+import SearchBox from '../components/SearchBox.vue';
+
 import CreateListModal from './modals/CreateListModal.vue';
 
 import { mockCocktailData, mockListsData, mockListItemsData } from '../mocks.js';
@@ -54,15 +56,11 @@ const deleteItemFromList = (cocktailId: number) => {
         </select>
       </div>
       <div class="span-1">
+        <!-- TODO: add confirmation modal -->
         <button class="secondary">Delete List</button>
       </div>
       <div class="span-1"></div>
-      <div class="span-3 justify-right">
-        <input id="search" placeholder="I have something in mind" />
-      </div>
-      <div class="span-1 justify-right">
-        <button class="secondary">Search</button>
-      </div>
+      <search-box />
     </context-menu>
     <layout-container>
       <grid-box :width="3" :startCol="1" :applyBoxStyle="true" class="list-details-box">
