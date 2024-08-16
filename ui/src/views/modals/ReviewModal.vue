@@ -47,9 +47,7 @@ const updateComment = (comment: string) => {
 const onSubmit = () => {
   // TODO: validate and submit review
   // and share feedback on submission success/failure
-  // reset
   console.log('hello ', payload.value);
-  payload.value = defaultPayload;
 };
 </script>
 

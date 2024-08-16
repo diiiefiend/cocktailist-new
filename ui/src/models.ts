@@ -1,31 +1,47 @@
+// enums
+
 export enum RATING_TYPES {
   RATING,
   SPIRITED_SLIDER,
   INNOVATION_SLIDER,
 }
 
+export enum DRINK_TYPES {
+  VODKA = 'vodka',
+  GIN = 'gin',
+  WHISKEY = 'whiskey',
+  RUM = 'rum',
+  TEQUILA = 'tequila',
+  BRANDY = 'brandy',
+  WINE = 'wine',
+  LIQUEUR = 'liqueur',
+  BAIJIU = 'baijiu',
+  SAKE = 'sake',
+}
+
+// interfaces
+
+export interface Bar {
+  id: number;
+  name: string;
+}
+
+export interface BarDetails extends Bar {
+  address: string;
+}
+
 export interface CocktailBoxItem {
   id: number;
   name: string;
   imgUrl: string;
-  bar: {
-    name: string;
-    id: number;
-  };
+  bar: Bar;
   rating: number;
-  type: string;
+  type: DRINK_TYPES;
 }
 
 export interface CocktailDetailItem extends CocktailBoxItem {
   ingredients: string;
   totalRatings: number;
-}
-
-export interface ReviewSubmission {
-  rating: number;
-  spiritedRating: null | number;
-  innovativeRating: null | number;
-  comment: null | string;
 }
 
 export interface ReviewItem {
@@ -54,3 +70,19 @@ export interface CoordinatePair {
 }
 
 export type ChartData = CoordinatePair[];
+
+// form-related models
+export interface CocktailSubmission {
+  name: string;
+  imgUrl?: string;
+  bar: Bar | BarDetails;
+  type: DRINK_TYPES;
+  ingredients: string;
+}
+
+export interface ReviewSubmission {
+  rating: number;
+  spiritedRating: null | number;
+  innovativeRating: null | number;
+  comment: null | string;
+}

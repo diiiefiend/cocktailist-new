@@ -64,7 +64,7 @@ button.close-modal {
       flex-direction: row;
       flex-wrap: wrap;
       justify-content: flex-start;
-      align-items: baseline;
+      align-items: flex-end;
 
       border: 0;
       margin: 0;
@@ -85,16 +85,15 @@ button.close-modal {
         flex: 1;
       }
 
-      input, textarea {
+      input, select, textarea {
         font: $font-baseline "LibreBaskerville", "Garamond", serif;
       }
 
-      input[type="text"] {
+      input[type="text"], select {
         border-bottom: 1px solid $light-emerald;
         padding: 10px 10px 5px 10px;
         outline: none;
       }
-
     }
 
     // if we end up using checkboxes elsewhere, can make this a checkbox component
@@ -107,6 +106,7 @@ button.close-modal {
         font-size: $font-md;
       }
 
+      // thanks to https://moderncss.dev/pure-css-custom-checkbox-style/
       label {
         display: grid;
         grid-template-columns: 4em auto;

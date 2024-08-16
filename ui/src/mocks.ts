@@ -1,3 +1,5 @@
+import { DRINK_TYPES } from "./models";
+
 export const mockCocktailData = [
   {
     id: 1,
@@ -9,7 +11,7 @@ export const mockCocktailData = [
       id: 1,
     },
     rating: 3.5,
-    type: "gin"
+    type: DRINK_TYPES.GIN,
   },
   {
     id: 2,
@@ -21,7 +23,7 @@ export const mockCocktailData = [
       id: 2,
     },
     rating: 2.2,
-    type: "vodka"
+    type: DRINK_TYPES.VODKA,
   },
   {
     id: 3,
@@ -33,7 +35,7 @@ export const mockCocktailData = [
       id: 2,
     },
     rating: 3.8,
-    type: "tequila"
+    type: DRINK_TYPES.TEQUILA,
   },
   {
     id: 4,
@@ -45,7 +47,7 @@ export const mockCocktailData = [
       id: 2,
     },
     rating: 4.3,
-    type: "whiskey"
+    type: DRINK_TYPES.WHISKEY,
   },
   {
     id: 5,
@@ -57,7 +59,7 @@ export const mockCocktailData = [
       id: 2,
     },
     rating: 5,
-    type: "rum"
+    type: DRINK_TYPES.RUM,
   },
   {
     id: 6,
@@ -68,7 +70,7 @@ export const mockCocktailData = [
       id: 3,
     },
     rating: 3,
-    type: "baijiu"
+    type: DRINK_TYPES.BAIJIU,
   },
   {
     id: 7,
@@ -80,7 +82,7 @@ export const mockCocktailData = [
       id: 2,
     },
     rating: 5,
-    type: "vodka"
+    type: DRINK_TYPES.VODKA,
   }
 ];
 

@@ -8,7 +8,7 @@ import GridBox from '../components/GridBox.vue';
 import CocktailBox from '../components/CocktailBox.vue';
 import SearchBox from '../components/SearchBox.vue';
 
-import CreateListModal from './modals/CreateListModal.vue';
+import AddEditListModal from './modals/AddEditListModal.vue';
 
 import { mockCocktailData, mockListsData, mockListItemsData } from '../mocks.js';
 
@@ -85,7 +85,7 @@ const deleteItemFromList = (cocktailId: number) => {
   <!-- modals -->
 
   <transition name="modal">
-    <create-list-modal
+    <add-edit-list-modal
       v-if="showCreateListModal"
       :userId="2"
       @close="showCreateListModal = false"
