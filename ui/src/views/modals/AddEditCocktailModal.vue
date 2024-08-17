@@ -19,7 +19,7 @@ let payload = ref(
   props.existingCocktailInfo ?? {
     name: null,
     type: null,
-    bar: null,
+    barId: null,
     ingredients: null,
     imgUrl: null,
   },
@@ -52,6 +52,7 @@ const onSubmit = () => {
         </fieldset>
         <fieldset>
           <label for="bars">Bar</label>
+          <!-- TODO: add option to add bar -->
           <select id="bars" v-model="payload.bar">
             <option v-for="bar in allBars" :key="bar.id" :value="bar.id">{{ bar.name }}</option>
           </select>
@@ -62,6 +63,7 @@ const onSubmit = () => {
         </fieldset>
         <fieldset>
           <label>Image</label>
+          <!-- TODO: image upload form -->
           <input type="text" v-model="payload.imgUrl" />
         </fieldset>
       </form>

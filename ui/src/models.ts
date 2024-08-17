@@ -74,10 +74,10 @@ export type ChartData = CoordinatePair[];
 // form-related models
 export interface CocktailSubmission {
   name: string;
-  imgUrl?: string;
-  bar: Bar | BarDetails;
   type: DRINK_TYPES;
+  barId: number;
   ingredients: string;
+  imgUrl?: string;
 }
 
 export interface ReviewSubmission {
