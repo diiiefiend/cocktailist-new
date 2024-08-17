@@ -2,11 +2,10 @@
 
 # ui
 ui/node_modules
-ui-vue2/node_modules
 
 # server
 api/node_modules
-api/ruby-version
+api/dist
 
 # local env files
 .env.local
