@@ -79,7 +79,16 @@ app.route("/reviews")
     res.send("TODO - create review, will require session");
   });
 
-// TODO: USERS
+// users
+app.route("/users/:id")
+  .get((req: Request, res: Response) => {
+    res.send("TODO - get user");
+  });
+
+app.route("/users")
+  .post((req:Request, res: Response) => {
+    res.send("TODO - create user");
+  });
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
