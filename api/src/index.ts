@@ -1,7 +1,9 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 
-import cocktails from './routes/cocktails/cocktails';
+import cocktails from './routes/cocktails';
+import bars from './routes/bars';
+import lists from './routes/lists';
 
 dotenv.config();
 
@@ -10,16 +12,16 @@ const port = process.env.PORT || 3000;
 
 // cocktails
 app.route("/cocktails/:id")
-  .get((req: Request, res: Response) => {
-    res.send("TODO - get cocktail info");
+  .get(async (req: Request, res: Response) => {
+    res.send(await cocktails.getCocktail(+req.params.id));
   })
   .put((req:Request, res: Response) => {
     res.send("TODO - edit cocktail, will require session");
   });
 
 app.route("/cocktails")
-  .get((req: Request, res: Response) => {
-    res.send(cocktails.getCocktails());
+  .get(async (req: Request, res: Response) => {
+    res.send(await cocktails.getCocktails());
   })
   .post((req:Request, res: Response) => {
     res.send("TODO - create cocktail, will require session");
@@ -27,16 +29,16 @@ app.route("/cocktails")
 
 // bars
 app.route("/bars/:id")
-  .get((req: Request, res: Response) => {
-    res.send("TODO - get bar info");
+  .get(async (req: Request, res: Response) => {
+    res.send(await bars.getBar(+req.params.id));
   })
   .put((req:Request, res: Response) => {
     res.send("TODO - edit bar info (currently no FE flow), will require session");
   });
 
 app.route("/bars")
-  .get((req: Request, res: Response) => {
-    res.send("TODO - get list of all bars");
+  .get(async (req: Request, res: Response) => {
+    res.send(await bars.getBars());
   })
   .post((req:Request, res: Response) => {
     res.send("TODO - create bar, will require session");
@@ -44,8 +46,8 @@ app.route("/bars")
 
 // lists : all routes require a session
 app.route("/lists/:id")
-  .get((req: Request, res: Response) => {
-    res.send("TODO - get list details, will require session");
+  .get(async (req: Request, res: Response) => {
+    res.send(await lists.getList(+req.params.id));
   })
   .put((req:Request, res: Response) => {
     res.send("TODO - edit list info - don't think we have a FE flow yet, will require session");
@@ -55,8 +57,9 @@ app.route("/lists/:id")
   });
 
 app.route("/lists")
-  .get((req: Request, res: Response) => {
-    res.send('TODO - get all lists for logged in user, will require session');
+// TODO: add middleware to check for auth'd session; pass user id into getLists call
+  .get(async (req: Request, res: Response) => {
+    res.send(await lists.getLists());
   })
   .post((req:Request, res: Response) => {
     res.send("TODO - create list, will require session");
