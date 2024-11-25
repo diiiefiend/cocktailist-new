@@ -28,15 +28,17 @@ export interface Bar {
 
 export interface BarDetails extends Bar {
   address: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface CocktailBoxItem {
   id: number;
   name: string;
-  imgUrl: string;
+  liquor: DRINK_TYPES;
+  img_file_name: string;
   bar: Bar;
-  rating: number;
-  type: DRINK_TYPES;
+  avg_rating: number;
 }
 
 export interface CocktailDetailItem extends CocktailBoxItem {

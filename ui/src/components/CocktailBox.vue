@@ -23,14 +23,14 @@ const hovered = ref(false);
       </h3>
       <ul
         class="details colored-by-type"
-        :class="[hovered ? `hovered ${props.cocktail.type}` : props.cocktail.type]"
+        :class="[hovered ? `hovered ${props.cocktail.liquor}` : props.cocktail.liquor]"
       >
         <li>{{ props.cocktail.bar.name }}</li>
         <li>
-          {{ props.cocktail.rating }}
+          {{ props.cocktail.avg_rating }}
         </li>
         <li v-if="!!addedToListDate" class="list-info">Added on {{ props.addedToListDate }}</li>
-        <li class="label">{{ props.cocktail.type }}</li>
+        <li class="label">{{ props.cocktail.liquor }}</li>
       </ul>
     </router-link>
     <button

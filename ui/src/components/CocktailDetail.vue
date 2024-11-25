@@ -8,16 +8,16 @@ const props = defineProps<{
 
 <template>
   <div>
-    <h1 class="colored-by-type" :class="props.cocktail.type">
+    <h1 class="colored-by-type" :class="props.cocktail.liquor">
       {{ props.cocktail.name }}
       <span class="type">
         <!-- eslint-disable-next-line -->
-        (<a href="">{{ props.cocktail.type }}</a
+        (<a href="">{{ props.cocktail.liquor }}</a
         >)
       </span>
     </h1>
     <div class="cocktail-image">
-      <img :src="props.cocktail.imgUrl" :alt="props.cocktail.name + ' image'" />
+      <img :src="props.cocktail.img_file_name" :alt="props.cocktail.name + ' image'" />
     </div>
     <h2>
       from

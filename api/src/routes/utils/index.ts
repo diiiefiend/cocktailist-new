@@ -19,15 +19,13 @@ const getManyByFilter = async (tableName: string, filterCriteria?: Array<string>
     }
 
     const [results] = await connection.query<Array<genericResponse>>(
-      `SELECT * FROM ${tableName} ${whereClause} LIMIT 10`
+      `SELECT * FROM ${tableName} ${whereClause}`
     );
 
     console.log(results);
     // console.log(fields);
 
-    return {
-      results,
-    };
+    return results;
   } catch (err) {
     return "failed: " + err;
   }
@@ -51,6 +49,7 @@ const getOneById = async (tableName:string, id: number) => {
 };
 
 export {
+  genericResponse,
   getManyByFilter,
   getOneById,
 };
