@@ -18,7 +18,8 @@ app.use(cors({
 // cocktails
 app.route("/cocktails/:id")
   .get(async (req: Request, res: Response) => {
-    res.send(await cocktails.getCocktail(+req.params.id));
+    // res.send(await cocktails.getCocktail(+req.params.id));
+    res.send(await cocktails.getCocktailORM(+req.params.id));
   })
   .put((req:Request, res: Response) => {
     res.send("TODO - edit cocktail, will require session");

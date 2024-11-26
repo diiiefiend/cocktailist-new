@@ -1,4 +1,5 @@
-import {connection} from '../../db';
+import {dbConnect, connection} from '../../db';
+import { Cocktail } from '../../db/models/Cocktail';
 import { getManyByFilter, getOneById, genericResponse } from '../utils';
 
 const TABLE_NAME = 'cocktails';
@@ -10,6 +11,11 @@ const getCocktails = async () => {
 const getCocktail = async (id: number) => {
   return getOneById(TABLE_NAME, id);
 };
+
+const getCocktailORM = async (id: number) => {
+  await dbConnect();
+  return await Cocktail.findByPk(id);
+}
 
 const getCocktailsWithBars = async () => {
   try {
@@ -48,6 +54,7 @@ const getCocktailsWithBars = async () => {
 
 export default {
   getCocktails,
+  getCocktailORM,
   getCocktail,
   getCocktailsWithBars,
 }

@@ -1,5 +1,5 @@
 import { RowDataPacket } from 'mysql2';
-import {connection} from '../../db';
+import { connection } from '../../db';
 
 interface genericResponse extends RowDataPacket {
   id: number;

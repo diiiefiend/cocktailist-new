@@ -1,4 +1,3 @@
-import {connection} from '../../db';
 import { getManyByFilter, getOneById } from '../utils';
 
 const TABLE_NAME = 'lists';
