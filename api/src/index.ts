@@ -32,6 +32,11 @@ app.route("/cocktails")
     res.send("TODO - create cocktail, will require session");
   });
 
+app.route("/liquors")
+  .get(async (req: Request, res: Response) => {
+    res.send(await cocktails.getLiquors());
+  });
+
 // bars
 app.route("/bars/:id")
   .get(async (req: Request, res: Response) => {

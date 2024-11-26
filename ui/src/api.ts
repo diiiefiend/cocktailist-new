@@ -1,14 +1,20 @@
-const HOST = "http://localhost:3000";
+const HOST = 'http://localhost:3000';
 
 const getCocktailsWithBars = async () => {
   return makeCall(`${HOST}/cocktailsWithBars`, {
-    method: "GET",
+    method: 'GET',
+  });
+}
+
+const getLiquorList = async () => {
+  return makeCall(`${HOST}/liquors`, {
+    method: 'GET',
   });
 }
 
 const getBars = async () => {
   return makeCall(`${HOST}/bars`, {
-    method: "GET",
+    method: 'GET',
   });
 }
 
@@ -26,5 +32,6 @@ const makeCall = async (endpoint: string, options: any) => {
 
 export {
   getCocktailsWithBars,
+  getLiquorList,
   getBars,
 };

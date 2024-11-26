@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 
-// import { mockBarData, mockCocktailData } from '../mocks.js';
-import { getCocktailsWithBars, getBars } from '../api.js';
-import { DRINK_TYPES, type Bar, type CocktailBoxItem } from '../models.js';
+import { getCocktailsWithBars, getBars, getLiquorList } from '../api.js';
+import { type Bar, type CocktailBoxItem } from '../models.js';
 
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
@@ -11,15 +10,14 @@ import CocktailBox from '../components/CocktailBox.vue';
 import SearchBox from '../components/SearchBox.vue';
 import AddEditCocktailModal from './modals/AddEditCocktailModal.vue';
 
-// const cocktails = mockCocktailData;
-// const allBars = mockBarData;
-
 let isLoading = ref(false);
 let error = ref(null);
 
+// TODO: implement this UX and style disabled button
 let isUserLoggedIn = ref(false);
 let cocktails: Ref<null | CocktailBoxItem> = ref(null);
 let allBars: Ref<null | Bar> = ref(null);
+let liquorTypes: Ref<null | String> = ref(null);
 
 let showAddCocktailModal = ref(false);
 
@@ -30,6 +28,7 @@ async function fetchData() {
   try {
     cocktails.value = await getCocktailsWithBars();
     allBars.value = await getBars();
+    liquorTypes.value = await getLiquorList();
   } catch (err: any) {
     error.value = err.toString();
   } finally {
@@ -64,7 +63,7 @@ onMounted(async () => {
       <div class="span-2">
         <select :disabled="isLoading">
           <option>All spirits</option>
-          <option v-for="type in DRINK_TYPES" :key="type" :value="type">{{ type }}</option>
+          <option v-for="type in liquorTypes" :key="type" :value="type">{{ type }}</option>
         </select>
       </div>
       <search-box />
