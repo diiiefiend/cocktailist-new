@@ -1,20 +1,5 @@
-import mysql from 'mysql2/promise';
-
-const DB_CONFIGS = {
-  host: process.env.CLIST_DB_HOST,
-  user: process.env.CLIST_DB_USER,
-  password: process.env.CLIST_DB_PW,
-  database: 'cocktailist',
-};
-
-
-const connection = mysql.createPool(DB_CONFIGS);
-
-// export {
-//   connection,
-// };
-
 import { Sequelize } from 'sequelize';
+import modelInitFns from './models';
 
 const sequelize = new Sequelize(
   'cocktailist',
@@ -40,12 +25,11 @@ const dbConnect = async () => {
   };
 };
 
-// const dbModels = {
-//   Cocktail: Cocktail(sequelize, Sequelize.DataTypes),
-// }
+// init models
+const models = modelInitFns.initModelsAndAssociations(sequelize);
 
 export {
   dbConnect,
   getDbInstance,
-  connection,
+  models,
 };

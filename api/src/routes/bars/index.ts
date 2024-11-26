@@ -1,13 +1,13 @@
-import { getManyByFilter, getOneById } from '../utils';
-
-const TABLE_NAME = 'bars';
+import { dbConnect, models } from '../../db';
 
 const getBars = async () => {
-  return getManyByFilter(TABLE_NAME);
+  await dbConnect();
+  return await models.bar.findAll();
 };
 
 const getBar = async (id: number) => {
-  return getOneById(TABLE_NAME, id);
+  await dbConnect();
+  return await models.bar.findByPk(id);
 };
 
 export default {
