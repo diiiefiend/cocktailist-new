@@ -23,6 +23,15 @@ const getCocktailsWithBars = async () => {
   return results;
 }
 
+const getBarCocktails = async (barId: string) => {
+  await dbConnect();
+  return await models.cocktail.findAll({
+    where: {
+      bar_id: barId,
+    }
+  });
+}
+
 const getLiquors = async () => {
   await dbConnect();
 
@@ -54,5 +63,6 @@ export default {
   getCocktails,
   getCocktail,
   getCocktailsWithBars,
+  getBarCocktails,
   getLiquors,
 }

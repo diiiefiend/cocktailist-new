@@ -44,6 +44,11 @@ app.route("/liquors")
   });
 
 // bars
+app.route("/bars/:id/cocktails")
+  .get(async (req: Request, res: Response) => {
+    res.send(await cocktails.getBarCocktails(req.params.id));
+  });
+
 app.route("/bars/:id")
   .get(async (req: Request, res: Response) => {
     res.send(await bars.getBar(req.params.id));

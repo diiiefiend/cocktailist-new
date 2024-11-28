@@ -25,7 +25,7 @@ const hovered = ref(false);
         class="details colored-by-type"
         :class="[hovered ? `hovered ${props.cocktail.liquor}` : props.cocktail.liquor]"
       >
-        <li>{{ props.cocktail.bar.name }}</li>
+        <li>{{ props.cocktail.bar ? props.cocktail.bar.name : '' }}</li>
         <li>
           {{ props.cocktail.avg_rating }}
         </li>

@@ -38,6 +38,13 @@ const getBar = async (id: string) => {
   });
 }
 
+// additional bar routes
+const getBarCocktails = async (id: string) => {
+  return makeCall(`${HOST}/bars/${id}/cocktails`, {
+    method: 'GET',
+  });
+}
+
 const getLists = async () => {
   return makeCall(`${HOST}/lists`, {
     method: 'GET',
@@ -69,6 +76,7 @@ export {
   getCocktail,
   getCocktailReviews,
   getBar,
+  getBarCocktails,
   getLists,
   getList,
 };

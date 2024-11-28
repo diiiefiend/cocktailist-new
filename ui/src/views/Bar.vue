@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { mockCocktailData, mockBarData } from '../mocks.js';
+import { onMounted, ref } from 'vue';
+
+import { getBar, getBarCocktails } from '../api.js';
+
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
 import GridBox from '../components/GridBox.vue';
@@ -16,8 +19,33 @@ const props = withDefaults(
   },
 );
 
-const cocktails = mockCocktailData.filter((cocktail) => cocktail.bar.id === +props.id);
-const barDetails = mockBarData.find((bar) => bar.id === +props.id)!;
+let isLoading = ref(true);
+let error = ref(null);
+
+let bar: Ref<null | Bar> = ref(null);
+let cocktails: Ref<null | CocktailDetailItem> = ref(null);
+
+// TODO: implement edit bar modal
+let isUserLoggedIn = ref(false);
+const showEditBarModal = ref(false);
+
+async function fetchData() {
+  error.value = null;
+  isLoading.value = true;
+
+  try {
+    bar.value = await getBar(props.id);
+    cocktails.value = await getBarCocktails(props.id);
+  } catch (err: any) {
+    error.value = err.toString();
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+onMounted(async () => {
+  await fetchData();
+});
 </script>
 
 <template>
@@ -25,11 +53,11 @@ const barDetails = mockBarData.find((bar) => bar.id === +props.id)!;
     <context-menu>
       <div class="row-gap-1"></div>
       <div class="span-2 justify-left">
-        <button class="primary">Add Cocktail</button>
+        <button class="primary" :disabled="!isUserLoggedIn">Add Cocktail</button>
       </div>
       <div class="span-2">
         <select>
-          <option>{{ barDetails.name }}</option>
+          <option>{{ bar ? bar.name : '' }}</option>
         </select>
       </div>
       <div class="span-2">
@@ -39,16 +67,17 @@ const barDetails = mockBarData.find((bar) => bar.id === +props.id)!;
       </div>
       <search-box />
     </context-menu>
-    <layout-container>
+    <div v-if="isLoading">LOADING</div>
+    <layout-container v-else>
       <grid-box :width="3" :startCol="1" :applyBoxStyle="true" class="bar-details-box">
-        <h2>{{ barDetails.name }}</h2>
+        <h2>{{ bar.name }}</h2>
         <rating-item
           :rating-value="4"
           :show-total="true"
           :total-ratings="10"
           :show-divider="true"
         ></rating-item>
-        <h3>{{ barDetails.address }}</h3>
+        <h3>{{ bar.address }}</h3>
       </grid-box>
       <grid-box :width="4" :startCol="4" :applyBoxStyle="true" class="map-box">
         <div class="placeholder-box"></div>
