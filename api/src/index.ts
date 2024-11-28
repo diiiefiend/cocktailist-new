@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import cocktails from './routes/cocktails';
 import bars from './routes/bars';
 import lists from './routes/lists';
+import reviews from './routes/reviews';
 
 dotenv.config();
 
@@ -16,9 +17,14 @@ app.use(cors({
 }));
 
 // cocktails
+app.route("/cocktails/:cocktailId/reviews")
+  .get(async (req: Request, res: Response) => {
+    res.send(await reviews.getReviewsForCocktail(req.params.cocktailId));
+  });
+
 app.route("/cocktails/:id")
   .get(async (req: Request, res: Response) => {
-    res.send(await cocktails.getCocktail(+req.params.id));
+    res.send(await cocktails.getCocktail(req.params.id));
   })
   .put((req:Request, res: Response) => {
     res.send("TODO - edit cocktail, will require session");
@@ -40,7 +46,7 @@ app.route("/liquors")
 // bars
 app.route("/bars/:id")
   .get(async (req: Request, res: Response) => {
-    res.send(await bars.getBar(+req.params.id));
+    res.send(await bars.getBar(req.params.id));
   })
   .put((req:Request, res: Response) => {
     res.send("TODO - edit bar info (currently no FE flow), will require session");
@@ -58,7 +64,7 @@ app.route("/bars")
 app.route("/lists/:id")
 // TODO: add middleware to check for auth'd session
   .get(async (req: Request, res: Response) => {
-    res.send(await lists.getList(+req.params.id));
+    res.send(await lists.getList(req.params.id));
   })
   .put((req:Request, res: Response) => {
     res.send("TODO - edit list info - don't think we have a FE flow yet, will require session");

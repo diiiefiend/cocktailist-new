@@ -3,6 +3,8 @@ import { type CocktailDetailItem } from '../models';
 
 const props = defineProps<{
   cocktail: CocktailDetailItem;
+  barId: number;
+  barName: string;
 }>();
 </script>
 
@@ -21,8 +23,8 @@ const props = defineProps<{
     </div>
     <h2>
       from
-      <router-link :to="{ name: 'Bar', params: { id: props.cocktail.bar.id } }">{{
-        props.cocktail.bar.name
+      <router-link :to="{ name: 'Bar', params: { id: props.barId } }">{{
+        props.barName
       }}</router-link>
     </h2>
     <h2>Ingredients:</h2>

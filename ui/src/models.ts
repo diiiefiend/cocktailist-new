@@ -43,7 +43,12 @@ export interface CocktailBoxItem {
 
 export interface CocktailDetailItem extends CocktailBoxItem {
   ingredients: string;
-  totalRatings: number;
+}
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
 }
 
 export interface ReviewItem {
@@ -51,11 +56,11 @@ export interface ReviewItem {
   cocktail_id: number;
   user_id: number;
   rating: number;
-  spiritedRating: number;
-  innovativeRating: number;
-  comment: string | null;
-  reviewer: string;
-  timestamp: string;
+  body: string | null;
+  updated_at: string;
+  scale_spirited: number;
+  scale_composition: number;
+  reviewer: User;
 }
 
 export interface List {
@@ -64,6 +69,7 @@ export interface List {
     user_id: number;
     created_at: string;
     updated_at: string;
+    owner: User;
 }
 
 export interface CoordinatePair {

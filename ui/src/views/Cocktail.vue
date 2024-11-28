@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+
+import { type Bar, type CocktailDetailItem, type List, type ReviewItem } from '../models';
+import { getBar, getCocktail, getCocktailReviews, getLists } from '../api';
 
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
@@ -13,25 +16,49 @@ import SearchBox from '../components/SearchBox.vue';
 import ReviewModal from './modals/ReviewModal.vue';
 import ListsModal from './modals/ListsModal.vue';
 
-import { type ReviewItem } from '../models';
-import { mockCocktailDetailData, mockReviewData, mockBarData, mockListsData } from '../mocks';
-
 const props = defineProps<{
   id: string;
 }>();
 
-const reviews = mockReviewData;
-const cocktail = props.id === '1' ? mockCocktailDetailData[0] : mockCocktailDetailData[1];
-const bar = mockBarData.find((bar) => bar.id === cocktail.bar.id)!;
-const scatterChartData = {
-  xValues: mockReviewData.map((review: ReviewItem) => review.spiritedRating),
-  yValues: mockReviewData.map((review: ReviewItem) => review.innovativeRating),
-};
-const lists = mockListsData;
-const selectedLists = [mockListsData[1]];
+let isLoading = ref(true);
+let error = ref(null);
+
+let isUserLoggedIn = ref(false);
+let cocktail: Ref<null | CocktailDetailItem> = ref(null);
+let bar: Ref<null | Bar> = ref(null);
+let lists: Ref<null | List> = ref(null);
+let selectedLists: Ref<null | List> = ref(null);
+let reviews: Ref<null | ReviewItem> = ref(null);
+let scatterChartData: Ref<null | { xValues: Array<number>; yValues: Array<number> }> = ref(null);
 
 const showReviewModal = ref(false);
 const showListsModal = ref(false);
+
+async function fetchData() {
+  error.value = null;
+  isLoading.value = true;
+
+  try {
+    cocktail.value = await getCocktail(props.id);
+    bar.value = await getBar(cocktail.value.bar_id);
+    lists.value = await getLists();
+    selectedLists.value = lists.value.length ? [lists.value[0]] : [];
+
+    reviews.value = await getCocktailReviews(props.id);
+    scatterChartData.value = {
+      xValues: reviews.value.map((review: ReviewItem) => review.scale_spirited),
+      yValues: reviews.value.map((review: ReviewItem) => review.scale_composition),
+    };
+  } catch (err: any) {
+    error.value = err.toString();
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+onMounted(async () => {
+  await fetchData();
+});
 </script>
 
 <template>
@@ -41,25 +68,41 @@ const showListsModal = ref(false);
       <div class="span-3 justify-left">
         <!-- TODO: if user is not logged in, these 2 buttons should be disabled (with a tooltip?) -->
         <!-- TODO: if a review exists, then this should say "edit review" -->
-        <button class="primary" @click.stop="showReviewModal = true">Add Review</button>
-        <button class="primary" @click.stop="showListsModal = true">Modify Lists</button>
+        <button class="primary" @click.stop="showReviewModal = true" :disabled="!isUserLoggedIn">
+          Add Review
+        </button>
+        <button class="primary" @click.stop="showListsModal = true" :disabled="!isUserLoggedIn">
+          Modify Lists
+        </button>
       </div>
       <div class="span-2">
-        Listed in: <a href="">{{ selectedLists.map((list) => list.name).join(', ') }}</a>
+        Listed in:
+        <router-link
+          v-for="list in selectedLists"
+          :to="{ name: 'List', params: { id: list.id } }"
+          :key="list.id"
+        >
+          {{ list.name }}
+        </router-link>
       </div>
       <div class="span-1 justify-right">
         <!-- TODO: if user is not logged in, this button should be disabled (with a tooltip?) -->
-        <button class="secondary">Edit Entry</button>
+        <button class="secondary" :disabled="!isUserLoggedIn">Edit Entry</button>
       </div>
       <search-box />
     </context-menu>
-    <layout-container>
+    <div v-if="isLoading">LOADING</div>
+    <layout-container v-else>
       <!-- main content -->
       <grid-box :width="6" :startCol="1" :applyBoxStyle="false">
         <!-- grids in grids so the left and right content areas can flow independently--at least until there's native masonry -->
         <layout-container>
           <grid-box :width="10">
-            <cocktail-detail :cocktail="cocktail"></cocktail-detail>
+            <cocktail-detail
+              :cocktail="cocktail"
+              :bar-name="bar.name"
+              :bar-id="bar.id"
+            ></cocktail-detail>
           </grid-box>
           <grid-box :width="10">
             <h1 class="reviews">Guests say...</h1>
@@ -73,9 +116,9 @@ const showListsModal = ref(false);
           <grid-box :width="10">
             <h2>Stats</h2>
             <rating-item
-              :rating-value="cocktail.rating"
+              :rating-value="cocktail.avg_rating"
               :show-total="true"
-              :total-ratings="cocktail.totalRatings"
+              :total-ratings="reviews.length"
               :show-divider="true"
             ></rating-item>
             <scatter-chart
@@ -86,7 +129,9 @@ const showListsModal = ref(false);
               :is-drink-stats="true"
             ></scatter-chart>
             <div class="teaser-link">
-              <a href="#!">View stats for {{ cocktail.type }} drinks</a>
+              <router-link :to="{ name: 'Data' }">
+                View stats for {{ cocktail.liquor }} drinks
+              </router-link>
             </div>
           </grid-box>
           <grid-box :width="10">
@@ -94,9 +139,9 @@ const showListsModal = ref(false);
             {{ bar.address }}
             <div class="placeholder-box"></div>
             <div class="teaser-link">
-              <router-link :to="{ name: 'Bar', params: { id: cocktail.bar.id } }"
-                >View all drinks</router-link
-              >
+              <router-link :to="{ name: 'Bar', params: { id: bar.id } }">
+                View all drinks
+              </router-link>
             </div>
           </grid-box>
         </layout-container>

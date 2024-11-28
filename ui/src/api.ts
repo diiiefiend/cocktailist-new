@@ -1,5 +1,6 @@
 const HOST = 'http://localhost:3000';
 
+// browse routes
 const getCocktailsWithBars = async () => {
   return makeCall(`${HOST}/cocktailsWithBars`, {
     method: 'GET',
@@ -14,6 +15,37 @@ const getLiquorList = async () => {
 
 const getBars = async () => {
   return makeCall(`${HOST}/bars`, {
+    method: 'GET',
+  });
+}
+
+// cocktail detail routes
+const getCocktail = async (id: string) => {
+  return makeCall(`${HOST}/cocktails/${id}`, {
+    method: 'GET',
+  });
+}
+
+const getCocktailReviews = async (cocktailId: string) => {
+  return makeCall(`${HOST}/cocktails/${cocktailId}/reviews`, {
+    method: 'GET',
+  });
+}
+
+const getBar = async (id: string) => {
+  return makeCall(`${HOST}/bars/${id}`, {
+    method: 'GET',
+  });
+}
+
+const getLists = async () => {
+  return makeCall(`${HOST}/lists`, {
+    method: 'GET',
+  });
+}
+
+const getList = async (id: string) => {
+  return makeCall(`${HOST}/lists/${id}`, {
     method: 'GET',
   });
 }
@@ -34,4 +66,9 @@ export {
   getCocktailsWithBars,
   getLiquorList,
   getBars,
+  getCocktail,
+  getCocktailReviews,
+  getBar,
+  getLists,
+  getList,
 };

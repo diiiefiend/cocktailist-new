@@ -7,7 +7,7 @@ const getLists = async () => {
   return await models.list.findAll();
 };
 
-const getList = async (id: number) => {
+const getList = async (id: string) => {
   // TODO: requires a user session
   await dbConnect();
   const list = await models.list.findByPk(id);

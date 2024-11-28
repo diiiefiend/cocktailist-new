@@ -6,7 +6,7 @@ const getCocktails = async () => {
   return await models.cocktail.findAll();
 };
 
-const getCocktail = async (id: number) => {
+const getCocktail = async (id: string) => {
   await dbConnect();
   return await models.cocktail.findByPk(id);
 }
@@ -15,8 +15,7 @@ const getCocktailsWithBars = async () => {
   await dbConnect();
   const results = await models.cocktail.findAll({
     include: [{
-      model: models.bar,
-      as: 'bar',
+      association: 'bar',
       required: true
     }],
   });

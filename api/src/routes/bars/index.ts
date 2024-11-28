@@ -5,7 +5,7 @@ const getBars = async () => {
   return await models.bar.findAll();
 };
 
-const getBar = async (id: number) => {
+const getBar = async (id: string) => {
   await dbConnect();
   return await models.bar.findByPk(id);
 };

@@ -10,7 +10,7 @@ import CocktailBox from '../components/CocktailBox.vue';
 import SearchBox from '../components/SearchBox.vue';
 import AddEditCocktailModal from './modals/AddEditCocktailModal.vue';
 
-let isLoading = ref(false);
+let isLoading = ref(true);
 let error = ref(null);
 
 // TODO: implement this UX and style disabled button

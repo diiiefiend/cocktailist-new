@@ -12,13 +12,13 @@ const props = defineProps<{
     <li v-for="review in props.reviews" :key="review.id">
       <rating-item :rating-value="review.rating"></rating-item><br />
       Spirited:
-      <span class="rating number">{{ review.spiritedRating }}</span>
+      <span class="rating number">{{ review.scale_spirited }}</span>
       ; Innovative:
-      <span class="rating number">{{ review.innovativeRating }}</span>
+      <span class="rating number">{{ review.scale_composition }}</span>
       <br />
-      <p>{{ review.comment }}</p>
-      <div class="reviewer">{{ review.reviewer }}</div>
-      <div class="timestamp">on {{ review.timestamp }}</div>
+      <p>{{ review.body }}</p>
+      <div class="reviewer">{{ review.reviewer.username }}</div>
+      <div class="timestamp">on {{ review.updated_at }}</div>
     </li>
   </ul>
 </template>
