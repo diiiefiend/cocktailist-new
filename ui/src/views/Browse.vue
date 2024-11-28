@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 
 import { getCocktailsWithBars, getBars, getLiquorList } from '../api.js';
-import { type Bar, type CocktailBoxItem } from '../models.js';
+import type { Bar, CocktailBoxItem } from '../models.js';
 
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 
-import { type Bar, type CocktailDetailItem, type List, type ReviewItem } from '../models';
+import type { Bar, CocktailDetailItem, List, ReviewItem } from '../models';
 import { getBar, getCocktail, getCocktailReviews, getLists } from '../api';
 
 import ContextMenu from '../components/ContextMenu.vue';

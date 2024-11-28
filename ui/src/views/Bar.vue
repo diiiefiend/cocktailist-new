@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 
-import { getBar, getBarCocktails } from '../api.js';
+import { getBarCocktails, getBars } from '../api.js';
+import type { Bar, CocktailDetailItem } from '../models.js';
 
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
@@ -22,6 +23,7 @@ const props = withDefaults(
 let isLoading = ref(true);
 let error = ref(null);
 
+let allBars: Ref<null | Bar> = ref(null);
 let bar: Ref<null | Bar> = ref(null);
 let cocktails: Ref<null | CocktailDetailItem> = ref(null);
 
@@ -34,7 +36,10 @@ async function fetchData() {
   isLoading.value = true;
 
   try {
-    bar.value = await getBar(props.id);
+    // TODO: feels weird to get all the bars every time. Prob can refactor to persist this list in the store or via props
+    // and go back to a single bar get
+    allBars.value = await getBars();
+    bar.value = allBars.value.find((bar: Bar) => bar.id === +props.id);
     cocktails.value = await getBarCocktails(props.id);
   } catch (err: any) {
     error.value = err.toString();
@@ -56,8 +61,8 @@ onMounted(async () => {
         <button class="primary" :disabled="!isUserLoggedIn">Add Cocktail</button>
       </div>
       <div class="span-2">
-        <select>
-          <option>{{ bar ? bar.name : '' }}</option>
+        <select v-if="allBars">
+          <option v-for="bar in allBars" :key="bar.id" :value="bar.id">{{ bar.name }}</option>
         </select>
       </div>
       <div class="span-2">
