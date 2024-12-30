@@ -1,46 +1,54 @@
-const HOST = 'http://localhost:8005';
+let API_HOST: string;
+switch (window.location.hostname) {
+  case 'localhost':
+    API_HOST = 'http://localhost:8005';
+    break;
+  case 'cocktailist.club':
+    API_HOST = 'https://cocktailist.club/new/api';
+    break;
+}
 
 // browse routes
 const getCocktailsWithBars = async () => {
-  return makeCall(`${HOST}/cocktails`, {
+  return makeCall(`${API_HOST}/cocktails`, {
     method: 'GET',
   });
 }
 
 const getLiquorList = async () => {
-  return makeCall(`${HOST}/liquors`, {
+  return makeCall(`${API_HOST}/liquors`, {
     method: 'GET',
   });
 }
 
 const getBars = async () => {
-  return makeCall(`${HOST}/bars`, {
+  return makeCall(`${API_HOST}/bars`, {
     method: 'GET',
   });
 }
 
 // cocktail detail routes
 const getCocktail = async (id: string) => {
-  return makeCall(`${HOST}/cocktails/${id}`, {
+  return makeCall(`${API_HOST}/cocktails/${id}`, {
     method: 'GET',
   });
 }
 
 const getCocktailReviews = async (cocktailId: string) => {
-  return makeCall(`${HOST}/cocktails/${cocktailId}/reviews`, {
+  return makeCall(`${API_HOST}/cocktails/${cocktailId}/reviews`, {
     method: 'GET',
   });
 }
 
 const getBar = async (id: string) => {
-  return makeCall(`${HOST}/bars/${id}`, {
+  return makeCall(`${API_HOST}/bars/${id}`, {
     method: 'GET',
   });
 }
 
 // additional bar routes
 const getBarCocktails = async (id: string) => {
-  return makeCall(`${HOST}/bars/${id}/cocktails`, {
+  return makeCall(`${API_HOST}/bars/${id}/cocktails`, {
     method: 'GET',
   });
 }
@@ -48,13 +56,13 @@ const getBarCocktails = async (id: string) => {
 // list routes
 
 const getLists = async () => {
-  return makeCall(`${HOST}/lists`, {
+  return makeCall(`${API_HOST}/lists`, {
     method: 'GET',
   });
 }
 
 const getList = async (id: string) => {
-  return makeCall(`${HOST}/lists/${id}`, {
+  return makeCall(`${API_HOST}/lists/${id}`, {
     method: 'GET',
   });
 }
