@@ -89,6 +89,12 @@ button {
     &:hover {
       background: $light-gold;
     }
+
+    &:disabled {
+      opacity: 0.25;
+      background: $light-gray;
+      pointer-events: none;
+    }
   }
 
   &.secondary {
@@ -97,6 +103,11 @@ button {
     
     &:hover {
       background: $light-emerald;
+    }
+
+    &:disabled {
+      opacity: 0.25;
+      pointer-events: none;
     }
   }
 

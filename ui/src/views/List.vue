@@ -27,6 +27,7 @@ let listInfo: Ref<null | ListInfo> = ref(null);
 let cocktails: Ref<null | CocktailDetailItem> = ref(null);
 
 let showCreateListModal = ref(false);
+let isUserLoggedIn = ref(false);
 
 async function fetchData() {
   error.value = null;
@@ -68,7 +69,13 @@ const deleteItemFromList = (cocktailId: number) => {
     <context-menu>
       <div class="row-gap-1"></div>
       <div class="span-2 justify-left">
-        <button class="primary" @click.stop="showCreateListModal = true">Create List</button>
+        <button
+          class="primary"
+          @click.stop="showCreateListModal = true"
+          :disabled="!isUserLoggedIn"
+        >
+          Create List
+        </button>
       </div>
       <div class="span-2">
         <select v-if="userLists">
@@ -77,7 +84,7 @@ const deleteItemFromList = (cocktailId: number) => {
       </div>
       <div class="span-1">
         <!-- TODO: add confirmation modal -->
-        <button class="secondary">Delete List</button>
+        <button class="secondary" :disabled="!isUserLoggedIn">Delete List</button>
       </div>
       <div class="span-1"></div>
       <search-box />
