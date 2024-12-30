@@ -38,7 +38,7 @@ async function fetchData() {
     let listId;
     if (props.id === '' || props.id === undefined) {
       listId = userLists.value[0].id;
-      useRouter().push({ name: 'List', params: { id: listId } });
+      // useRouter().push({ name: 'List', params: { id: listId } });
     } else {
       listId = props.id;
     }

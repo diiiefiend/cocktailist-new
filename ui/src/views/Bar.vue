@@ -36,11 +36,19 @@ async function fetchData() {
   isLoading.value = true;
 
   try {
+    let barId;
+    if (props.id === '' || props.id === undefined) {
+      barId = '1';
+      // useRouter().push({ name: 'Bar', params: { id: barId } });
+    } else {
+      barId = props.id;
+    }
+
     // TODO: feels weird to get all the bars every time. Prob can refactor to persist this list in the store or via props
     // and go back to a single bar get
     allBars.value = await getBars();
-    bar.value = allBars.value.find((bar: Bar) => bar.id === +props.id);
-    cocktails.value = await getBarCocktails(props.id);
+    bar.value = allBars.value.find((bar: Bar) => bar.id === +barId);
+    cocktails.value = await getBarCocktails(barId);
   } catch (err: any) {
     error.value = err.toString();
   } finally {

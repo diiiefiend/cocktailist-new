@@ -16,7 +16,7 @@ const imgHover = '/images/deco-logo-hover.png';
     </div>
     <nav>
       <li><router-link to="/">Cocktails</router-link></li>
-      <li><router-link to="/bars/1">Bars</router-link></li>
+      <li><router-link to="/bars">Bars</router-link></li>
       <li><router-link to="/lists">Lists</router-link></li>
       <li><router-link to="/data">Data</router-link></li>
       <li><router-link to="/login">Login</router-link></li>
