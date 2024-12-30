@@ -30,9 +30,10 @@ app.route("/cocktails/:id")
     res.send("TODO - edit cocktail, will require session");
   });
 
+
 app.route("/cocktails")
   .get(async (req: Request, res: Response) => {
-    res.send(await cocktails.getCocktails());
+    res.send(await cocktails.getCocktailsWithBars());
   })
   .post((req:Request, res: Response) => {
     res.send("TODO - create cocktail, will require session");
@@ -46,7 +47,7 @@ app.route("/liquors")
 // bars
 app.route("/bars/:id/cocktails")
   .get(async (req: Request, res: Response) => {
-    res.send(await cocktails.getBarCocktails(req.params.id));
+    res.send(await bars.getBarCocktails(req.params.id));
   });
 
 app.route("/bars/:id")
@@ -69,7 +70,7 @@ app.route("/bars")
 app.route("/lists/:id")
 // TODO: add middleware to check for auth'd session
   .get(async (req: Request, res: Response) => {
-    res.send(await lists.getList(req.params.id));
+    res.send(await lists.getListWithCocktails(req.params.id));
   })
   .put((req:Request, res: Response) => {
     res.send("TODO - edit list info - don't think we have a FE flow yet, will require session");
@@ -122,12 +123,6 @@ app.route("/users")
   .post((req:Request, res: Response) => {
     res.send("TODO - create user");
   });
-
-// composite routes
-app.route("/cocktailsWithBars")
-  .get(async (req: Request, res: Response) => {
-    res.send(await cocktails.getCocktailsWithBars());
-  })
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);

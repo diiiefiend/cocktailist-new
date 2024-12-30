@@ -1,11 +1,6 @@
 import { Sequelize } from 'sequelize';
 import {dbConnect, models} from '../../db';
 
-const getCocktails = async () => {
-  await dbConnect();
-  return await models.cocktail.findAll();
-};
-
 const getCocktail = async (id: string) => {
   await dbConnect();
   return await models.cocktail.findByPk(id);
@@ -21,15 +16,6 @@ const getCocktailsWithBars = async () => {
   });
 
   return results;
-}
-
-const getBarCocktails = async (barId: string) => {
-  await dbConnect();
-  return await models.cocktail.findAll({
-    where: {
-      bar_id: barId,
-    }
-  });
 }
 
 const getLiquors = async () => {
@@ -60,9 +46,7 @@ const getLiquors = async () => {
 }
 
 export default {
-  getCocktails,
   getCocktail,
   getCocktailsWithBars,
-  getBarCocktails,
   getLiquors,
 }

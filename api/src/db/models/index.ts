@@ -16,6 +16,7 @@ const initModelsAndAssociations = (sequelize: Sequelize) => {
     user: initUser(sequelize),
   };
 
+  // cocktail <> bar
   models.cocktail.belongsTo(models.bar, {
     foreignKey: 'bar_id',
     as: 'bar',
@@ -25,6 +26,7 @@ const initModelsAndAssociations = (sequelize: Sequelize) => {
     as: 'bar',
   });
 
+  // listitems <> list
   models.listitem.belongsTo(models.list, {
     foreignKey: 'list_id',
     as: 'list',
@@ -34,6 +36,13 @@ const initModelsAndAssociations = (sequelize: Sequelize) => {
     as: 'list',
   });
 
+  // listitem <> cocktail
+  models.listitem.belongsTo(models.cocktail, {
+    foreignKey: 'cocktail_id',
+    as: 'listedCocktail',
+  });
+
+  // list <> user
   models.list.belongsTo(models.user, {
     foreignKey: 'user_id',
     as: 'owner',
@@ -43,6 +52,7 @@ const initModelsAndAssociations = (sequelize: Sequelize) => {
     as: 'owner',
   });
 
+  // ratings <> cocktail
   models.rating.belongsTo(models.cocktail, {
     foreignKey: 'cocktail_id',
     as: 'cocktail',
@@ -51,6 +61,8 @@ const initModelsAndAssociations = (sequelize: Sequelize) => {
     foreignKey: 'cocktail_id',
     as: 'cocktail',
   });
+
+  // ratings <> user
   models.rating.belongsTo(models.user, {
     foreignKey: 'user_id',
     as: 'reviewer',

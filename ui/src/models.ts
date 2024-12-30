@@ -69,7 +69,19 @@ export interface List {
     user_id: number;
     created_at: string;
     updated_at: string;
-    owner: User;
+}
+
+export interface ListInfo extends List {
+  listItems: Array<ListItem>;
+}
+
+export interface ListItem {
+  id: number;
+  cocktail_id: number;
+  list_id: number;
+  created_at: string;
+  updated_at: string;
+  listedCocktail: CocktailDetailItem;
 }
 
 export interface CoordinatePair {

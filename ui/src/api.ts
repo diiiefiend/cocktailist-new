@@ -2,7 +2,7 @@ const HOST = 'http://localhost:3000';
 
 // browse routes
 const getCocktailsWithBars = async () => {
-  return makeCall(`${HOST}/cocktailsWithBars`, {
+  return makeCall(`${HOST}/cocktails`, {
     method: 'GET',
   });
 }
@@ -44,6 +44,8 @@ const getBarCocktails = async (id: string) => {
     method: 'GET',
   });
 }
+
+// list routes
 
 const getLists = async () => {
   return makeCall(`${HOST}/lists`, {
