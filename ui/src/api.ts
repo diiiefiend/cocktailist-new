@@ -1,4 +1,4 @@
-const HOST = 'http://localhost:3000';
+const HOST = 'http://localhost:8005';
 
 // browse routes
 const getCocktailsWithBars = async () => {

@@ -6,6 +6,7 @@ ui/node_modules
 # server
 api/node_modules
 api/dist
+api/app_log.txt
 
 # env files
 api/.env*

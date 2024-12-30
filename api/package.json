@@ -5,7 +5,9 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "npx tsc",
-    "start": "npm run build && dotenvx run -f .env.production -- node dist/index.js",
+    "start": "dotenvx run -f .env.production -- node dist/index.js 2>&1 >> app_log.txt &",
+    "stop": "kill -15 $(lsof -t -i:8005)",
+    "clean:log": "rm app_log.txt",
     "dev": "dotenvx run -f .env.local -- nodemon src/index.ts",
     "format": "prettier --write src/"
   },
