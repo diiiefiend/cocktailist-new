@@ -53,7 +53,7 @@ const onSubmit = () => {
         <fieldset>
           <label for="bars">Bar</label>
           <!-- TODO: add option to add bar -->
-          <select id="bars" v-model="payload.bar">
+          <select id="bars" v-model="payload.barId">
             <option v-for="bar in allBars" :key="bar.id" :value="bar.id">{{ bar.name }}</option>
           </select>
         </fieldset>

@@ -28,7 +28,6 @@ const tooltipLabelColor = '#03242f';
 const sharedScaleOptions = {
   min: 0,
   max: 10,
-  position: 'center',
   grid: {
     display: true,
     drawTicks: false,
@@ -135,6 +134,8 @@ const renderChart = (
               display: !!xLabel && !isDrinkStats,
               text: xLabel,
             },
+            // have to define explicitly here vs in "sharedScaleOptions" to make the enum type happy
+            position: 'center',
           },
           y: {
             ...sharedScaleOptions,
@@ -142,12 +143,15 @@ const renderChart = (
               display: !!yLabel && !isDrinkStats,
               text: yLabel,
             },
+            // have to define explicitly here vs in "sharedScaleOptions" to make the enum type happy
+            position: 'center',
           },
         },
         plugins: {
           legend: {
             display: !!dataLabel,
           },
+          // @ts-ignore
           annotation: isDrinkStats ? { annotations: drinkAnnotations } : {},
           tooltip: {
             displayColors: false,

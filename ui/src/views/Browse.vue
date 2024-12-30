@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, type Ref } from 'vue';
 
 import { getCocktailsWithBars, getBars, getLiquorList } from '../api.js';
 import type { Bar, CocktailBoxItem } from '../models.js';
@@ -15,8 +15,8 @@ let error = ref(null);
 
 // TODO: implement this UX and style disabled button
 let isUserLoggedIn = ref(false);
-let cocktails: Ref<null | CocktailBoxItem> = ref(null);
-let allBars: Ref<null | Bar> = ref(null);
+let cocktails: Ref<null | Array<CocktailBoxItem>> = ref(null);
+let allBars: Ref<null | Array<Bar>> = ref(null);
 let liquorTypes: Ref<null | String> = ref(null);
 
 let showAddCocktailModal = ref(false);

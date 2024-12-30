@@ -3,7 +3,12 @@ import {dbConnect, models} from '../../db';
 
 const getCocktail = async (id: string) => {
   await dbConnect();
-  return await models.cocktail.findByPk(id);
+  return await models.cocktail.findByPk(id, {
+    include: [{
+      association: 'bar',
+      required: true
+    }],
+  });
 }
 
 const getCocktailsWithBars = async () => {

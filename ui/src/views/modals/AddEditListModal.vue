@@ -3,7 +3,9 @@ import { ref } from 'vue';
 
 import SiteModal from '../../components/SiteModal.vue';
 
-const props = defineProps<{}>();
+const props = defineProps<{
+  userId: number;
+}>();
 
 const emit = defineEmits(['close']);
 

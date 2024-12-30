@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, type Ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import type { CocktailDetailItem, List, ListItem } from '../models';
+import type { CocktailDetailItem, List, ListInfo, ListItem } from '../models';
 import { getList, getLists } from '../api';
 
 import ContextMenu from '../components/ContextMenu.vue';
@@ -22,9 +22,9 @@ const props = defineProps<{
 let isLoading = ref(true);
 let error = ref(null);
 
-let userLists: Ref<null | List> = ref(null);
+let userLists: Ref<Array<List>> = ref([]);
 let listInfo: Ref<null | ListInfo> = ref(null);
-let cocktails: Ref<null | CocktailDetailItem> = ref(null);
+let cocktails: Ref<Array<CocktailDetailItem>> = ref([]);
 
 let showCreateListModal = ref(false);
 let isUserLoggedIn = ref(false);
@@ -36,16 +36,16 @@ async function fetchData() {
   try {
     userLists.value = await getLists();
 
-    let listId;
+    let listId: string;
     if (props.id === '' || props.id === undefined) {
-      listId = userLists.value[0].id;
+      listId = '' + userLists.value[0].id;
       // useRouter().push({ name: 'List', params: { id: listId } });
     } else {
       listId = props.id;
     }
 
     listInfo.value = await getList(listId);
-    cocktails.value = listInfo.value.listItems.map((item: ListItem) => {
+    cocktails.value = listInfo.value!.listItems.map((item: ListItem) => {
       return item.listedCocktail;
     });
   } catch (err: any) {
@@ -92,10 +92,10 @@ const deleteItemFromList = (cocktailId: number) => {
     <div v-if="isLoading">LOADING</div>
     <layout-container v-else>
       <grid-box :width="3" :startCol="1" :applyBoxStyle="true" class="list-details-box">
-        <h2>{{ listInfo.name }}</h2>
+        <h2>{{ listInfo!.name }}</h2>
         <ul>
-          <li>Created on {{ listInfo.created_at }}</li>
-          <li>Last updated on {{ listInfo.updated_at }}</li>
+          <li>Created on {{ listInfo!.created_at }}</li>
+          <li>Last updated on {{ listInfo!.updated_at }}</li>
         </ul>
         <h3>{{ cocktails.length }} items</h3>
       </grid-box>
@@ -104,7 +104,7 @@ const deleteItemFromList = (cocktailId: number) => {
         :key="cocktail.id"
         :cocktail="cocktail"
         :addedToListDate="
-          listInfo.listItems.find((item: ListItem) => cocktail.id === item.cocktail_id)!.updated_at
+          listInfo!.listItems.find((item: ListItem) => cocktail.id === item.cocktail_id)!.updated_at
         "
         :deleteCallback="deleteItemFromList"
       >

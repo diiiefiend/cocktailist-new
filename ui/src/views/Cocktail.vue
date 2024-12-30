@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, type Ref } from 'vue';
 
-import type { Bar, CocktailDetailItem, List, ReviewItem } from '../models';
-import { getBar, getCocktail, getCocktailReviews, getLists } from '../api';
+import type { BarDetails, CocktailDetailItem, List, ReviewItem } from '../models';
+import { getCocktail, getCocktailReviews, getLists } from '../api';
 
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
@@ -25,11 +25,14 @@ let error = ref(null);
 
 let isUserLoggedIn = ref(false);
 let cocktail: Ref<null | CocktailDetailItem> = ref(null);
-let bar: Ref<null | Bar> = ref(null);
-let lists: Ref<null | List> = ref(null);
-let selectedLists: Ref<null | List> = ref(null);
-let reviews: Ref<null | ReviewItem> = ref(null);
-let scatterChartData: Ref<null | { xValues: Array<number>; yValues: Array<number> }> = ref(null);
+let bar: Ref<null | BarDetails> = ref(null);
+let lists: Ref<Array<List>> = ref([]);
+let selectedLists: Ref<Array<List>> = ref([]);
+let reviews: Ref<Array<ReviewItem>> = ref([]);
+let scatterChartData: Ref<{ xValues: Array<number>; yValues: Array<number> }> = ref({
+  xValues: [],
+  yValues: [],
+});
 
 const showReviewModal = ref(false);
 const showListsModal = ref(false);
@@ -40,9 +43,9 @@ async function fetchData() {
 
   try {
     cocktail.value = await getCocktail(props.id);
-    bar.value = await getBar(cocktail.value.bar_id);
+    bar.value = cocktail.value!.bar;
     lists.value = await getLists();
-    selectedLists.value = lists.value.length ? [lists.value[0]] : [];
+    selectedLists.value = lists.value.length ? [lists.value![0]] : [];
 
     reviews.value = await getCocktailReviews(props.id);
     scatterChartData.value = {
@@ -99,9 +102,9 @@ onMounted(async () => {
         <layout-container>
           <grid-box :width="10">
             <cocktail-detail
-              :cocktail="cocktail"
-              :bar-name="bar.name"
-              :bar-id="bar.id"
+              :cocktail="cocktail!"
+              :bar-name="bar!.name"
+              :bar-id="bar!.id"
             ></cocktail-detail>
           </grid-box>
           <grid-box :width="10">
@@ -116,7 +119,7 @@ onMounted(async () => {
           <grid-box :width="10">
             <h2>Stats</h2>
             <rating-item
-              :rating-value="cocktail.avg_rating"
+              :rating-value="cocktail!.avg_rating"
               :show-total="true"
               :total-ratings="reviews.length"
               :show-divider="true"
@@ -130,16 +133,16 @@ onMounted(async () => {
             ></scatter-chart>
             <div class="teaser-link">
               <router-link :to="{ name: 'Data' }">
-                View stats for {{ cocktail.liquor }} drinks
+                View stats for {{ cocktail!.liquor }} drinks
               </router-link>
             </div>
           </grid-box>
           <grid-box :width="10">
-            <h2>{{ bar.name }}</h2>
-            {{ bar.address }}
+            <h2>{{ bar!.name }}</h2>
+            {{ bar!.address }}
             <div class="placeholder-box"></div>
             <div class="teaser-link">
-              <router-link :to="{ name: 'Bar', params: { id: bar.id } }">
+              <router-link :to="{ name: 'Bar', params: { id: bar!.id } }">
                 View all drinks
               </router-link>
             </div>
@@ -154,8 +157,8 @@ onMounted(async () => {
   <transition name="modal">
     <review-modal
       v-if="showReviewModal"
-      :cocktailId="cocktail.id"
-      :cocktailName="cocktail.name"
+      :cocktailId="cocktail!.id"
+      :cocktailName="cocktail!.name"
       :userId="2"
       @close="showReviewModal = false"
     />
@@ -163,8 +166,8 @@ onMounted(async () => {
   <transition name="modal">
     <lists-modal
       v-if="showListsModal"
-      :cocktailId="cocktail.id"
-      :cocktailName="cocktail.name"
+      :cocktailId="cocktail!.id"
+      :cocktailName="cocktail!.name"
       :userId="2"
       :lists="lists"
       :selectedLists="selectedLists"

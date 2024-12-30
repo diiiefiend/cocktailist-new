@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const props = defineProps<{}>();
+const props = defineProps<{
+  onClose: any;
+}>();
 
 const emit = defineEmits(['close']);
 </script>

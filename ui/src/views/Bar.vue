@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, type Ref } from 'vue';
 
 import { getBarCocktails, getBars } from '../api.js';
-import type { Bar, CocktailDetailItem } from '../models.js';
+import type { BarDetails, CocktailDetailItem } from '../models.js';
 
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
@@ -23,9 +23,9 @@ const props = withDefaults(
 let isLoading = ref(true);
 let error = ref(null);
 
-let allBars: Ref<null | Bar> = ref(null);
-let bar: Ref<null | Bar> = ref(null);
-let cocktails: Ref<null | CocktailDetailItem> = ref(null);
+let allBars: Ref<Array<BarDetails>> = ref([]);
+let bar: Ref<null | BarDetails> = ref(null);
+let cocktails: Ref<Array<CocktailDetailItem>> = ref([]);
 
 // TODO: implement edit bar modal
 let isUserLoggedIn = ref(false);
@@ -47,7 +47,7 @@ async function fetchData() {
     // TODO: feels weird to get all the bars every time. Prob can refactor to persist this list in the store or via props
     // and go back to a single bar get
     allBars.value = await getBars();
-    bar.value = allBars.value.find((bar: Bar) => bar.id === +barId);
+    bar.value = allBars.value.find((bar: BarDetails) => bar.id === +barId) || null;
     cocktails.value = await getBarCocktails(barId);
   } catch (err: any) {
     error.value = err.toString();
@@ -83,14 +83,14 @@ onMounted(async () => {
     <div v-if="isLoading">LOADING</div>
     <layout-container v-else>
       <grid-box :width="3" :startCol="1" :applyBoxStyle="true" class="bar-details-box">
-        <h2>{{ bar.name }}</h2>
+        <h2>{{ bar!.name }}</h2>
         <rating-item
           :rating-value="4"
           :show-total="true"
           :total-ratings="10"
           :show-divider="true"
         ></rating-item>
-        <h3>{{ bar.address }}</h3>
+        <h3>{{ bar!.address }}</h3>
       </grid-box>
       <grid-box :width="4" :startCol="4" :applyBoxStyle="true" class="map-box">
         <div class="placeholder-box"></div>

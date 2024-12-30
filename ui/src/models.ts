@@ -37,7 +37,7 @@ export interface CocktailBoxItem {
   name: string;
   liquor: DRINK_TYPES;
   img_file_name: string;
-  bar: Bar;
+  bar: BarDetails;
   avg_rating: number;
 }
 
