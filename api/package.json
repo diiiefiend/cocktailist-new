@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "npx tsc",
-    "start": "dotenvx run -- node dist/index.js",
-    "dev": "dotenvx run -- nodemon src/index.ts",
+    "start": "npm run build && dotenvx run -f .env.production -- node dist/index.js",
+    "dev": "dotenvx run -f .env.local -- nodemon src/index.ts",
     "format": "prettier --write src/"
   },
   "repository": {
