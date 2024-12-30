@@ -1,13 +1,10 @@
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 
 import cocktails from './routes/cocktails';
 import bars from './routes/bars';
 import lists from './routes/lists';
 import reviews from './routes/reviews';
-
-dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT || 3000;

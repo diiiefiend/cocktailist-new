@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "npx tsc",
-    "start": "node dist/index.js",
-    "dev": "nodemon src/index.ts",
+    "start": "dotenvx run -- node dist/index.js",
+    "dev": "dotenvx run -- nodemon src/index.ts",
     "format": "prettier --write src/"
   },
   "repository": {
@@ -17,8 +17,8 @@
   "license": "ISC",
   "homepage": "https://github.com/diiiefiend/cocktailist-new#readme",
   "dependencies": {
+    "@dotenvx/dotenvx": "^1.32.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "mysql2": "^3.11.0",
     "prettier": "^3.3.3",
