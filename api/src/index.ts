@@ -10,18 +10,16 @@ const app: Express = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: ['http://localhost:5173', 'https://cocktailist.club'],
 }));
 
-const PROD_PREFIX = "(/new/api)?";
-
 // cocktails
-app.route(PROD_PREFIX + "/cocktails/:cocktailId/reviews")
+app.route("/cocktails/:cocktailId/reviews")
   .get(async (req: Request, res: Response) => {
     res.send(await reviews.getReviewsForCocktail(req.params.cocktailId));
   });
 
-app.route(PROD_PREFIX + "/cocktails/:id")
+app.route("/cocktails/:id")
   .get(async (req: Request, res: Response) => {
     res.send(await cocktails.getCocktail(req.params.id));
   })
@@ -30,7 +28,7 @@ app.route(PROD_PREFIX + "/cocktails/:id")
   });
 
 
-app.route(PROD_PREFIX + "/cocktails")
+app.route("/cocktails")
   .get(async (req: Request, res: Response) => {
     res.send(await cocktails.getCocktailsWithBars());
   })
@@ -38,18 +36,18 @@ app.route(PROD_PREFIX + "/cocktails")
     res.send("TODO - create cocktail, will require session");
   });
 
-app.route(PROD_PREFIX + "/liquors")
+app.route("/liquors")
   .get(async (req: Request, res: Response) => {
     res.send(await cocktails.getLiquors());
   });
 
 // bars
-app.route(PROD_PREFIX + "/bars/:id/cocktails")
+app.route("/bars/:id/cocktails")
   .get(async (req: Request, res: Response) => {
     res.send(await bars.getBarCocktails(req.params.id));
   });
 
-app.route(PROD_PREFIX + "/bars/:id")
+app.route("/bars/:id")
   .get(async (req: Request, res: Response) => {
     res.send(await bars.getBar(req.params.id));
   })
@@ -57,7 +55,7 @@ app.route(PROD_PREFIX + "/bars/:id")
     res.send("TODO - edit bar info (currently no FE flow), will require session");
   });
 
-app.route(PROD_PREFIX + "/bars")
+app.route("/bars")
   .get(async (req: Request, res: Response) => {
     res.send(await bars.getBars());
   })
@@ -66,7 +64,7 @@ app.route(PROD_PREFIX + "/bars")
   });
 
 // lists : all routes require a session
-app.route(PROD_PREFIX + "/lists/:id")
+app.route("/lists/:id")
 // TODO: add middleware to check for auth'd session
   .get(async (req: Request, res: Response) => {
     res.send(await lists.getListWithCocktails(req.params.id));
@@ -78,7 +76,7 @@ app.route(PROD_PREFIX + "/lists/:id")
     res.send("TODO - delete list, will require session");
   });
 
-app.route(PROD_PREFIX + "/lists")
+app.route("/lists")
 // TODO: add middleware to check for auth'd session; pass user id into getLists call
   .get(async (req: Request, res: Response) => {
     res.send(await lists.getLists());
@@ -88,18 +86,18 @@ app.route(PROD_PREFIX + "/lists")
   });
 
 // listitem : all routes require a session
-app.route(PROD_PREFIX + "/listitems/:id")
+app.route("/listitems/:id")
   .delete((req:Request, res: Response) => {
     res.send("TODO - delete list item, will require session");
   });
 
-app.route(PROD_PREFIX + "/listitems")
+app.route("/listitems")
   .post((req:Request, res: Response) => {
     res.send("TODO - create list item, will require session");
   });
 
 // reviews
-app.route(PROD_PREFIX + "/reviews/:id")
+app.route("/reviews/:id")
   .put((req:Request, res: Response) => {
     res.send("TODO - edit review - don't think we have a FE flow yet, will require session");
   })
@@ -107,18 +105,18 @@ app.route(PROD_PREFIX + "/reviews/:id")
     res.send("TODO - delete review, will require session");
   });
 
-app.route(PROD_PREFIX + "/reviews")
+app.route("/reviews")
   .post((req:Request, res: Response) => {
     res.send("TODO - create review, will require session");
   });
 
 // users
-app.route(PROD_PREFIX + "/users/:id")
+app.route("/users/:id")
   .get((req: Request, res: Response) => {
     res.send("TODO - get user");
   });
 
-app.route(PROD_PREFIX + "/users")
+app.route("/users")
   .post((req:Request, res: Response) => {
     res.send("TODO - create user");
   });

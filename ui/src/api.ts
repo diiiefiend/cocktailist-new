@@ -4,7 +4,7 @@ switch (window.location.hostname) {
     API_HOST = 'http://localhost:8005';
     break;
   case 'cocktailist.club':
-    API_HOST = 'https://cocktailist.club/new/api';
+    API_HOST = 'https://api.cocktailist.club';
     break;
 }
 
