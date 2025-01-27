@@ -1,6 +1,10 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
+import passport from 'passport';
+import session from 'express-session';
+import connectSession from 'connect-session-sequelize';
 
+import { getDbInstance } from './db';
 import cocktails from './routes/cocktails';
 import bars from './routes/bars';
 import lists from './routes/lists';
@@ -12,6 +16,16 @@ const port = process.env.PORT || 3000;
 app.use(cors({
   origin: ['http://localhost:5173', 'https://cocktailist.club'],
 }));
+
+// session stuff
+const SequelizeStore = connectSession(session.Store);
+app.use(session({
+  secret: 'keyboard cat',
+  store: new SequelizeStore({ db: getDbInstance() }),
+  resave: false,
+  saveUninitialized: false,
+}));
+app.use(passport.authenticate('session'));
 
 // cocktails
 app.route('/cocktails/:cocktailId/reviews')
@@ -26,7 +40,6 @@ app.route('/cocktails/:id')
   .put((req:Request, res: Response) => {
     res.send('TODO - edit cocktail, will require session');
   });
-
 
 app.route('/cocktails')
   .get(async (req: Request, res: Response) => {
