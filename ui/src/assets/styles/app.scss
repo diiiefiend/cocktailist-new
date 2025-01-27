@@ -92,8 +92,7 @@ button {
 
     &:disabled {
       opacity: 0.25;
-      background: $light-gray;
-      pointer-events: none;
+      cursor: not-allowed;
     }
   }
 
@@ -107,7 +106,7 @@ button {
 
     &:disabled {
       opacity: 0.25;
-      pointer-events: none;
+      cursor: not-allowed;
     }
   }
 
