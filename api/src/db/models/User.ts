@@ -42,6 +42,10 @@ const init = (sequelize: Sequelize) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      salt: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     {
       // Other model options go here
@@ -50,7 +54,12 @@ const init = (sequelize: Sequelize) => {
       modelName: 'User', // We need to choose the model name
       tableName: 'users',
       defaultScope: {
-        attributes: { exclude: ['password_digest', 'session_token', 'uid', 'provider'] },
+        attributes: { exclude: ['password_digest', 'session_token', 'uid', 'provider', 'salt'] },
+      },
+      scopes: {
+        auth: {
+          attributes: { include: ['password_digest', 'session_token', 'uid', 'provider', 'salt'] },
+        }
       }
     },
   );
