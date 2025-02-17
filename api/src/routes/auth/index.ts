@@ -4,8 +4,7 @@ import crypto from 'crypto';
 import {dbConnect, models} from '../../db';
 
 const configureAuth = () => {
-  console.log('hi there');
-
+  // login stuff
   passport.use('local', new Strategy(
     async (username: string, password: string, cb: any) => {
     console.log('im in here!');
@@ -32,8 +31,56 @@ const configureAuth = () => {
     return cb(null, user);
 
   }));
+
+  // session stuff
+  passport.serializeUser((user: any, cb) => {
+    process.nextTick(() => {
+      cb(null, { id: user.id, username: user.username });
+    });
+  });
+
+  passport.deserializeUser((user: any, cb) => {
+    process.nextTick(() => {
+      return cb(null, user);
+    });
+  });
 }
 
-export {
+const createUser = async (params: any) => {
+  console.log(params);
+  const {email, username, password} = params;
+
+  if (!(email && username && password)) {
+      return { user: null, error: 'Missing required fields' };
+  }
+
+  const salt = crypto.randomBytes(32).toString('base64');
+  const hashedPwStr = crypto.pbkdf2Sync(password, salt, 310000, 32, 'sha256').toString('base64');
+  
+  await dbConnect();
+  const user: any = await models.user.findOne({
+      where: {
+        email,
+      },
+    });
+
+    if (user) {
+      return { user: null, error: 'User with that email already exists!' };
+    }
+
+    const result = await models.user.create({
+      username,
+      email,
+      password_digest: hashedPwStr,
+      salt,
+      // placeholder value?
+      session_token: crypto.randomBytes(16).toString('base64'),
+    });
+    
+    return { user: result, error: null};
+}
+
+export default {
   configureAuth,
+  createUser,
 };

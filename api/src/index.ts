@@ -10,12 +10,12 @@ import cocktails from './routes/cocktails';
 import bars from './routes/bars';
 import lists from './routes/lists';
 import reviews from './routes/reviews';
-import { configureAuth } from './routes/auth';
+import auth from './routes/auth';
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
-configureAuth();
+auth.configureAuth();
 
 app.use(cors({
   origin: ['http://localhost:5173', 'https://cocktailist.club'],
@@ -24,14 +24,14 @@ app.use(cors({
 app.use(bodyParser.json());
 
 // session stuff
-// const SequelizeStore = connectSession(session.Store);
-// app.use(session({
-//   secret: 'keyboard cat',
-//   store: new SequelizeStore({ db: getDbInstance() }),
-//   resave: false,
-//   saveUninitialized: false,
-// }));
-// app.use(passport.authenticate('session'));
+const SequelizeStore = connectSession(session.Store);
+app.use(session({
+  secret: 'keyboard cat',
+  store: new SequelizeStore({ db: getDbInstance() }),
+  resave: false,
+  saveUninitialized: false,
+}));
+app.use(passport.authenticate('session'));
 
 // cocktails
 app.route('/cocktails/:cocktailId/reviews')
@@ -136,12 +136,20 @@ app.route('/users/:id')
   });
 
 app.route('/users')
-  .post((req: Request, res: Response) => {
-    res.send('TODO - create user');
+  .post(async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.body);
+    const {user, error} = await auth.createUser(req.body);
+
+    if (error || !user) { return res.send(error || 'error'); }
+
+    req.login(user, (err) => {
+      if (err) { return res.send(err); }
+      res.send('success!');
+    });
   });
 
-// session
-app.route('/session')
+// sessions
+app.route('/login')
   .post((req: Request, res: Response, next: NextFunction) => {
     passport.authenticate('local', function(err: any, user: any, info: any, status: any) {
       // if (err) { return next(err) }
@@ -151,8 +159,17 @@ app.route('/session')
       console.log('user: ', user);
       console.log('info: ', info);
       console.log('status: ', status);
-      res.send(info.message);
+      res.send(info ? info.message : 'success!');
     })(req, res, next);
+  });
+
+app.route('/logout')
+  .post((req: Request, res: Response, next: NextFunction) => {
+    // TODO: come back to this
+    req.logout((err) => {
+      if (err) { return next(err); }
+      res.redirect('/cocktails');
+    });
   });
 
 app.listen(port, () => {
