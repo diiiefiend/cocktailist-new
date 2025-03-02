@@ -15,22 +15,44 @@ import auth from './routes/auth';
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
+// passport configure auth stuff
 auth.configureAuth();
 
+// global middleware
 app.use(cors({
   origin: ['http://localhost:5173', 'https://cocktailist.club'],
 }));
 
 app.use(bodyParser.json());
 
-// session stuff
+// configure session stuff on app
 const SequelizeStore = connectSession(session.Store);
-app.use(session({
+const sessionStore = new SequelizeStore({ db: getDbInstance() });
+
+const expressSessionSettings = {
+  name: 'cocktailist.sid',
+  // update this once this is working--move this value to secret env var
   secret: 'keyboard cat',
-  store: new SequelizeStore({ db: getDbInstance() }),
+  store: sessionStore,
   resave: false,
   saveUninitialized: false,
-}));
+  cookie: {
+    // 24 hours in ms
+    maxAge: 86400000,
+    secure: false,
+  },
+};
+
+sessionStore.sync();
+
+// validate this later
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1) // trust first proxy
+  expressSessionSettings.cookie.secure = true // serve secure cookies
+}
+
+app.use(session(expressSessionSettings));
+
 app.use(passport.authenticate('session'));
 
 // cocktails
@@ -98,6 +120,10 @@ app.route('/lists/:id')
 app.route('/lists')
 // TODO: add middleware to check for auth'd session; pass user id into getLists call
   .get(async (req: Request, res: Response) => {
+    // @ts-ignore
+    // console.log('User ID: '+req.session.passport.user.id);
+    console.log('Session:');
+    console.dir(req.session);
     res.send(await lists.getLists());
   })
   .post((req:Request, res: Response) => {
@@ -140,35 +166,35 @@ app.route('/users')
     console.log(req.body);
     const {user, error} = await auth.createUser(req.body);
 
-    if (error || !user) { return res.send(error || 'error'); }
+    if (error || !user) { 
+      console.error(error);
+      return next(error || 'error'); 
+    }
 
     req.login(user, (err) => {
-      if (err) { return res.send(err); }
+      if (err) { 
+        console.error(err);
+        return next(err);
+      }
+
       res.send('success!');
     });
   });
 
 // sessions
+// uses the "local" strategy defined in auth.configureAuth
+// expected payload: username, password
 app.route('/login')
-  .post((req: Request, res: Response, next: NextFunction) => {
-    passport.authenticate('local', function(err: any, user: any, info: any, status: any) {
-      // if (err) { return next(err) }
-      // if (!user) { return res.redirect('/signin') }
-      // res.redirect('/account');
-      console.log('err: ', err);
-      console.log('user: ', user);
-      console.log('info: ', info);
-      console.log('status: ', status);
-      res.send(info ? info.message : 'success!');
-    })(req, res, next);
-  });
+  .post(passport.authenticate('local'), auth.createNewSessionWithPassport);
 
 app.route('/logout')
   .post((req: Request, res: Response, next: NextFunction) => {
-    // TODO: come back to this
     req.logout((err) => {
-      if (err) { return next(err); }
-      res.redirect('/cocktails');
+      if (err) { 
+        console.error(err);
+        return next(err);
+      }
+      res.send('logged out');
     });
   });
 

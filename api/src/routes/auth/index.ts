@@ -1,10 +1,11 @@
+import { NextFunction, Request, Response } from 'express';
 import passport from 'passport';
 import { Strategy } from 'passport-local';
 import crypto from 'crypto';
 import {dbConnect, models} from '../../db';
 
 const configureAuth = () => {
-  // login stuff
+  // login logic (called from POST /login)
   passport.use('local', new Strategy(
     async (username: string, password: string, cb: any) => {
     console.log('im in here!');
@@ -29,18 +30,20 @@ const configureAuth = () => {
     }
 
     return cb(null, user);
-
   }));
 
   // session stuff
+  // this is used to attach user info to the active session
   passport.serializeUser((user: any, cb) => {
     process.nextTick(() => {
+      console.log('in the serializeUser fn!');
       cb(null, { id: user.id, username: user.username });
     });
   });
 
   passport.deserializeUser((user: any, cb) => {
     process.nextTick(() => {
+      console.log('in the deserializeUser fn!');
       return cb(null, user);
     });
   });
@@ -73,14 +76,68 @@ const createUser = async (params: any) => {
       email,
       password_digest: hashedPwStr,
       salt,
-      // placeholder value?
-      session_token: crypto.randomBytes(16).toString('base64'),
+      // this column isn't used anymore
+      session_token: 'PLACEHOLDER',
     });
     
     return { user: result, error: null};
 }
 
+// uses the "local" strategy defined in auth.configureAuth
+// expected payload: username, password
+// expected to be chained with createNewSessionWithPassport on success
+// TODO: figure out how to properly convert this to a promise later; currently this isn't used
+const loginUser = (req: Request, res: Response, next: NextFunction) => {
+  console.log('hello');
+  passport.authenticate('local', function(err: any, user: any, info: any, status: any) {
+    console.log('user: ', user);
+    console.log('info: ', info);
+    console.log('status: ', status);
+
+    if (err) { 
+      console.error(err);
+      res.send(err);
+    }
+    
+    if (!user) { res.send('no user found!') }
+
+    next();
+  });
+}
+
+const createNewSessionWithPassport = (req: Request, res: Response, next: NextFunction) => {
+  // @ts-ignore
+  const passportObj = req.session.passport;
+  console.log('the current passport object:');
+  console.dir(passportObj);
+
+  // make new session after login
+  req.session.regenerate((err) => {
+    if (err) {
+      console.error(err);
+      return next(err);
+    }
+    // @ts-ignore
+    req.session.passport = passportObj;
+    req.session.save((err) => {
+      if (err) {
+        console.error(err);
+        return next(err);
+      }
+
+      const response = {
+        status: 'success',
+        sessionInfo: req.session,
+      };
+
+      res.send(response);
+    });
+  });
+}
+
 export default {
   configureAuth,
   createUser,
+  loginUser,
+  createNewSessionWithPassport,
 };
