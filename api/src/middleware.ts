@@ -34,7 +34,7 @@ const generateCSRFToken = (req: RequestWithCsrf, res: Response, next: NextFuncti
   if (req.session.passport?.user.id) {
     next();
   } else {
-    res.status(403).send("Requested feature requires a logged-in session.");
+    res.status(403).send('Requested feature requires a logged-in session.');
   }
 };
 

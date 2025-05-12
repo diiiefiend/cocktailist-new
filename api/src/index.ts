@@ -64,55 +64,103 @@ app.use(passport.authenticate('session'));
 // cocktails
 app.route('/cocktails/:cocktailId/reviews')
   .get(async (req: Request, res: Response) => {
-    res.send(await reviews.getReviewsForCocktail(req.params.cocktailId));
+    try {
+      res.send(await reviews.getReviewsForCocktail(req.params.cocktailId));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   });
 
 app.route('/cocktails/:id')
   .get(async (req: Request, res: Response) => {
-    res.send(await cocktails.getCocktail(req.params.id));
+    try {
+      res.send(await cocktails.getCocktail(req.params.id));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   })
   .put(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
     const cocktailData = req.body;
-    res.send(await cocktails.updateCocktail(req.params.id, cocktailData));
+    
+    try { 
+      res.send(await cocktails.updateCocktail(req.params.id, cocktailData));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   });
   // Should I let cocktails be deleted?
 
 app.route('/cocktails')
   .get(async (req: Request, res: Response) => {
-    res.send(await cocktails.getCocktailsWithBars());
+    try {
+      res.send(await cocktails.getCocktailsWithBars());
+    } catch (e) {
+      errorHandler(e, res);
+    }
   })
   .post(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
     const cocktailData = req.body;
-    res.send(await cocktails.addCocktail(cocktailData));
+
+    try {
+      res.send(await cocktails.addCocktail(cocktailData));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   });
 
 app.route('/liquors')
   .get(async (req: Request, res: Response) => {
-    res.send(await cocktails.getLiquors());
+    try {
+      res.send(await cocktails.getLiquors());
+    } catch (e) {
+      errorHandler(e, res);
+    }
   });
 
 // bars
 app.route('/bars/:id/cocktails')
   .get(async (req: Request, res: Response) => {
-    res.send(await bars.getBarCocktails(req.params.id));
+    try {
+      res.send(await bars.getBarCocktails(req.params.id));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   });
 
 app.route('/bars/:id')
   .get(async (req: Request, res: Response) => {
-    res.send(await bars.getBar(req.params.id));
+    try {
+      res.send(await bars.getBar(req.params.id));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   })
   .put(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
     const barData = req.body;
-    res.send(await bars.updateBar(req.params.id, barData));
+    
+    try {
+      res.send(await bars.updateBar(req.params.id, barData));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   });
 
 app.route('/bars')
   .get(async (req: Request, res: Response) => {
-    res.send(await bars.getBars());
+    try {
+      res.send(await bars.getBars());
+    } catch (e) {
+      errorHandler(e, res);
+    }
   })
   .post(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
     const barData = req.body;
-    res.send(await bars.addBar(barData));
+    
+    try {
+      res.send(await bars.addBar(barData));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   });
 
 // lists : all routes require a session
@@ -121,35 +169,55 @@ app.route('/lists/:id')
     // @ts-ignore
     const userId = req.session.passport.user.id;
 
-    res.send(await lists.getListWithCocktails(req.params.id, userId));
+    try{
+      res.send(await lists.getListWithCocktails(req.params.id, userId));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   })
   .put(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
     const listData = req.body;
     // @ts-ignore
     const userId = req.session.passport.user.id;
     
-    res.send(await lists.updateList(req.params.id, listData, userId));
+    try {
+      res.send(await lists.updateList(req.params.id, listData, userId));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   })
   .delete(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
     // @ts-ignore
     const userId = req.session.passport.user.id;
 
-    res.send(await lists.deleteList(req.params.id, userId));
+    try {
+      res.send(await lists.deleteList(req.params.id, userId));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   });
 
 app.route('/lists')
   .get(isLoggedIn, async (req: Request, res: Response) => {
-    console.log('Session:');
-    console.dir(req.session);
     // @ts-ignore
-    res.send(await lists.getLists(req.session.passport.user.id));
+    const userId = req.session.passport.user.id;
+    
+    try{
+      res.send(await lists.getLists(userId));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   })
   .post(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
     const listData = req.body;
     // @ts-ignore
     const userId = req.session.passport.user.id;
     
-    res.send(await lists.addList(listData, userId));
+    try {
+      res.send(await lists.addList(listData, userId));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   });
 
 // listitem : all routes require a session
@@ -158,7 +226,11 @@ app.route('/listitems/:id')
     // @ts-ignore
     const userId = req.session.passport.user.id;
 
-    res.send(await lists.deleteListItem(req.params.id, userId));
+    try {
+      res.send(await lists.deleteListItem(req.params.id, userId));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   });
 
 app.route('/listitems')
@@ -167,7 +239,11 @@ app.route('/listitems')
     // @ts-ignore
     const userId = req.session.passport.user.id;
     
-    res.send(await lists.addListItem(itemData, userId));
+    try {
+      res.send(await lists.addListItem(itemData, userId));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   });
 
 // reviews
@@ -177,13 +253,21 @@ app.route('/reviews/:id')
     // @ts-ignore
     const userId = req.session.passport.user.id;
     
-    res.send(await reviews.updateReview(req.params.id, reviewData, userId));
+    try {
+      res.send(await reviews.updateReview(req.params.id, reviewData, userId));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   })
   .delete(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
     // @ts-ignore
     const userId = req.session.passport.user.id;
 
-    res.send(await reviews.deleteReview(req.params.id, userId));
+    try {
+      res.send(await reviews.deleteReview(req.params.id, userId));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   });
 
 app.route('/reviews')
@@ -192,13 +276,21 @@ app.route('/reviews')
     // @ts-ignore
     const userId = req.session.passport.user.id;
     
-    res.send(await reviews.addReview(reviewData, userId));
+    try {
+      res.send(await reviews.addReview(reviewData, userId));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   });
 
 // users
 app.route('/users/:id')
   .get(async (req: Request, res: Response) => {
-    res.send(await auth.getUser(req.params.id));
+    try {
+      res.send(await auth.getUser(req.params.id));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   });
 
 app.route('/users')
@@ -241,3 +333,8 @@ app.route('/logout')
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
+
+// generic error handler
+const errorHandler = (error: any, res: Response) => {
+  res.status(403).send('not authorized');
+}
