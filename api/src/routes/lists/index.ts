@@ -1,13 +1,10 @@
 import { dbConnect, models } from '../../db';
 
-const getLists = async () => {
-  // TODO: requires a user session
-  // TODO: This actually needs to be filtered down by user ID
-  // we'll just hardcode a user for now
+const getLists = async (userId: number) => {
   await dbConnect();
   return await models.list.findAll({
     where: {
-      user_id: 1,
+      user_id: userId,
     }
   });
 };
