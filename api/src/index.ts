@@ -154,33 +154,51 @@ app.route('/lists')
 
 // listitem : all routes require a session
 app.route('/listitems/:id')
-  .delete(isLoggedIn, validateCSRFToken, (req:Request, res: Response) => {
-    res.send('TODO - delete list item, will require session');
+  .delete(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+    // @ts-ignore
+    const userId = req.session.passport.user.id;
+
+    res.send(await lists.deleteListItem(req.params.id, userId));
   });
 
 app.route('/listitems')
-  .post(isLoggedIn, validateCSRFToken, (req:Request, res: Response) => {
-    res.send('TODO - create list item, will require session');
+  .post(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+    const itemData = req.body;
+    // @ts-ignore
+    const userId = req.session.passport.user.id;
+    
+    res.send(await lists.addListItem(itemData, userId));
   });
 
 // reviews
 app.route('/reviews/:id')
-  .put(isLoggedIn, validateCSRFToken, (req:Request, res: Response) => {
-    res.send('TODO - edit review - dont think we have a FE flow yet, will require session');
+  .put(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+    const reviewData = req.body;
+    // @ts-ignore
+    const userId = req.session.passport.user.id;
+    
+    res.send(await reviews.updateReview(req.params.id, reviewData, userId));
   })
-  .delete(isLoggedIn, validateCSRFToken, (req:Request, res: Response) => {
-    res.send('TODO - delete review, will require session');
+  .delete(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+    // @ts-ignore
+    const userId = req.session.passport.user.id;
+
+    res.send(await reviews.deleteReview(req.params.id, userId));
   });
 
 app.route('/reviews')
-  .post(isLoggedIn, validateCSRFToken, (req:Request, res: Response) => {
-    res.send('TODO - create review, will require session');
+  .post(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+    const reviewData = req.body;
+    // @ts-ignore
+    const userId = req.session.passport.user.id;
+    
+    res.send(await reviews.addReview(reviewData, userId));
   });
 
 // users
 app.route('/users/:id')
-  .get((req: Request, res: Response) => {
-    res.send('TODO - get user');
+  .get(async (req: Request, res: Response) => {
+    res.send(await auth.getUser(req.params.id));
   });
 
 app.route('/users')

@@ -135,9 +135,15 @@ const createNewSessionWithPassport = (req: Request, res: Response, next: NextFun
   });
 }
 
+const getUser = async (userId: string) => {
+  await dbConnect();
+  return await models.user.findByPk(userId);
+};
+
 export default {
   configureAuth,
   createUser,
   loginUser,
   createNewSessionWithPassport,
+  getUser,
 };

@@ -4,6 +4,11 @@ interface ListData {
   name: string;
 }
 
+interface ListItemData {
+  cocktailId: number;
+  listId: number;
+}
+
 const getLists = async (userId: number) => {
   await dbConnect();
   return await models.list.findAll({
@@ -74,7 +79,7 @@ const updateList = async (listId: string, listData: ListData, userId: number) =>
 
   const { name } = listData;
 
-  await models.bar.update({
+  await models.list.update({
     name,
     }, {
     where: {
@@ -87,10 +92,63 @@ const updateList = async (listId: string, listData: ListData, userId: number) =>
 const deleteList = async (listId: string, userId: number) => {
   await dbConnect();
 
-  await models.bar.destroy({
+  await models.list.destroy({
     where: {
       id: listId,
       user_id: userId,
+    }
+  });
+}
+
+// list item functions
+
+const addListItem = async (itemData: ListItemData, userId: number) => {
+  await dbConnect();
+
+  const { cocktailId, listId } = itemData;
+
+  // confirm the user is associated with the list
+  const list = await models.list.findOne({
+    where: {
+      id: listId,
+      user_id: userId,
+    }
+  });
+
+  if (!list) {
+    throw new Error('not a list associated with the logged in user');
+  }
+
+  await models.listitem.create({
+    cocktail_id: cocktailId,
+    list_id: listId,
+  });
+}
+
+const deleteListItem = async (itemId: string, userId: number) => {
+  await dbConnect();
+
+  const listItem = await models.listitem.findByPk(itemId);
+
+  if (!listItem) {
+    throw new Error('not an existing list item');
+  }
+
+  const list = await models.list.findOne({
+    where: {
+      // @ts-ignore
+      id: listItem.list_id,
+      user_id: userId,
+    }
+  });
+
+  if (!list) {
+    throw new Error('not a list associated with the logged in user');
+  }
+
+  await models.listitem.destroy({
+    where: {
+      id: itemId,
     }
   });
 }
@@ -101,4 +159,6 @@ export default {
   addList,
   updateList,
   deleteList,
+  addListItem,
+  deleteListItem,
 }

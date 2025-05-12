@@ -27,6 +27,9 @@ const init = (sequelize: Sequelize) => {
       rating: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        validate: {
+          isNumeric: true,
+        },
       },
       body: {
         type: DataTypes.TEXT,
@@ -45,10 +48,16 @@ const init = (sequelize: Sequelize) => {
       scale_composition: {
         type: DataTypes.INTEGER,
         allowNull: true,
+        validate: {
+          isNumeric: true,
+        },
       },
       scale_spirited: {
         type: DataTypes.INTEGER,
         allowNull: true,
+        validate: {
+          isNumeric: true,
+        },
       },
     },
     {

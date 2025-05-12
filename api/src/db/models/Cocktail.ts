@@ -68,6 +68,9 @@ const init = (sequelize: Sequelize) => {
         type: DataTypes.DOUBLE,
         allowNull: false,
         defaultValue: -1,
+        validate: {
+          isNumeric: true,
+        },
       },
     },
     {
