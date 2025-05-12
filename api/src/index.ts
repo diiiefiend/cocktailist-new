@@ -71,16 +71,19 @@ app.route('/cocktails/:id')
   .get(async (req: Request, res: Response) => {
     res.send(await cocktails.getCocktail(req.params.id));
   })
-  .put(isLoggedIn, validateCSRFToken, (req:Request, res: Response) => {
-    res.send('TODO - edit cocktail, will require session');
+  .put(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+    const cocktailData = req.body;
+    res.send(await cocktails.updateCocktail(req.params.id, cocktailData));
   });
+  // Should I let cocktails be deleted?
 
 app.route('/cocktails')
   .get(async (req: Request, res: Response) => {
     res.send(await cocktails.getCocktailsWithBars());
   })
-  .post(isLoggedIn, validateCSRFToken, (req:Request, res: Response) => {
-    res.send('TODO - create cocktail, will require session');
+  .post(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+    const cocktailData = req.body;
+    res.send(await cocktails.addCocktail(cocktailData));
   });
 
 app.route('/liquors')

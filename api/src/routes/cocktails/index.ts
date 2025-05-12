@@ -1,6 +1,14 @@
 import { Sequelize } from 'sequelize';
 import {dbConnect, models} from '../../db';
 
+interface CocktailData {
+  name: string;
+  barId: number;
+  type: string;
+  ingredients: string;
+  imgUrl?: string;
+};
+
 const getCocktail = async (id: string) => {
   await dbConnect();
   return await models.cocktail.findByPk(id, {
@@ -50,8 +58,42 @@ const getLiquors = async () => {
   return result;
 }
 
+const addCocktail = async (cocktailData: CocktailData) => {
+  await dbConnect();
+
+  const { name, barId, type, ingredients, imgUrl} = cocktailData;
+
+  await models.cocktail.create({
+    bar_id: barId,
+    name,
+    liquor: type,
+    ingredients,
+    imageFileName: imgUrl, // TODO: update this later
+  });
+}
+
+const updateCocktail = async (cocktailId: string, cocktailData: CocktailData) => {
+  await dbConnect();
+
+  const { name, barId, type, ingredients, imgUrl} = cocktailData;
+
+  await models.cocktail.update({
+    bar_id: barId,
+    name,
+    liquor: type,
+    ingredients,
+    imageFileName: imgUrl, // TODO: update this later
+  }, {
+    where: {
+      id: cocktailId,
+    }
+  });
+}
+
 export default {
   getCocktail,
   getCocktailsWithBars,
   getLiquors,
+  addCocktail,
+  updateCocktail,
 }

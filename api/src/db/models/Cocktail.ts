@@ -11,14 +11,24 @@ const init = (sequelize: Sequelize) => {
       name: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
       },
       liquor: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notEmpty: true,
+          isAlpha: true,
+        },
       },
       ingredients: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
       },
       bar_id: {
         type: DataTypes.INTEGER,

@@ -11,10 +11,17 @@ const init = (sequelize: Sequelize) => {
       username: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
+        validate: {
+          notEmpty: true,
+        },
       },
       email: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          isEmail: true,
+        },
       },
       password_digest: {
         type: DataTypes.STRING,
