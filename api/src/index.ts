@@ -101,29 +101,40 @@ app.route('/bars/:id')
   .get(async (req: Request, res: Response) => {
     res.send(await bars.getBar(req.params.id));
   })
-  .put(isLoggedIn, validateCSRFToken, (req:Request, res: Response) => {
-    res.send('TODO - edit bar info (currently no FE flow), will require session');
+  .put(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+    const barData = req.body;
+    res.send(await bars.updateBar(req.params.id, barData));
   });
 
 app.route('/bars')
   .get(async (req: Request, res: Response) => {
     res.send(await bars.getBars());
   })
-  .post(isLoggedIn, validateCSRFToken, (req:Request, res: Response) => {
-    res.send('TODO - create bar, will require session');
+  .post(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+    const barData = req.body;
+    res.send(await bars.addBar(barData));
   });
 
 // lists : all routes require a session
 app.route('/lists/:id')
-// TODO: get ID from logged in user's lists
   .get(isLoggedIn, async (req: Request, res: Response) => {
-    res.send(await lists.getListWithCocktails(req.params.id));
+    // @ts-ignore
+    const userId = req.session.passport.user.id;
+
+    res.send(await lists.getListWithCocktails(req.params.id, userId));
   })
-  .put(isLoggedIn, validateCSRFToken, (req:Request, res: Response) => {
-    res.send('TODO - edit list info - dont think we have a FE flow yet, will require session');
+  .put(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+    const listData = req.body;
+    // @ts-ignore
+    const userId = req.session.passport.user.id;
+    
+    res.send(await lists.updateList(req.params.id, listData, userId));
   })
-  .delete(isLoggedIn, validateCSRFToken, (req:Request, res: Response) => {
-    res.send('TODO - delete list, will require session');
+  .delete(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+    // @ts-ignore
+    const userId = req.session.passport.user.id;
+
+    res.send(await lists.deleteList(req.params.id, userId));
   });
 
 app.route('/lists')
@@ -133,8 +144,12 @@ app.route('/lists')
     // @ts-ignore
     res.send(await lists.getLists(req.session.passport.user.id));
   })
-  .post(isLoggedIn, validateCSRFToken, (req:Request, res: Response) => {
-    res.send('TODO - create list, will require session');
+  .post(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+    const listData = req.body;
+    // @ts-ignore
+    const userId = req.session.passport.user.id;
+    
+    res.send(await lists.addList(listData, userId));
   });
 
 // listitem : all routes require a session

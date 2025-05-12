@@ -11,10 +11,16 @@ const init = (sequelize: Sequelize) => {
       name: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
       },
       address: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
       },
       latitude: {
         type: DataTypes.DOUBLE,

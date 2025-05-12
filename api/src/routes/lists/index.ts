@@ -1,5 +1,9 @@
 import { dbConnect, models } from '../../db';
 
+interface ListData {
+  name: string;
+}
+
 const getLists = async (userId: number) => {
   await dbConnect();
   return await models.list.findAll({
@@ -9,14 +13,23 @@ const getLists = async (userId: number) => {
   });
 };
 
-const getListWithCocktails = async (id: string) => {
-  // TODO: requires a user session
+const getListWithCocktails = async (listId: string, userId: number) => {
   await dbConnect();
-  // TODO: confirm this list is associated with the logged in user
-  const list = await models.list.findByPk(id);
+
+  const list = await models.list.findOne({
+    where: {
+      id: listId,
+      user_id: userId,
+    }
+  });
+
+  if (!list) {
+    throw new Error('no list associated with logged in user');
+  };
+  
   const listItems = await models.listitem.findAll({
     where: {
-      list_id: id,
+      list_id: listId,
     },
     include: [{
       association: 'listedCocktail',
@@ -24,19 +37,68 @@ const getListWithCocktails = async (id: string) => {
     }],
   });
 
-  let response = {};
 
-  if (!!list) {
-    response = {
-      ...list.toJSON(),
-      listItems: !!listItems ? listItems : [],
-    }
-  }
+  const response = {
+    ...list.toJSON(),
+    listItems: !!listItems ? listItems : [],
+  };
 
   return response;
 };
 
+const addList = async (listData: ListData, userId: number) => {
+  await dbConnect();
+
+  const { name } = listData;
+
+  // confirm the user doesn't have a list already with the same name
+  const list = await models.list.findOne({
+    where: {
+      name,
+      user_id: userId,
+    }
+  });
+
+  if (list) {
+    throw new Error('list with that name already exists!');
+  }
+
+  await models.list.create({
+    name,
+    user_id: userId,
+  });
+}
+
+const updateList = async (listId: string, listData: ListData, userId: number) => {
+  await dbConnect();
+
+  const { name } = listData;
+
+  await models.bar.update({
+    name,
+    }, {
+    where: {
+      id: listId,
+      user_id: userId,
+    }
+  });
+}
+
+const deleteList = async (listId: string, userId: number) => {
+  await dbConnect();
+
+  await models.bar.destroy({
+    where: {
+      id: listId,
+      user_id: userId,
+    }
+  });
+}
+
 export default {
   getLists,
   getListWithCocktails,
+  addList,
+  updateList,
+  deleteList,
 }

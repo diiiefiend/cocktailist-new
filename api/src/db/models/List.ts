@@ -11,6 +11,9 @@ const init = (sequelize: Sequelize) => {
       name: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
       },
       user_id: {
         type: DataTypes.INTEGER,
