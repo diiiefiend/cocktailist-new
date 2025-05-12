@@ -29,6 +29,7 @@ const init = (sequelize: Sequelize) => {
         allowNull: false,
         defaultValue: DataTypes.NOW,
       },
+      // dumb that we have this, it never should get updated after creation
       updated_at: {
         type: DataTypes.DATE,
         allowNull: false,

@@ -56,11 +56,12 @@ const updateReview = async (reviewId: string, reviewData: ReviewData, userId: nu
 
   const { rating, body, scaleComposition, scaleSpirited } = reviewData;
 
-  await models.list.update({
+  await models.rating.update({
     rating,
     body,
     scale_composition: scaleComposition,
     scale_spirited: scaleSpirited,
+    updated_at: Date.now(),
     }, {
     where: {
       id: reviewId,
@@ -72,7 +73,7 @@ const updateReview = async (reviewId: string, reviewData: ReviewData, userId: nu
 const deleteReview = async (reviewId: string, userId: number) => {
   await dbConnect();
 
-  await models.list.destroy({
+  await models.rating.destroy({
     where: {
       id: reviewId,
       user_id: userId,

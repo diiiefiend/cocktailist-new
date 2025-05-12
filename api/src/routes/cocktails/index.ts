@@ -63,6 +63,9 @@ const addCocktail = async (cocktailData: CocktailData) => {
 
   const { name, barId, type, ingredients, imgUrl} = cocktailData;
 
+  // TODO: support creating a bar along with a cocktail
+  // can use: https://sequelize.org/docs/v6/core-concepts/assocs/#foobelongstobar
+
   await models.cocktail.create({
     bar_id: barId,
     name,
@@ -83,6 +86,7 @@ const updateCocktail = async (cocktailId: string, cocktailData: CocktailData) =>
     liquor: type,
     ingredients,
     imageFileName: imgUrl, // TODO: update this later
+    updated_at: Date.now(),
   }, {
     where: {
       id: cocktailId,

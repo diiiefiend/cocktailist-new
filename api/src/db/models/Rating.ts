@@ -29,6 +29,8 @@ const init = (sequelize: Sequelize) => {
         allowNull: false,
         validate: {
           isNumeric: true,
+          min: 1,
+          max: 5,
         },
       },
       body: {
@@ -50,6 +52,8 @@ const init = (sequelize: Sequelize) => {
         allowNull: true,
         validate: {
           isNumeric: true,
+          min: 1,
+          max: 10,
         },
       },
       scale_spirited: {
@@ -57,6 +61,8 @@ const init = (sequelize: Sequelize) => {
         allowNull: true,
         validate: {
           isNumeric: true,
+          min: 1,
+          max: 10,
         },
       },
     },

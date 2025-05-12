@@ -23,7 +23,7 @@ const initModelsAndAssociations = (sequelize: Sequelize) => {
   });
   models.bar.hasMany(models.cocktail, {
     foreignKey: 'bar_id',
-    as: 'bar',
+    as: 'cocktail',
   });
 
   // listitems <> list
@@ -33,7 +33,7 @@ const initModelsAndAssociations = (sequelize: Sequelize) => {
   });
   models.list.hasMany(models.listitem, {
     foreignKey: 'list_id',
-    as: 'list',
+    as: 'listitem',
   });
 
   // listitem <> cocktail
@@ -49,7 +49,7 @@ const initModelsAndAssociations = (sequelize: Sequelize) => {
   });
   models.user.hasMany(models.list, {
     foreignKey: 'user_id',
-    as: 'owner',
+    as: 'list',
   });
 
   // ratings <> cocktail
@@ -59,7 +59,7 @@ const initModelsAndAssociations = (sequelize: Sequelize) => {
   });
   models.cocktail.hasMany(models.rating, {
     foreignKey: 'cocktail_id',
-    as: 'cocktail',
+    as: 'review',
   });
 
   // ratings <> user
@@ -69,7 +69,7 @@ const initModelsAndAssociations = (sequelize: Sequelize) => {
   });
   models.user.hasMany(models.rating, {
     foreignKey: 'user_id',
-    as: 'reviewer',
+    as: 'review',
   });
 
   return models;

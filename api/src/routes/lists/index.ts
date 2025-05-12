@@ -81,6 +81,7 @@ const updateList = async (listId: string, listData: ListData, userId: number) =>
 
   await models.list.update({
     name,
+    updated_at: Date.now(),
     }, {
     where: {
       id: listId,
@@ -92,12 +93,22 @@ const updateList = async (listId: string, listData: ListData, userId: number) =>
 const deleteList = async (listId: string, userId: number) => {
   await dbConnect();
 
-  await models.list.destroy({
+  const list = await models.list.findOne({
     where: {
       id: listId,
       user_id: userId,
     }
   });
+
+  if (!list) {
+    throw new Error('not a list associated with the logged in user');
+  }
+
+  // https://sequelize.org/docs/v6/core-concepts/assocs/#foohasmanybar  
+  // @ts-ignore
+  await list.removeListitems();
+
+  await list.destroy();
 }
 
 // list item functions
@@ -122,6 +133,10 @@ const addListItem = async (itemData: ListItemData, userId: number) => {
   await models.listitem.create({
     cocktail_id: cocktailId,
     list_id: listId,
+  });
+
+  await list.update({
+    updated_at: Date.now(),
   });
 }
 
@@ -150,6 +165,10 @@ const deleteListItem = async (itemId: string, userId: number) => {
     where: {
       id: itemId,
     }
+  });
+
+  await list.update({
+    updated_at: Date.now(),
   });
 }
 
