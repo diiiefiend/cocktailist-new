@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 import { DRINK_TYPES, type CocktailSubmission } from '../../models';
 import { mockBarData } from '../../mocks';
 
 import SiteModal from '../../components/SiteModal.vue';
+import { addCocktail } from '../../api';
 
 const props = defineProps<{
   existingCocktailInfo: CocktailSubmission | null;
@@ -25,10 +26,31 @@ let payload = ref(
   },
 );
 
-const onSubmit = () => {
-  // TODO: validate and submit review
-  // and share feedback on submission success/failure
+let errors: Ref<string[]> = ref([]);
+
+const onSubmit = async () => {
+  errors.value = [];
+
+  // validations
   console.log('hello ', payload.value);
+  const requiredFields = ['name', 'type', 'barId', 'ingredients'];
+  requiredFields.forEach((field) => {
+    // @ts-ignore
+    if (!payload.value[field] || payload.value[field] === '') {
+      errors.value.push(`missing required field: ${field}`);
+    }
+  });
+
+  console.log(errors);
+
+  // if no errors, continue to try to submit
+  if (!errors.value.length) {
+    try {
+      await addCocktail(payload.value);
+    } catch (e) {
+      errors.value.push(e);
+    }
+  }
 };
 </script>
 
@@ -46,6 +68,7 @@ const onSubmit = () => {
         </fieldset>
         <fieldset>
           <label for="cocktail-types">Type</label>
+          <!-- TODO: add option to add type? -->
           <select id="cocktail-type" v-model="payload.type">
             <option v-for="type in DRINK_TYPES" :key="type" :value="type">{{ type }}</option>
           </select>
@@ -69,6 +92,12 @@ const onSubmit = () => {
       </form>
     </template>
     <template #footer>
+      <div v-if="errors.length" class="form-error">
+        Please see the following error(s):
+        <ul>
+          <li v-for="error in errors" :key="error">{{ error }}</li>
+        </ul>
+      </div>
       <button type="submit" class="primary" @click.stop="onSubmit">Submit</button>
       <button type="reset" class="cancel" @click="$emit('close')">Cancel</button>
     </template>

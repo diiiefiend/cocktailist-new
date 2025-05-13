@@ -27,6 +27,13 @@ const getBars = async () => {
   });
 }
 
+const addCocktail = async (cocktailData: CocktailSubmission) => {
+  return makeCall(`${API_HOST}/cocktails`, {
+    method: 'POST',
+    body: JSON.stringify(cocktailData),
+  });
+};
+
 // cocktail detail routes
 const getCocktail = async (id: string) => {
   return makeCall(`${API_HOST}/cocktails/${id}`, {
@@ -83,6 +90,7 @@ export {
   getCocktailsWithBars,
   getLiquorList,
   getBars,
+  addCocktail,
   getCocktail,
   getCocktailReviews,
   getBar,

@@ -121,6 +121,19 @@ button {
   }
 }
 
+.form-error {
+  color: $ruby;
+
+  ul {
+    margin-left: 0;
+    padding-left: 0;
+  }
+
+  li {
+    list-style: none;
+  }
+}
+
 .placeholder-box { // will prob become its own component soon
   width: 200px;
   height: 180px;
