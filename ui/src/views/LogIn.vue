@@ -1,62 +1,107 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue';
 
-import { login } from '../api.js';
+import { createAccount, login } from '../api.js';
 import type {} from '../models.js';
 
+import router from '../router/index.js';
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
 import GridBox from '../components/GridBox.vue';
 import { checkRequiredFields } from '../utils.js';
 
-let isLoading = ref(false);
+let isSubmitting = ref(false);
 let errors: Ref<string[]> = ref([]);
 
+// TODO: figure out if the user has an active session -- is this going in the global store?
 let isUserLoggedIn = ref(false);
+let mode: Ref<'Create Account' | 'Login'> = ref('Login');
 
 let payload = ref({
   username: null,
   password: null,
+  email: null,
 });
+
+function reset() {
+  payload.value = {
+    username: null,
+    password: null,
+    email: null,
+  };
+
+  errors.value = [];
+}
+
+function getOtherMode() {
+  return mode.value === 'Create Account' ? 'Login' : 'Create Account';
+}
+
+function switchMode() {
+  mode.value = getOtherMode();
+  reset();
+}
 
 async function onSubmit() {
   errors.value = [];
-  isLoading.value = true;
+  isSubmitting.value = true;
   console.log('hello ', payload.value);
-  errors.value = errors.value.concat(checkRequiredFields(['username', 'password'], payload));
+  const requiredFields = ['username', 'password'];
+  if (mode.value === 'Create Account') {
+    requiredFields.push('email');
+  }
+  errors.value = errors.value.concat(checkRequiredFields(requiredFields, payload));
 
   console.log(errors);
 
   if (!errors.value.length) {
     try {
-      // @ts-ignore
-      await login(payload.value);
+      if (mode.value === 'Login') {
+        // @ts-ignore
+        await login(payload.value);
+      } else {
+        // @ts-ignore
+        await createAccount(payload.value);
+      }
+
+      router.push('/lists');
     } catch (e) {
       // @ts-ignore
       errors.value.push(e);
     }
   }
 
-  isLoading.value = false;
+  isSubmitting.value = false;
+}
+
+function onCancel() {
+  reset();
+
+  router.push('/');
 }
 </script>
 
 <template>
-  <div id="login">
+  <div v-if="!isUserLoggedIn" id="login">
     <context-menu>
       <div class="row-gap-1"></div>
       <div class="span-2 justify-left">
-        <button class="primary" :disabled="isUserLoggedIn">Create Account</button>
+        <button class="primary" @click="switchMode">
+          {{ getOtherMode() }}
+        </button>
       </div>
     </context-menu>
-    <div v-if="isLoading">LOADING</div>
-    <layout-container v-else>
+    <layout-container>
       <grid-box :width="6" :startCol="3" :applyBoxStyle="true" class="bar-details-box">
-        <h1>Login</h1>
+        <h1>{{ mode }}</h1>
         <form @submit.prevent>
           <fieldset>
             <label>Username</label>
             <input type="text" v-model="payload.username" />
+          </fieldset>
+          <fieldset v-if="mode == 'Create Account'">
+            <label>Email</label>
+            <input type="text" v-model="payload.email" />
           </fieldset>
           <fieldset>
             <label>Password</label>
@@ -69,8 +114,29 @@ async function onSubmit() {
             <li v-for="error in errors" :key="error">{{ error }}</li>
           </ul>
         </div>
-        <button type="submit" class="primary" @click.stop="onSubmit">Login</button>
-        <button type="reset" class="cancel" @click="$emit('close')">Cancel</button>
+        <div class="footer">
+          <button type="submit" class="primary" @click.stop="onSubmit" :disabled="isSubmitting">
+            {{ mode }}
+          </button>
+          <button type="reset" class="cancel" @click.stop="onCancel">Cancel</button>
+        </div>
+      </grid-box>
+    </layout-container>
+  </div>
+  <div v-if="isUserLoggedIn">
+    <context-menu>
+      <div class="row-gap-1"></div>
+      <div class="span-2 justify-left">
+        <button class="primary">Logout</button>
+      </div>
+    </context-menu>
+    <layout-container>
+      <grid-box :width="6" :startCol="3" :applyBoxStyle="true" class="bar-details-box">
+        <h1>Login</h1>
+        <p>
+          You're already logged in as TODO: put active user here. Do you need to
+          <a href="#">log out?</a>
+        </p>
       </grid-box>
     </layout-container>
   </div>

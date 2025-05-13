@@ -309,7 +309,9 @@ app.route('/users')
         return next(err);
       }
 
-      res.send('success!');
+      res.send({
+        status: 'success',
+      });
     });
   });
 
@@ -326,7 +328,10 @@ app.route('/logout')
         console.error(err);
         return next(err);
       }
-      res.send('logged out');
+      res.send({
+        status: 'success',
+        message: 'logged out'
+      });
     });
   });
 

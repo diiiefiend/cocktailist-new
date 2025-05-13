@@ -25,6 +25,7 @@ const defaultPayload: ReviewSubmission = {
 
 // TODO: if a review exists, then this should be prepopulated with the old review
 let payload = ref(defaultPayload);
+let isSubmitting = ref(false);
 
 const updateRating = (rating: number | string, ratingType: RATING_TYPES) => {
   switch (ratingType) {
@@ -45,9 +46,11 @@ const updateComment = (comment: string) => {
 };
 
 const onSubmit = () => {
+  isSubmitting.value = true;
   // TODO: validate and submit review
   // and share feedback on submission success/failure
   console.log('hello ', payload.value);
+  isSubmitting.value = false;
 };
 </script>
 
@@ -90,7 +93,9 @@ const onSubmit = () => {
       </form>
     </template>
     <template #footer>
-      <button type="submit" class="primary" @click.stop="onSubmit">Submit</button>
+      <button type="submit" class="primary" @click.stop="onSubmit" :disabled="isSubmitting">
+        Submit
+      </button>
       <button type="reset" class="cancel" @click="$emit('close')">Cancel</button>
     </template>
   </site-modal>

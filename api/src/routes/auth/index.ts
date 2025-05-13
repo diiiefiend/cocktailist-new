@@ -71,16 +71,21 @@ const createUser = async (params: any) => {
       return { user: null, error: 'User with that email already exists!' };
     }
 
-    const result = await models.user.create({
-      username,
-      email,
-      password_digest: hashedPwStr,
-      salt,
-      // this column isn't used anymore
-      session_token: 'PLACEHOLDER',
-    });
-    
-    return { user: result, error: null};
+    try {
+      const result = await models.user.create({
+        username,
+        email,
+        password_digest: hashedPwStr,
+        salt,
+        // this column isn't used anymore
+        session_token: 'PLACEHOLDER',
+      });
+      
+      return { user: result, error: null};
+    } catch (e) {
+      // if the model fails validation, it ends up here
+      return { user: null, error: e};
+    }
 }
 
 // uses the "local" strategy defined in auth.configureAuth

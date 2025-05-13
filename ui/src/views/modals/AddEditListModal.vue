@@ -10,13 +10,16 @@ const props = defineProps<{
 const emit = defineEmits(['close']);
 
 let listName = ref(null);
+let isSubmitting = ref(false);
 
 const onSubmit = () => {
+  isSubmitting.value = true;
   // TODO: validate and submit review
   // and share feedback on submission success/failure
   // reset state if success
   console.log(listName.value);
   listName.value = null;
+  isSubmitting.value = false;
 };
 </script>
 
@@ -35,7 +38,9 @@ const onSubmit = () => {
       </form>
     </template>
     <template #footer>
-      <button type="submit" class="primary" @click.stop="onSubmit">Submit</button>
+      <button type="submit" class="primary" @click.stop="onSubmit" :disabled="isSubmitting">
+        Submit
+      </button>
       <button type="reset" class="cancel" @click="$emit('close')">Cancel</button>
     </template>
   </site-modal>

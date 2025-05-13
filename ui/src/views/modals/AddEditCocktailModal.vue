@@ -28,9 +28,11 @@ let payload = ref(
 );
 
 let errors: Ref<string[]> = ref([]);
+let isSubmitting = ref(false);
 
 const onSubmit = async () => {
   errors.value = [];
+  isSubmitting.value = true;
 
   // validations
   console.log('hello ', payload.value);
@@ -49,6 +51,8 @@ const onSubmit = async () => {
       errors.value.push(e);
     }
   }
+
+  isSubmitting.value = false;
 };
 </script>
 
@@ -96,7 +100,9 @@ const onSubmit = async () => {
           <li v-for="error in errors" :key="error">{{ error }}</li>
         </ul>
       </div>
-      <button type="submit" class="primary" @click.stop="onSubmit">Submit</button>
+      <button type="submit" class="primary" @click.stop="onSubmit" :disabled="isSubmitting">
+        Submit
+      </button>
       <button type="reset" class="cancel" @click="$emit('close')">Cancel</button>
     </template>
   </site-modal>

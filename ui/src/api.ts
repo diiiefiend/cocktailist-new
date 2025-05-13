@@ -1,4 +1,4 @@
-import type { CocktailSubmission, LoginSubmission } from "./models";
+import type { CocktailSubmission, CreateAccountSubmission, LoginSubmission } from "./models";
 
 let API_HOST: string;
 switch (window.location.hostname) {
@@ -88,6 +88,13 @@ const login = async (loginData: LoginSubmission) => {
   });
 }
 
+const createAccount = async (createAccountData: CreateAccountSubmission) => {
+  return makeCall(`${API_HOST}/users`, {
+    method: 'POST',
+    body: JSON.stringify(createAccountData),
+  });
+}
+
 const makeCall = async (endpoint: string, options: any) => {
   const decoratedOptions = {
     headers: {
@@ -118,4 +125,5 @@ export {
   getLists,
   getList,
   login,
+  createAccount,
 };
