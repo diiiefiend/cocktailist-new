@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
 import { DRINK_TYPES, type CocktailSubmission } from '../../models';
 import { mockBarData } from '../../mocks';
 
 import SiteModal from '../../components/SiteModal.vue';
 import { addCocktail } from '../../api';
+import { checkRequiredFields } from '../../utils';
 
 const props = defineProps<{
   existingCocktailInfo: CocktailSubmission | null;
@@ -34,20 +35,17 @@ const onSubmit = async () => {
   // validations
   console.log('hello ', payload.value);
   const requiredFields = ['name', 'type', 'barId', 'ingredients'];
-  requiredFields.forEach((field) => {
-    // @ts-ignore
-    if (!payload.value[field] || payload.value[field] === '') {
-      errors.value.push(`missing required field: ${field}`);
-    }
-  });
+  errors.value = errors.value.concat(checkRequiredFields(requiredFields, payload));
 
   console.log(errors);
 
   // if no errors, continue to try to submit
   if (!errors.value.length) {
     try {
+      // @ts-ignore
       await addCocktail(payload.value);
     } catch (e) {
+      // @ts-ignore
       errors.value.push(e);
     }
   }

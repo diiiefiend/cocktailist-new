@@ -62,7 +62,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div id="browse">
+  <div id="bar-view">
     <context-menu>
       <div class="row-gap-1"></div>
       <div class="span-2 justify-left">

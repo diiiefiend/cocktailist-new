@@ -1,3 +1,5 @@
+import type { CocktailSubmission, LoginSubmission } from "./models";
+
 let API_HOST: string;
 switch (window.location.hostname) {
   case 'localhost':
@@ -9,6 +11,7 @@ switch (window.location.hostname) {
 }
 
 // browse routes
+
 const getCocktailsWithBars = async () => {
   return makeCall(`${API_HOST}/cocktails`, {
     method: 'GET',
@@ -35,6 +38,7 @@ const addCocktail = async (cocktailData: CocktailSubmission) => {
 };
 
 // cocktail detail routes
+
 const getCocktail = async (id: string) => {
   return makeCall(`${API_HOST}/cocktails/${id}`, {
     method: 'GET',
@@ -53,7 +57,8 @@ const getBar = async (id: string) => {
   });
 }
 
-// additional bar routes
+// bar routes
+
 const getBarCocktails = async (id: string) => {
   return makeCall(`${API_HOST}/bars/${id}/cocktails`, {
     method: 'GET',
@@ -74,8 +79,23 @@ const getList = async (id: string) => {
   });
 }
 
+// user auth routes
+
+const login = async (loginData: LoginSubmission) => {
+  return makeCall(`${API_HOST}/login`, {
+    method: 'POST',
+    body: JSON.stringify(loginData),
+  });
+}
+
 const makeCall = async (endpoint: string, options: any) => {
-  const response = await fetch(endpoint, options);
+  const decoratedOptions = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    ...options,
+  };
+  const response = await fetch(endpoint, decoratedOptions);
 
   if (!response.ok) {
     throw new Error(`Response status: ${response.status}`);
@@ -97,4 +117,5 @@ export {
   getBarCocktails,
   getLists,
   getList,
+  login,
 };

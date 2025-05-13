@@ -1,0 +1,11 @@
+@import "../_variables.scss";
+
+h1 {
+  color: $white;
+  font-size: $font-xxl;
+  font-weight: normal;
+  margin: -20px -20px 20px -20px;
+  padding: 20px;
+
+  background-color: $russet;
+}

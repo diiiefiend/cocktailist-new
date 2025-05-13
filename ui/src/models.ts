@@ -106,3 +106,12 @@ export interface ReviewSubmission {
   innovativeRating: null | number;
   comment: null | string;
 }
+
+export interface LoginSubmission {
+  username: string;
+  password: string;
+}
+
+export interface CreateAccountSubmission extends LoginSubmission {
+  email: string;
+}
