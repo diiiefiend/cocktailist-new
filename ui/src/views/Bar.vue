@@ -2,6 +2,7 @@
 import { onMounted, ref, type Ref } from 'vue';
 
 import { getBarCocktails, getBars } from '../api.js';
+import { useAuthStore } from '../stores/auth.js';
 import type { BarDetails, CocktailDetailItem } from '../models.js';
 
 import ContextMenu from '../components/ContextMenu.vue';
@@ -28,7 +29,7 @@ let bar: Ref<null | BarDetails> = ref(null);
 let cocktails: Ref<Array<CocktailDetailItem>> = ref([]);
 
 // TODO: implement edit bar modal
-let isUserLoggedIn = ref(false);
+let isUserLoggedIn = useAuthStore().isUserLoggedIn();
 const showEditBarModal = ref(false);
 
 async function fetchData() {

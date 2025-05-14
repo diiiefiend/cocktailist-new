@@ -100,6 +100,7 @@ const makeCall = async (endpoint: string, options: any) => {
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: 'include',
     ...options,
   };
   const response = await fetch(endpoint, decoratedOptions);

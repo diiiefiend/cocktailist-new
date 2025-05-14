@@ -8,28 +8,28 @@ const configureAuth = () => {
   // login logic (called from POST /login)
   passport.use('local', new Strategy(
     async (username: string, password: string, cb: any) => {
-    console.log('im in here!');
+      console.log('im in here!');
 
-    await dbConnect();
-    // TODO: define User type
-    const user: any = await models.user.scope('auth').findOne({
-      where: {
-        username,
-      },
-    });
+      await dbConnect();
+      // TODO: define User type
+      const user: any = await models.user.scope('auth').findOne({
+        where: {
+          username,
+        },
+      });
 
-    if (!user) {
-      return cb(null, false, { message: 'Incorrect username or password.' });
-    }
+      if (!user) {
+        return cb(null, false, { message: 'Incorrect username or password.' });
+      }
 
-    const hashedPw = crypto.pbkdf2Sync(password, user.salt, 310000, 32, 'sha256');
+      const hashedPw = crypto.pbkdf2Sync(password, user.salt, 310000, 32, 'sha256');
 
-    // validate hashedPw against db value
-    if (!hashedPw || !crypto.timingSafeEqual(Buffer.from(user.password_digest, 'base64'), hashedPw)) {
-      return cb(null, false, { message: 'Incorrect username or password.' });
-    }
+      // validate hashedPw against db value
+      if (!hashedPw || !crypto.timingSafeEqual(Buffer.from(user.password_digest, 'base64'), hashedPw)) {
+        return cb(null, false, { message: 'Incorrect username or password.' });
+      }
 
-    return cb(null, user);
+      return cb(null, user);
   }));
 
   // session stuff
@@ -41,9 +41,18 @@ const configureAuth = () => {
     });
   });
 
-  passport.deserializeUser((user: any, cb) => {
-    process.nextTick(() => {
+  passport.deserializeUser((serializedUser: any, cb) => {
+    process.nextTick(async () => {
       console.log('in the deserializeUser fn!');
+      const id = serializedUser.id;
+
+      await dbConnect();
+      const user: any = await models.user.scope('auth').findByPk(id);
+  
+      if (!user) {
+        return cb(null, false);
+      }
+
       return cb(null, user);
     });
   });
@@ -129,6 +138,16 @@ const createNewSessionWithPassport = (req: Request, res: Response, next: NextFun
         console.error(err);
         return next(err);
       }
+
+      // set extra cookie that can be parsed by FE JS
+      res.cookie(
+        'cocktailist.activeSession',
+        'true',
+        {
+          httpOnly: false,
+          maxAge: req.session.cookie.maxAge,
+        }
+      );
 
       const response = {
         status: 'success',

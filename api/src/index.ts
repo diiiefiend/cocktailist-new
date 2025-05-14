@@ -23,12 +23,13 @@ auth.configureAuth();
 // global middleware
 app.use(cors({
   origin: ['http://localhost:5173', 'https://cocktailist.club'],
+  credentials: true,
 }));
 
-app.use(cookieParser(process.env.COOKIE_PARSER_SECRET, {
-  //@ts-ignore
-  sameSite: 'strict'
-}));
+// app.use(cookieParser(process.env.COOKIE_PARSER_SECRET, {
+//   //@ts-ignore
+//   sameSite: 'strict',
+// }));
 
 app.use(bodyParser.json());
 
@@ -323,6 +324,8 @@ app.route('/login')
 
 app.route('/logout')
   .post((req: Request, res: Response, next: NextFunction) => {
+    // currently this just seems to make another cookie???
+    // TODO: validate this removes the cocktailist.sid cookie and manually remove the cocktailist.activeSession cookie
     req.logout((err) => {
       if (err) { 
         console.error(err);

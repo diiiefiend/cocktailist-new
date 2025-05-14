@@ -2,7 +2,7 @@
 import { ref, type Ref } from 'vue';
 
 import { createAccount, login } from '../api.js';
-import type {} from '../models.js';
+import { useAuthStore } from '../stores/auth.js';
 
 import router from '../router/index.js';
 import ContextMenu from '../components/ContextMenu.vue';
@@ -10,11 +10,12 @@ import LayoutContainer from '../components/LayoutContainer.vue';
 import GridBox from '../components/GridBox.vue';
 import { checkRequiredFields } from '../utils.js';
 
+const authStore = useAuthStore();
+
 let isSubmitting = ref(false);
 let errors: Ref<string[]> = ref([]);
 
-// TODO: figure out if the user has an active session -- is this going in the global store?
-let isUserLoggedIn = ref(false);
+let isUserLoggedIn = ref(authStore.isUserLoggedIn());
 let mode: Ref<'Create Account' | 'Login'> = ref('Login');
 
 let payload = ref({

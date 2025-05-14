@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 
 import type { CocktailDetailItem, List, ListInfo, ListItem } from '../models';
 import { getList, getLists } from '../api';
+import { useAuthStore } from '../stores/auth';
 
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
@@ -27,7 +28,7 @@ let listInfo: Ref<null | ListInfo> = ref(null);
 let cocktails: Ref<Array<CocktailDetailItem>> = ref([]);
 
 let showCreateListModal = ref(false);
-let isUserLoggedIn = ref(false);
+let isUserLoggedIn = useAuthStore().isUserLoggedIn();
 
 async function fetchData() {
   error.value = null;
@@ -78,7 +79,7 @@ const deleteItemFromList = (cocktailId: number) => {
         </button>
       </div>
       <div class="span-2">
-        <select v-if="userLists">
+        <select v-if="userLists.length">
           <option v-for="list in userLists" :key="list.id" :value="list.id">{{ list.name }}</option>
         </select>
       </div>
@@ -89,27 +90,37 @@ const deleteItemFromList = (cocktailId: number) => {
       <div class="span-1"></div>
       <search-box />
     </context-menu>
-    <div v-if="isLoading">LOADING</div>
-    <layout-container v-else>
-      <grid-box :width="3" :startCol="1" :applyBoxStyle="true" class="list-details-box">
-        <h2>{{ listInfo!.name }}</h2>
-        <ul>
-          <li>Created on {{ listInfo!.created_at }}</li>
-          <li>Last updated on {{ listInfo!.updated_at }}</li>
-        </ul>
-        <h3>{{ cocktails.length }} items</h3>
-      </grid-box>
-      <cocktail-box
-        v-for="cocktail in cocktails"
-        :key="cocktail.id"
-        :cocktail="cocktail"
-        :addedToListDate="
-          listInfo!.listItems.find((item: ListItem) => cocktail.id === item.cocktail_id)!.updated_at
-        "
-        :deleteCallback="deleteItemFromList"
-      >
-      </cocktail-box>
-    </layout-container>
+    <div v-if="!isUserLoggedIn">
+      <layout-container>
+        <grid-box :width="6" :startCol="3" :applyBoxStyle="true" class="bar-details-box">
+          <p>Requires an account. Please <a href="#">log in</a>.</p>
+        </grid-box>
+      </layout-container>
+    </div>
+    <div v-else>
+      <div v-if="isLoading">LOADING</div>
+      <layout-container v-else>
+        <grid-box :width="3" :startCol="1" :applyBoxStyle="true" class="list-details-box">
+          <h2>{{ listInfo!.name }}</h2>
+          <ul>
+            <li>Created on {{ listInfo!.created_at }}</li>
+            <li>Last updated on {{ listInfo!.updated_at }}</li>
+          </ul>
+          <h3>{{ cocktails.length }} items</h3>
+        </grid-box>
+        <cocktail-box
+          v-for="cocktail in cocktails"
+          :key="cocktail.id"
+          :cocktail="cocktail"
+          :addedToListDate="
+            listInfo!.listItems.find((item: ListItem) => cocktail.id === item.cocktail_id)!
+              .updated_at
+          "
+          :deleteCallback="deleteItemFromList"
+        >
+        </cocktail-box>
+      </layout-container>
+    </div>
   </div>
 
   <!-- modals -->

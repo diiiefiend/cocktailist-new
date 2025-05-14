@@ -2,6 +2,7 @@
 import { ref, onMounted, type Ref } from 'vue';
 
 import { getCocktailsWithBars, getBars, getLiquorList } from '../api.js';
+import { useAuthStore } from '../stores/auth.js';
 import type { Bar, CocktailBoxItem } from '../models.js';
 
 import ContextMenu from '../components/ContextMenu.vue';
@@ -14,7 +15,7 @@ let isLoading = ref(true);
 let error = ref(null);
 
 // TODO: implement this UX and style disabled button
-let isUserLoggedIn = ref(false);
+let isUserLoggedIn = useAuthStore().isUserLoggedIn();
 let cocktails: Ref<null | Array<CocktailBoxItem>> = ref(null);
 let allBars: Ref<null | Array<Bar>> = ref(null);
 let liquorTypes: Ref<null | String> = ref(null);

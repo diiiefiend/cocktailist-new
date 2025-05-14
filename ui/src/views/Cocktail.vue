@@ -3,6 +3,7 @@ import { onMounted, ref, type Ref } from 'vue';
 
 import type { BarDetails, CocktailDetailItem, List, ReviewItem } from '../models';
 import { getCocktail, getCocktailReviews, getLists } from '../api';
+import { useAuthStore } from '../stores/auth';
 
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
@@ -23,7 +24,7 @@ const props = defineProps<{
 let isLoading = ref(true);
 let error = ref(null);
 
-let isUserLoggedIn = ref(false);
+let isUserLoggedIn = useAuthStore().isUserLoggedIn();
 let cocktail: Ref<null | CocktailDetailItem> = ref(null);
 let bar: Ref<null | BarDetails> = ref(null);
 let lists: Ref<Array<List>> = ref([]);
