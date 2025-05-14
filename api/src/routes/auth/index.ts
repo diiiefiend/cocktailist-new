@@ -4,6 +4,8 @@ import { Strategy } from 'passport-local';
 import crypto from 'crypto';
 import {dbConnect, models} from '../../db';
 
+const CUSTOM_SESSION_COOKIE_NAME = 'cocktailist.activeSession';
+
 const configureAuth = () => {
   // login logic (called from POST /login)
   passport.use('local', new Strategy(
@@ -89,34 +91,14 @@ const createUser = async (params: any) => {
         // this column isn't used anymore
         session_token: 'PLACEHOLDER',
       });
+
+      // TODO: set up a new user with some default lists
       
       return { user: result, error: null};
     } catch (e) {
       // if the model fails validation, it ends up here
       return { user: null, error: e};
     }
-}
-
-// uses the "local" strategy defined in auth.configureAuth
-// expected payload: username, password
-// expected to be chained with createNewSessionWithPassport on success
-// TODO: figure out how to properly convert this to a promise later; currently this isn't used
-const loginUser = (req: Request, res: Response, next: NextFunction) => {
-  console.log('hello');
-  passport.authenticate('local', function(err: any, user: any, info: any, status: any) {
-    console.log('user: ', user);
-    console.log('info: ', info);
-    console.log('status: ', status);
-
-    if (err) { 
-      console.error(err);
-      res.send(err);
-    }
-    
-    if (!user) { res.send('no user found!') }
-
-    next();
-  });
 }
 
 const createNewSessionWithPassport = (req: Request, res: Response, next: NextFunction) => {
@@ -141,7 +123,7 @@ const createNewSessionWithPassport = (req: Request, res: Response, next: NextFun
 
       // set extra cookie that can be parsed by FE JS
       res.cookie(
-        'cocktailist.activeSession',
+        CUSTOM_SESSION_COOKIE_NAME,
         'true',
         {
           httpOnly: false,
@@ -159,6 +141,33 @@ const createNewSessionWithPassport = (req: Request, res: Response, next: NextFun
   });
 }
 
+const logout =  (req: Request, res: Response, next: NextFunction) => {
+  const user = req.user;
+
+  console.log('in logout function');
+  console.log('current user: ', user);
+
+  if (!user) {
+    const errorMessage = 'No user associated with session!';
+    console.error(errorMessage);
+    return next(errorMessage);
+  }
+
+  req.logout(user, (err) => {
+    if (err) { 
+      console.error(err);
+      return next(err);
+    }
+
+    res.clearCookie(CUSTOM_SESSION_COOKIE_NAME);
+
+    res.send({
+      status: 'success',
+      message: 'logged out'
+    });
+  });
+}
+
 const getUser = async (userId: string) => {
   await dbConnect();
   return await models.user.findByPk(userId);
@@ -167,7 +176,7 @@ const getUser = async (userId: string) => {
 export default {
   configureAuth,
   createUser,
-  loginUser,
   createNewSessionWithPassport,
+  logout,
   getUser,
 };

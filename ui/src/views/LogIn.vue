@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue';
 
-import { createAccount, login } from '../api.js';
+import { createAccount, login, logout } from '../api.js';
 import { useAuthStore } from '../stores/auth.js';
 
 import router from '../router/index.js';
@@ -80,6 +80,17 @@ function onCancel() {
 
   router.push('/');
 }
+
+async function onLogout() {
+  try {
+    await logout();
+
+    router.push('/');
+  } catch (e) {
+    // @ts-ignore
+    errors.value.push(e);
+  }
+}
 </script>
 
 <template>
@@ -128,7 +139,7 @@ function onCancel() {
     <context-menu>
       <div class="row-gap-1"></div>
       <div class="span-2 justify-left">
-        <button class="primary">Logout</button>
+        <button class="primary" @click="onLogout">Logout</button>
       </div>
     </context-menu>
     <layout-container>

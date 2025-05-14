@@ -88,6 +88,12 @@ const login = async (loginData: LoginSubmission) => {
   });
 }
 
+const logout = async () => {
+  return makeCall(`${API_HOST}/logout`, {
+    method: 'POST',
+  });
+}
+
 const createAccount = async (createAccountData: CreateAccountSubmission) => {
   return makeCall(`${API_HOST}/users`, {
     method: 'POST',
@@ -126,5 +132,6 @@ export {
   getLists,
   getList,
   login,
+  logout,
   createAccount,
 };

@@ -304,16 +304,7 @@ app.route('/users')
       return next(error || 'error'); 
     }
 
-    req.login(user, (err) => {
-      if (err) { 
-        console.error(err);
-        return next(err);
-      }
-
-      res.send({
-        status: 'success',
-      });
-    });
+    auth.createNewSessionWithPassport(req, res, next);
   });
 
 // sessions
@@ -324,18 +315,7 @@ app.route('/login')
 
 app.route('/logout')
   .post((req: Request, res: Response, next: NextFunction) => {
-    // currently this just seems to make another cookie???
-    // TODO: validate this removes the cocktailist.sid cookie and manually remove the cocktailist.activeSession cookie
-    req.logout((err) => {
-      if (err) { 
-        console.error(err);
-        return next(err);
-      }
-      res.send({
-        status: 'success',
-        message: 'logged out'
-      });
-    });
+    auth.logout(req, res, next);
   });
 
 app.listen(port, () => {
