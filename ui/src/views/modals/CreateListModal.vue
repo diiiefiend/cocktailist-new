@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+import { checkRequiredFields } from '../../utils';
+import { addList } from '../../api';
 import SiteModal from '../../components/SiteModal.vue';
 
 const props = defineProps<{
@@ -9,16 +11,37 @@ const props = defineProps<{
 
 const emit = defineEmits(['close']);
 
-let listName = ref(null);
+let listName: Ref<string | null> = ref(null);
 let isSubmitting = ref(false);
+let errors: Ref<string[]> = ref([]);
 
-const onSubmit = () => {
+const onSubmit = async () => {
+  errors.value = [];
   isSubmitting.value = true;
-  // TODO: validate and submit review
-  // and share feedback on submission success/failure
-  // reset state if success
-  console.log(listName.value);
-  listName.value = null;
+
+  // validations
+  console.log('hello ', listName.value);
+  // make an artificial Payload ref to make "checkRequiredFields" happy
+  const payload = {
+    value: { name: listName.value },
+  };
+  const requiredFields = ['name'];
+  // @ts-ignore
+  errors.value = errors.value.concat(checkRequiredFields(requiredFields, payload));
+
+  console.log(errors);
+
+  // if no errors, continue to try to submit
+  if (!errors.value.length) {
+    try {
+      // @ts-ignore
+      await addList({ ...payload.value });
+    } catch (e) {
+      // @ts-ignore
+      errors.value.push(e);
+    }
+  }
+
   isSubmitting.value = false;
 };
 </script>

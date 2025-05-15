@@ -26,11 +26,6 @@ app.use(cors({
   credentials: true,
 }));
 
-// app.use(cookieParser(process.env.COOKIE_PARSER_SECRET, {
-//   //@ts-ignore
-//   sameSite: 'strict',
-// }));
-
 app.use(bodyParser.json());
 
 // configure session stuff on app
@@ -52,11 +47,19 @@ const expressSessionSettings = {
 
 sessionStore.sync();
 
-// validate this later
+let cookieParserOptions = {};
+
+// TODO: validate this later
 if (app.get('env') === 'production') {
   app.set('trust proxy', 1) // trust first proxy
   expressSessionSettings.cookie.secure = true // serve secure cookies
+  cookieParserOptions = {
+    //   //@ts-ignore
+      sameSite: 'strict',
+  };
 }
+
+app.use(cookieParser(process.env.COOKIE_PARSER_SECRET, cookieParserOptions));
 
 app.use(session(expressSessionSettings));
 

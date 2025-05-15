@@ -68,7 +68,7 @@ const addList = async (listData: ListData, userId: number) => {
     throw new Error('list with that name already exists!');
   }
 
-  await models.list.create({
+  return await models.list.create({
     name,
     user_id: userId,
   });

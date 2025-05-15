@@ -79,6 +79,13 @@ const getList = async (id: string) => {
   });
 }
 
+const addList = async (listData: { name: string }) => {
+  return makeCall(`${API_HOST}/lists`, {
+    method: 'POST',
+    body: JSON.stringify(listData),
+  });
+};
+
 // user auth routes
 
 const login = async (loginData: LoginSubmission) => {
@@ -102,13 +109,23 @@ const createAccount = async (createAccountData: CreateAccountSubmission) => {
 }
 
 const makeCall = async (endpoint: string, options: any) => {
+  const csrfTokenMatcher = document.cookie.match(new RegExp('(^| )' + 'cocktailist.token' + '=([^;]+)'));
+  let csrfToken = '';
+  if (csrfTokenMatcher) {
+    csrfToken = csrfTokenMatcher[2];
+  }
+
+  const additionalHeaders = csrfTokenMatcher ? { "X-CSRF-Token": csrfToken } : {};
+
   const decoratedOptions = {
     headers: {
       "Content-Type": "application/json",
+      ...additionalHeaders,
     },
     credentials: 'include',
     ...options,
   };
+
   const response = await fetch(endpoint, decoratedOptions);
 
   if (!response.ok) {
@@ -131,6 +148,7 @@ export {
   getBarCocktails,
   getLists,
   getList,
+  addList,
   login,
   logout,
   createAccount,

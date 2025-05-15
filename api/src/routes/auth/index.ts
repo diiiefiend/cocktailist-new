@@ -2,7 +2,9 @@ import { NextFunction, Request, Response } from 'express';
 import passport from 'passport';
 import { Strategy } from 'passport-local';
 import crypto from 'crypto';
-import {dbConnect, models} from '../../db';
+
+import { dbConnect, models } from '../../db';
+import { CSRF_TOKEN_COOKIE_NAME, generateCSRFToken } from '../../middleware';
 
 const CUSTOM_SESSION_COOKIE_NAME = 'cocktailist.activeSession';
 
@@ -117,6 +119,9 @@ const doPostLoginActions = (req: Request, res: Response, next: NextFunction) => 
     }
   );
 
+  // set csrf token
+  generateCSRFToken(req, res);
+
   // @ts-ignore
   const passportObj = req.session.passport;
   console.log('the current passport object:');
@@ -153,6 +158,7 @@ const logout =  (req: Request, res: Response, next: NextFunction) => {
     }
 
     res.clearCookie(CUSTOM_SESSION_COOKIE_NAME);
+    res.clearCookie(CSRF_TOKEN_COOKIE_NAME);
 
     res.send({
       status: 'success',

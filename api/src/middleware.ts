@@ -2,28 +2,39 @@ import { NextFunction, Request, Response } from 'express';
 // import cookieParser from 'cookie-parser';
 import crypto from 'crypto';
 
+const CSRF_TOKEN_COOKIE_NAME = 'cocktailist.token';
+
 interface RequestWithCsrf extends Request {
   csrfToken?: String;
 }
 
-// generate CSRF token middleware
-const generateCSRFToken = (req: RequestWithCsrf, res: Response, next: NextFunction) => {
+// generate CSRF token
+const generateCSRFToken = (req: RequestWithCsrf, res: Response, next?: NextFunction) => {
+  // expected to be used after login
   const csrfToken = crypto.randomBytes(16).toString('hex');
   console.log(csrfToken)
 
-  res.cookie('mycsrfToken', csrfToken);
-  req.csrfToken = csrfToken;
+  res.cookie(CSRF_TOKEN_COOKIE_NAME, csrfToken,
+    {
+      httpOnly: false,
+      maxAge: req.session.cookie.maxAge,
+    }
+  );
 
-  next();
+  if (next) {
+    next();
+  }
  }
  
- // validate CSRF token middleware
- // expected to be used with a route where the request has a body (eg a PUT/POST)
+ // validate CSRF token
  const validateCSRFToken = (req: Request, res: Response, next: NextFunction) => {
-  const csrfToken = req.cookies.mycsrfToken;
-  if (req.body?.csrfToken === csrfToken) {
+  const csrfToken = req.cookies[CSRF_TOKEN_COOKIE_NAME];
+
+  if (req.header('X-CSRF-Token') === csrfToken) {
+    console.log('matched!');
     next();
   } else {
+    console.log('not matched');
     res.status(403).send('Invalid CSRF token');
   }
  }
@@ -39,6 +50,7 @@ const generateCSRFToken = (req: RequestWithCsrf, res: Response, next: NextFuncti
 };
 
  export {
+  CSRF_TOKEN_COOKIE_NAME,
   generateCSRFToken,
   validateCSRFToken,
   isLoggedIn,

@@ -15,7 +15,7 @@ import ScatterChart from '../components/ScatterChart.vue';
 import SearchBox from '../components/SearchBox.vue';
 
 import ReviewModal from './modals/ReviewModal.vue';
-import ListsModal from './modals/ListsModal.vue';
+import ListsModal from './modals/AddEditCocktailToListsModal2.vue';
 
 const props = defineProps<{
   id: string;

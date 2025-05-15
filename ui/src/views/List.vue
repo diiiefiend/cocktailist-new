@@ -12,7 +12,7 @@ import GridBox from '../components/GridBox.vue';
 import CocktailBox from '../components/CocktailBox.vue';
 import SearchBox from '../components/SearchBox.vue';
 
-import AddEditListModal from './modals/AddEditListModal.vue';
+import AddEditListModal from './modals/CreateListModal.vue';
 
 // unfort "withDefaults" doesn't seem to work with route params,
 // so we do some bespoke redirection below
@@ -21,7 +21,7 @@ const props = defineProps<{
 }>();
 
 let isLoading = ref(true);
-let error = ref(null);
+let errors: Ref<string[]> = ref([]);
 
 let userLists: Ref<Array<List>> = ref([]);
 let listInfo: Ref<null | ListInfo> = ref(null);
@@ -31,7 +31,7 @@ let showCreateListModal = ref(false);
 let isUserLoggedIn = useAuthStore().checkIsUserLoggedIn();
 
 async function fetchData() {
-  error.value = null;
+  errors.value = [];
   isLoading.value = true;
 
   try {
@@ -50,7 +50,7 @@ async function fetchData() {
       return item.listedCocktail;
     });
   } catch (err: any) {
-    error.value = err.toString();
+    errors.value.push = err.toString();
   } finally {
     isLoading.value = false;
   }
