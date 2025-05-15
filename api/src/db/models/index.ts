@@ -19,11 +19,11 @@ const initModelsAndAssociations = (sequelize: Sequelize) => {
   // cocktail <> bar
   models.cocktail.belongsTo(models.bar, {
     foreignKey: 'bar_id',
-    as: 'bar',
+    as: 'bar',  // this is the name of the RELATIONSHIP, not the individual item!
   });
   models.bar.hasMany(models.cocktail, {
     foreignKey: 'bar_id',
-    as: 'cocktail',
+    as: 'cocktails',
   });
 
   // listitems <> list
@@ -33,7 +33,10 @@ const initModelsAndAssociations = (sequelize: Sequelize) => {
   });
   models.list.hasMany(models.listitem, {
     foreignKey: 'list_id',
-    as: 'listitem',
+    // the below is supposed to work but it doesn't :/
+    // onDelete: 'CASCADE',  // delete associated listitems when list is deleted
+    // hooks: true,
+    as: 'listitems',
   });
 
   // listitem <> cocktail
@@ -49,7 +52,7 @@ const initModelsAndAssociations = (sequelize: Sequelize) => {
   });
   models.user.hasMany(models.list, {
     foreignKey: 'user_id',
-    as: 'list',
+    as: 'lists',
   });
 
   // ratings <> cocktail
@@ -59,7 +62,7 @@ const initModelsAndAssociations = (sequelize: Sequelize) => {
   });
   models.cocktail.hasMany(models.rating, {
     foreignKey: 'cocktail_id',
-    as: 'review',
+    as: 'reviews',
   });
 
   // ratings <> user
@@ -69,7 +72,7 @@ const initModelsAndAssociations = (sequelize: Sequelize) => {
   });
   models.user.hasMany(models.rating, {
     foreignKey: 'user_id',
-    as: 'review',
+    as: 'reviews',
   });
 
   return models;

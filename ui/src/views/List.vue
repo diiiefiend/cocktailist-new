@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue';
 
-import type { CocktailDetailItem, List, ListInfo, ListItem } from '../models';
-import { getList, getLists } from '../api';
+import type { CocktailBoxItem, CocktailDetailItem, List, ListInfo, ListItem } from '../models';
+import { deleteList, getList, getLists } from '../api';
 import { useAuthStore } from '../stores/auth';
 
 import ContextMenu from '../components/ContextMenu.vue';
@@ -25,32 +25,29 @@ const authStore = useAuthStore();
 let isLoading = ref(true);
 let errors: Ref<string[]> = ref([]);
 
-let currentListId: Ref<string | null> = ref(null);
+let currentList: Ref<List | undefined> = ref(undefined);
 let userLists: Ref<Array<List>> = ref([]);
 let listInfo: Ref<ListInfo | null> = ref(null);
 let cocktails: Ref<Array<CocktailDetailItem>> = ref([]);
-let currentFocusedItemId: Ref<number | null> = ref(null);
+let currentFocusedItem: Ref<CocktailBoxItem | null> = ref(null);
 
 let showCreateListModal = ref(false);
 let showDeleteItemConfirmationModal = ref(false);
 let showDeleteListConfirmationModal = ref(false);
 let isUserLoggedIn = authStore.checkIsUserLoggedIn();
 
-async function fetchData() {
+async function fetchData(activeListId?: string) {
   errors.value = [];
   isLoading.value = true;
 
   try {
     userLists.value = await getLists();
 
-    let listId: string;
-    if (props.id === '' || props.id === undefined) {
-      listId = '' + userLists.value[0].id;
+    if (!activeListId) {
+      currentList.value = userLists.value[0];
     } else {
-      listId = props.id;
+      currentList.value = userLists.value.find((list) => list.id === +activeListId);
     }
-
-    currentListId.value = listId;
 
     await getAndSetListData();
   } catch (err: any) {
@@ -62,31 +59,41 @@ async function fetchData() {
 
 async function getAndSetListData() {
   // maybe update route to reflect list id?
-  listInfo.value = await getList(currentListId.value!);
+  listInfo.value = await getList(currentList.value!.id);
   cocktails.value = listInfo.value!.listItems.map((item: ListItem) => {
     return item.listedCocktail;
   });
 }
 
-const onClickDeleteItem = (cocktailId: number) => {
+const onCreateCallback = (newListId: number) => {
+  fetchData('' + newListId);
+};
+
+const onClickDeleteItem = (cocktail: CocktailBoxItem) => {
   // TODO: finish this
-  console.log(cocktailId);
-  currentFocusedItemId.value = cocktailId;
+  console.log(cocktail);
+  currentFocusedItem.value = cocktail;
   showDeleteItemConfirmationModal.value = true;
 };
 
 const deleteItemFromList = () => {
   // TODO: finish this
-  console.log(currentFocusedItemId.value);
+  console.log(currentFocusedItem.value);
 };
 
-const deleteList = () => {
+const submitDeleteList = async () => {
   // TODO: finish this
-  console.log(currentListId);
+  console.log(currentList.value);
+
+  await deleteList(currentList.value!.id);
+
+  showDeleteListConfirmationModal.value = false;
+
+  fetchData();
 };
 
 onMounted(async () => {
-  await fetchData();
+  await fetchData(props.id);
 });
 </script>
 
@@ -104,8 +111,8 @@ onMounted(async () => {
         </button>
       </div>
       <div class="span-2">
-        <select v-if="userLists.length" v-model="currentListId" @change="getAndSetListData">
-          <option v-for="list in userLists" :key="list.id" :value="list.id">{{ list.name }}</option>
+        <select v-if="userLists.length" v-model="currentList" @change="getAndSetListData">
+          <option v-for="list in userLists" :key="list.id" :value="list">{{ list.name }}</option>
         </select>
       </div>
       <div class="span-1">
@@ -160,6 +167,7 @@ onMounted(async () => {
     <add-edit-list-modal
       v-if="showCreateListModal"
       :userId="+authStore.userId"
+      :on-submit-callback="onCreateCallback"
       @close="showCreateListModal = false"
     />
   </transition>
@@ -168,7 +176,7 @@ onMounted(async () => {
     <confirmation-modal
       v-if="showDeleteItemConfirmationModal"
       :title="'Delete Item'"
-      :modal-text="`Are you sure you want to remove ${currentFocusedItemId} from the list?`"
+      :modal-text="`Are you sure you want to remove '${currentFocusedItem?.name}' from the list?`"
       :submit-text="'Confirm'"
       :submit-fn="deleteItemFromList"
       @close="showDeleteItemConfirmationModal = false"
@@ -179,9 +187,9 @@ onMounted(async () => {
     <confirmation-modal
       v-if="showDeleteListConfirmationModal"
       :title="'Delete List'"
-      :modal-text="`Are you sure you want to delete the list ${currentListId}?`"
+      :modal-text="`Are you sure you want to delete the list '${currentList?.name}'?`"
       :submit-text="'Confirm'"
-      :submit-fn="deleteList"
+      :submit-fn="submitDeleteList"
       @close="showDeleteListConfirmationModal = false"
     />
   </transition>

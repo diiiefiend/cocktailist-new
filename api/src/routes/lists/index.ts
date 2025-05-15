@@ -1,5 +1,23 @@
 import { dbConnect, models } from '../../db';
 
+/*
+  // @ts-ignore
+  console.log(Object.keys(list.__proto__));
+
+[
+  '_customGetters',    '_customSetters',
+  'validators',        '_hasCustomGetters',
+  '_hasCustomSetters', 'rawAttributes',
+  '_isAttribute',      'getListitems',
+  'countListitems',    'hasListitem',
+  'hasListitems',      'setListitems',
+  'addListitem',       'addListitems',
+  'removeListitem',    'removeListitems',
+  'createListitem',    'getOwner',
+  'setOwner',          'createOwner'
+]
+*/
+
 interface ListData {
   name: string;
 }
@@ -31,11 +49,9 @@ const getListWithCocktails = async (listId: string, userId: number) => {
   if (!list) {
     throw new Error('no list associated with logged in user');
   };
-  
-  const listItems = await models.listitem.findAll({
-    where: {
-      list_id: listId,
-    },
+
+  // @ts-ignore
+    const listItems = await list.getListitems({
     include: [{
       association: 'listedCocktail',
       required: true
@@ -79,7 +95,7 @@ const updateList = async (listId: string, listData: ListData, userId: number) =>
 
   const { name } = listData;
 
-  await models.list.update({
+  return await models.list.update({
     name,
     updated_at: Date.now(),
     }, {
@@ -104,11 +120,22 @@ const deleteList = async (listId: string, userId: number) => {
     throw new Error('not a list associated with the logged in user');
   }
 
-  // https://sequelize.org/docs/v6/core-concepts/assocs/#foohasmanybar  
+  // doesn't work properly bc "on delete cascade" isn't working
   // @ts-ignore
-  await list.removeListitems();
+  // await list.removeListitems();
+
+  // ... so we'll just do it manually
+  const removedItemsCount = await models.listitem.destroy({
+    where: {
+      list_id: listId,
+    }
+  });
+
+  console.log(`removed ${removedItemsCount} listitems`);
 
   await list.destroy();
+
+  return { status: 'success' };
 }
 
 // list item functions
@@ -130,7 +157,7 @@ const addListItem = async (itemData: ListItemData, userId: number) => {
     throw new Error('not a list associated with the logged in user');
   }
 
-  await models.listitem.create({
+  const createdItem = await models.listitem.create({
     cocktail_id: cocktailId,
     list_id: listId,
   });
@@ -138,6 +165,8 @@ const addListItem = async (itemData: ListItemData, userId: number) => {
   await list.update({
     updated_at: Date.now(),
   });
+
+  return createdItem;
 }
 
 const deleteListItem = async (itemId: string, userId: number) => {
@@ -170,6 +199,8 @@ const deleteListItem = async (itemId: string, userId: number) => {
   await list.update({
     updated_at: Date.now(),
   });
+
+  return { status: 'success' };
 }
 
 export default {

@@ -7,6 +7,7 @@ import SiteModal from '../../components/SiteModal.vue';
 
 const props = defineProps<{
   userId: number;
+  onSubmitCallback?: any;
 }>();
 
 const emit = defineEmits(['close']);
@@ -35,7 +36,10 @@ const onSubmit = async () => {
   if (!errors.value.length) {
     try {
       // @ts-ignore
-      await addList({ ...payload.value });
+      const newList = await addList({ ...payload.value });
+
+      props.onSubmitCallback(newList.id);
+      emit('close');
     } catch (e) {
       // @ts-ignore
       errors.value.push(e);

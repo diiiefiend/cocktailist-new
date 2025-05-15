@@ -338,5 +338,6 @@ app.listen(port, () => {
 
 // generic error handler
 const errorHandler = (error: any, res: Response) => {
-  res.status(403).send('not authorized');
+  console.error(error);
+  res.status(403).send(error);
 }

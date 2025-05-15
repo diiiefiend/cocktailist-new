@@ -73,7 +73,7 @@ const getLists = async () => {
   });
 }
 
-const getList = async (id: string) => {
+const getList = async (id: number) => {
   return makeCall(`${API_HOST}/lists/${id}`, {
     method: 'GET',
   });
@@ -85,6 +85,12 @@ const addList = async (listData: { name: string }) => {
     body: JSON.stringify(listData),
   });
 };
+
+const deleteList = async (id: number) => {
+  return makeCall(`${API_HOST}/lists/${id}`, {
+    method: 'DELETE',
+  });
+}
 
 // user auth routes
 
@@ -149,6 +155,7 @@ export {
   getLists,
   getList,
   addList,
+  deleteList,
   login,
   logout,
   createAccount,

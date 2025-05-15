@@ -7,7 +7,7 @@ const props = withDefaults(
   defineProps<{
     cocktail: CocktailBoxItem;
     addedToListDate?: string;
-    deleteCallback?: (id: number) => void;
+    deleteCallback?: (cocktail: CocktailBoxItem) => void;
   }>(),
   {},
 );
@@ -33,11 +33,7 @@ const hovered = ref(false);
         <li class="label">{{ props.cocktail.liquor }}</li>
       </ul>
     </router-link>
-    <button
-      v-if="!!deleteCallback"
-      class="delete-button"
-      @click.stop="deleteCallback!(cocktail.id)"
-    >
+    <button v-if="!!deleteCallback" class="delete-button" @click.stop="deleteCallback!(cocktail)">
       <trash-icon />
     </button>
   </div>

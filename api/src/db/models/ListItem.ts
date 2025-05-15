@@ -20,7 +20,7 @@ const init = (sequelize: Sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         // references: {
-        //   model: sequelize.models.User,
+        //   model: sequelize.models.List,
         //   key: 'id',
         // },
       },

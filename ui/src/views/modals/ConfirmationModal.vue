@@ -44,6 +44,12 @@ const onSubmit = async () => {
       {{ props.modalText }}
     </template>
     <template #footer>
+      <div v-if="errors.length" class="form-error">
+        Please see the following error(s):
+        <ul>
+          <li v-for="error in errors" :key="error">{{ error }}</li>
+        </ul>
+      </div>
       <button type="submit" class="primary" @click.stop="onSubmit" :disabled="isSubmitting">
         {{ props.submitText }}
       </button>
