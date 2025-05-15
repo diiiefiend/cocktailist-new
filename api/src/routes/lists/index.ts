@@ -141,21 +141,7 @@ const deleteList = async (listId: string, userId: number) => {
 const getListInfoForCocktail = async (cocktailId: string, userId: number) => {
   await dbConnect();
 
-  const userLists = await models.list.findAll({
-    where: {
-      user_id: userId,
-    }
-  });
-
-  // @ts-ignore
-  const userListIds = userLists.map(list => list.id);
-
-  const listItems = await models.listitem.findAll({
-    where: {
-      cocktail_id: cocktailId,
-      list_id: userListIds,
-    }
-  });
+  const {userLists, listItems} = await getExistingListItemsForOwner(+cocktailId, userId);
 
   // we want the list objects
   // @ts-ignore
@@ -167,7 +153,22 @@ const updateListItems = async (listsData: AddCocktailToListsData, cocktailId: st
 
   const { listIds } = listsData;
 
-  const result = await Promise.all(listIds.map(async (listId) => {
+  const {userLists, listItems} = await getExistingListItemsForOwner(+cocktailId, userId);
+
+  // @ts-ignore
+  const existingListIds = listItems.map(existingItem => existingItem.list_id);
+
+  console.log('existingListIds: ', existingListIds);
+  console.log('newListIds: ', listIds);
+
+  const idsToDelete = existingListIds.filter(id => !listIds.includes(id));
+  const idsToAdd = listIds.filter(id => !existingListIds.includes(id));
+
+
+  console.log('ids to delete: ', idsToDelete);
+  console.log('ids to add: ', idsToAdd);
+
+  const createPromises = idsToAdd.map(async (listId) => {
     // confirm they don't already have a matching listitem
     const existingListitem = await models.listitem.findOne({
       where: {
@@ -202,9 +203,48 @@ const updateListItems = async (listsData: AddCocktailToListsData, cocktailId: st
     });
 
     return createdItem;
-  }));
+  });
 
-  // TODO: needs to handle destroy too--find listitems associated with the cocktail that aren't in the listsData and remove them
+  const deletePromises = idsToDelete.map(async (listId) => {
+    // confirm they DO already have a matching listitem
+    const existingListitem = await models.listitem.findOne({
+      where: {
+        list_id: listId,
+        cocktail_id: cocktailId,
+      }
+    });
+
+    if (!existingListitem) {
+      return;
+    }
+
+    // confirm the user is associated with the list
+    const list = await models.list.findOne({
+      where: {
+        id: listId,
+        user_id: userId,
+      }
+    });
+
+    if (!list) {
+      return;
+    }
+
+    await existingListitem.destroy();
+
+    await list.update({
+      updated_at: Date.now(),
+    });
+
+    return { deleteResult: 'success' };
+  });
+
+  const allPromises: Promise<any>[] = [
+    ...createPromises,
+    ...deletePromises,
+  ];
+
+  const result = await Promise.all(allPromises);
 
   return result;
 }
@@ -241,6 +281,26 @@ const deleteListItem = async (itemId: string, userId: number) => {
   });
 
   return { status: 'success' };
+}
+
+const getExistingListItemsForOwner = async (cocktailId: number, userId: number) => {
+  const userLists = await models.list.findAll({
+    where: {
+      user_id: userId,
+    }
+  });
+
+  // @ts-ignore
+  const userListIds = userLists.map(list => list.id);
+
+  const listItems = await models.listitem.findAll({
+    where: {
+      cocktail_id: cocktailId,
+      list_id: userListIds,
+    }
+  });
+
+  return {userLists, listItems}; 
 }
 
 export default {

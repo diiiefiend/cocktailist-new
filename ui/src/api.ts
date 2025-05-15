@@ -105,6 +105,12 @@ const deleteList = async (id: number) => {
   });
 }
 
+const deleteItemFromList = async (id: number) => {
+  return makeCall(`${API_HOST}/listitems/${id}`, {
+    method: 'DELETE',
+  });
+}
+
 // user auth routes
 
 const login = async (loginData: LoginSubmission) => {
@@ -170,6 +176,7 @@ export {
   getList,
   addList,
   deleteList,
+  deleteItemFromList,
   login,
   logout,
   createAccount,

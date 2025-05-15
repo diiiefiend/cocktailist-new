@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type CocktailBoxItem } from '../models';
+import { type CocktailBoxItem, type ListItem } from '../models';
 import TrashIcon from './TrashIcon.vue';
 import { ref } from 'vue';
 
@@ -7,7 +7,8 @@ const props = withDefaults(
   defineProps<{
     cocktail: CocktailBoxItem;
     addedToListDate?: string;
-    deleteCallback?: (cocktail: CocktailBoxItem) => void;
+    listItem?: ListItem;
+    deleteListItemCallback?: (listItem: ListItem) => void;
   }>(),
   {},
 );
@@ -29,11 +30,17 @@ const hovered = ref(false);
         <li>
           {{ props.cocktail.avg_rating }}
         </li>
-        <li v-if="!!addedToListDate" class="list-info">Added on {{ props.addedToListDate }}</li>
+        <li v-if="!!props.addedToListDate" class="list-info">
+          Added on {{ props.addedToListDate }}
+        </li>
         <li class="label">{{ props.cocktail.liquor }}</li>
       </ul>
     </router-link>
-    <button v-if="!!deleteCallback" class="delete-button" @click.stop="deleteCallback!(cocktail)">
+    <button
+      v-if="!!props.deleteListItemCallback && props.listItem"
+      class="delete-button"
+      @click.stop="props.deleteListItemCallback(props.listItem)"
+    >
       <trash-icon />
     </button>
   </div>

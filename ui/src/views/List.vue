@@ -2,7 +2,7 @@
 import { onMounted, ref, type Ref } from 'vue';
 
 import type { CocktailBoxItem, CocktailDetailItem, List, ListInfo, ListItem } from '../models';
-import { deleteList, getList, getLists } from '../api';
+import { deleteItemFromList, deleteList, getList, getLists } from '../api';
 import { useAuthStore } from '../stores/auth';
 
 import ContextMenu from '../components/ContextMenu.vue';
@@ -28,8 +28,7 @@ let errors: Ref<string[]> = ref([]);
 let currentList: Ref<List | undefined> = ref(undefined);
 let userLists: Ref<Array<List>> = ref([]);
 let listInfo: Ref<ListInfo | null> = ref(null);
-let cocktails: Ref<Array<CocktailDetailItem>> = ref([]);
-let currentFocusedItem: Ref<CocktailBoxItem | null> = ref(null);
+let currentFocusedItem: Ref<ListItem | null> = ref(null);
 
 let showCreateListModal = ref(false);
 let showDeleteItemConfirmationModal = ref(false);
@@ -60,24 +59,26 @@ async function fetchData(activeListId?: string) {
 async function getAndSetListData() {
   // maybe update route to reflect list id?
   listInfo.value = await getList(currentList.value!.id);
-  cocktails.value = listInfo.value!.listItems.map((item: ListItem) => {
-    return item.listedCocktail;
-  });
 }
 
 const onCreateCallback = (newListId: number) => {
   fetchData('' + newListId);
 };
 
-const onClickDeleteItem = (cocktail: CocktailBoxItem) => {
-  // TODO: finish this
-  currentFocusedItem.value = cocktail;
+const onClickDeleteItem = (listItem: ListItem) => {
+  currentFocusedItem.value = listItem;
   showDeleteItemConfirmationModal.value = true;
 };
 
-const deleteItemFromList = () => {
+const submitDeleteItem = async () => {
   // TODO: finish this
   console.log(currentFocusedItem.value);
+
+  await deleteItemFromList(currentFocusedItem.value!.id);
+
+  showDeleteItemConfirmationModal.value = false;
+
+  getAndSetListData();
 };
 
 const submitDeleteList = async () => {
@@ -140,17 +141,15 @@ onMounted(async () => {
             <li>Created on {{ listInfo!.created_at }}</li>
             <li>Last updated on {{ listInfo!.updated_at }}</li>
           </ul>
-          <h3>{{ cocktails.length }} items</h3>
+          <h3>{{ listInfo!.listItems.length }} items</h3>
         </grid-box>
         <cocktail-box
-          v-for="cocktail in cocktails"
-          :key="cocktail.id"
-          :cocktail="cocktail"
-          :addedToListDate="
-            listInfo!.listItems.find((item: ListItem) => cocktail.id === item.cocktail_id)!
-              .updated_at
-          "
-          :deleteCallback="onClickDeleteItem"
+          v-for="item in listInfo!.listItems"
+          :key="item.listedCocktail.id"
+          :cocktail="item.listedCocktail"
+          :addedToListDate="item.updated_at"
+          :list-item="item"
+          :deleteListItemCallback="onClickDeleteItem"
         >
         </cocktail-box>
       </layout-container>
@@ -172,9 +171,9 @@ onMounted(async () => {
     <confirmation-modal
       v-if="showDeleteItemConfirmationModal"
       :title="'Delete Item'"
-      :modal-text="`Are you sure you want to remove '${currentFocusedItem?.name}' from the list?`"
+      :modal-text="`Are you sure you want to remove '${currentFocusedItem?.listedCocktail.name}' from the list?`"
       :submit-text="'Confirm'"
-      :submit-fn="deleteItemFromList"
+      :submit-fn="submitDeleteItem"
       @close="showDeleteItemConfirmationModal = false"
     />
   </transition>
