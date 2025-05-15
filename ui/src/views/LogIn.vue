@@ -69,6 +69,7 @@ async function onSubmit() {
       authStore.$patch((state) => {
         state.isUserLoggedIn = true;
         state.username = response.user.username;
+        state.userId = response.user.userId;
       });
 
       router.push('/lists');

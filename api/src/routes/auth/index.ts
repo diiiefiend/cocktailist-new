@@ -109,19 +109,6 @@ const createUser = async (params: any) => {
 const doPostLoginActions = (req: Request, res: Response, next: NextFunction) => {
   console.log('hello!');
 
-  // set extra cookie that can be parsed by FE JS
-  res.cookie(
-    CUSTOM_SESSION_COOKIE_NAME,
-    'true',
-    {
-      httpOnly: false,
-      maxAge: req.session.cookie.maxAge,
-    }
-  );
-
-  // set csrf token
-  generateCSRFToken(req, res);
-
   // @ts-ignore
   const passportObj = req.session.passport;
   console.log('the current passport object:');
@@ -130,6 +117,19 @@ const doPostLoginActions = (req: Request, res: Response, next: NextFunction) => 
   if (!passportObj) {
     throw new Error('no user attached!');
   }
+  
+  // set extra cookie that can be parsed by FE JS
+  res.cookie(
+    CUSTOM_SESSION_COOKIE_NAME,
+    `username:${passportObj.user.username};id:${passportObj.user.id}`,
+    {
+      httpOnly: false,
+      maxAge: req.session.cookie.maxAge,
+    }
+  );
+
+  // set csrf token
+  generateCSRFToken(req, res);
 
   const response = {
     status: 'success',
