@@ -71,7 +71,6 @@ const onCreateCallback = (newListId: number) => {
 
 const onClickDeleteItem = (cocktail: CocktailBoxItem) => {
   // TODO: finish this
-  console.log(cocktail);
   currentFocusedItem.value = cocktail;
   showDeleteItemConfirmationModal.value = true;
 };
@@ -82,9 +81,6 @@ const deleteItemFromList = () => {
 };
 
 const submitDeleteList = async () => {
-  // TODO: finish this
-  console.log(currentList.value);
-
   await deleteList(currentList.value!.id);
 
   showDeleteListConfirmationModal.value = false;

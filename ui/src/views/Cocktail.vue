@@ -2,7 +2,7 @@
 import { onMounted, ref, type Ref } from 'vue';
 
 import type { BarDetails, CocktailDetailItem, List, ReviewItem } from '../models';
-import { getCocktail, getCocktailReviews, getLists } from '../api';
+import { getCocktail, getCocktailReviews, getListItemsForCocktail, getLists } from '../api';
 import { useAuthStore } from '../stores/auth';
 
 import ContextMenu from '../components/ContextMenu.vue';
@@ -15,16 +15,18 @@ import ScatterChart from '../components/ScatterChart.vue';
 import SearchBox from '../components/SearchBox.vue';
 
 import ReviewModal from './modals/ReviewModal.vue';
-import ListsModal from './modals/AddEditCocktailToListsModal2.vue';
+import ListsModal from './modals/AddEditCocktailToListsModal.vue';
 
 const props = defineProps<{
   id: string;
 }>();
 
+const authStore = useAuthStore();
+
 let isLoading = ref(true);
 let error = ref(null);
 
-let isUserLoggedIn = useAuthStore().checkIsUserLoggedIn();
+let isUserLoggedIn = authStore.checkIsUserLoggedIn();
 let cocktail: Ref<null | CocktailDetailItem> = ref(null);
 let bar: Ref<null | BarDetails> = ref(null);
 let lists: Ref<Array<List>> = ref([]);
@@ -46,7 +48,7 @@ async function fetchData() {
     cocktail.value = await getCocktail(props.id);
     bar.value = cocktail.value!.bar;
     lists.value = await getLists();
-    selectedLists.value = lists.value.length ? [lists.value![0]] : [];
+    selectedLists.value = await getListItemsForCocktail(props.id);
 
     reviews.value = await getCocktailReviews(props.id);
     scatterChartData.value = {
@@ -60,6 +62,10 @@ async function fetchData() {
   }
 }
 
+function selectedListsSubmitted(updatedSelectedLists: List[]) {
+  selectedLists.value = updatedSelectedLists;
+}
+
 onMounted(async () => {
   await fetchData();
 });
@@ -70,7 +76,6 @@ onMounted(async () => {
     <context-menu>
       <div class="row-gap-1"></div>
       <div class="span-3 justify-left">
-        <!-- TODO: if user is not logged in, these 2 buttons should be disabled (with a tooltip?) -->
         <!-- TODO: if a review exists, then this should say "edit review" -->
         <button class="primary" @click.stop="showReviewModal = true" :disabled="!isUserLoggedIn">
           Add Review
@@ -80,14 +85,17 @@ onMounted(async () => {
         </button>
       </div>
       <div class="span-2">
-        Listed in:
-        <router-link
-          v-for="list in selectedLists"
-          :to="{ name: 'List', params: { id: list.id } }"
-          :key="list.id"
-        >
-          {{ list.name }}
-        </router-link>
+        <span v-if="isUserLoggedIn">
+          Listed in:
+          <router-link
+            class="selected-list-item"
+            v-for="list in selectedLists"
+            :to="{ name: 'List', params: { id: list.id } }"
+            :key="list.id"
+          >
+            {{ list.name }}
+          </router-link>
+        </span>
       </div>
       <div class="span-1 justify-right">
         <!-- TODO: if user is not logged in, this button should be disabled (with a tooltip?) -->
@@ -160,7 +168,7 @@ onMounted(async () => {
       v-if="showReviewModal"
       :cocktailId="cocktail!.id"
       :cocktailName="cocktail!.name"
-      :userId="2"
+      :userId="+authStore.userId"
       @close="showReviewModal = false"
     />
   </transition>
@@ -169,10 +177,16 @@ onMounted(async () => {
       v-if="showListsModal"
       :cocktailId="cocktail!.id"
       :cocktailName="cocktail!.name"
-      :userId="2"
+      :userId="+authStore.userId"
       :lists="lists"
       :selectedLists="selectedLists"
+      :onSubmitCallback="selectedListsSubmitted"
       @close="showListsModal = false"
     />
   </transition>
 </template>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+@import '../assets/styles/views/cocktail.scss';
+</style>

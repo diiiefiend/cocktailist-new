@@ -107,6 +107,10 @@ export interface ReviewSubmission {
   comment: null | string;
 }
 
+export interface AddCocktailToListsSubmission {
+  listIds: number[];
+}
+
 export interface LoginSubmission {
   username: string;
   password: string;

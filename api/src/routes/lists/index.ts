@@ -22,9 +22,8 @@ interface ListData {
   name: string;
 }
 
-interface ListItemData {
-  cocktailId: number;
-  listId: number;
+interface AddCocktailToListsData {
+  listIds: number[];
 }
 
 const getLists = async (userId: number) => {
@@ -139,34 +138,75 @@ const deleteList = async (listId: string, userId: number) => {
 }
 
 // list item functions
-
-const addListItem = async (itemData: ListItemData, userId: number) => {
+const getListInfoForCocktail = async (cocktailId: string, userId: number) => {
   await dbConnect();
 
-  const { cocktailId, listId } = itemData;
-
-  // confirm the user is associated with the list
-  const list = await models.list.findOne({
+  const userLists = await models.list.findAll({
     where: {
-      id: listId,
       user_id: userId,
     }
   });
 
-  if (!list) {
-    throw new Error('not a list associated with the logged in user');
-  }
+  // @ts-ignore
+  const userListIds = userLists.map(list => list.id);
 
-  const createdItem = await models.listitem.create({
-    cocktail_id: cocktailId,
-    list_id: listId,
+  const listItems = await models.listitem.findAll({
+    where: {
+      cocktail_id: cocktailId,
+      list_id: userListIds,
+    }
   });
 
-  await list.update({
-    updated_at: Date.now(),
-  });
+  // we want the list objects
+  // @ts-ignore
+  return listItems.map((item) => userLists.find(list => list.id === item.list_id));
+}
 
-  return createdItem;
+const updateListItems = async (listsData: AddCocktailToListsData, cocktailId: string, userId: number) => {
+  await dbConnect();
+
+  const { listIds } = listsData;
+
+  const result = await Promise.all(listIds.map(async (listId) => {
+    // confirm they don't already have a matching listitem
+    const existingListitem = await models.listitem.findOne({
+      where: {
+        list_id: listId,
+        cocktail_id: cocktailId,
+      }
+    });
+
+    if (existingListitem) {
+      return;
+    }
+
+    // confirm the user is associated with the list
+    const list = await models.list.findOne({
+      where: {
+        id: listId,
+        user_id: userId,
+      }
+    });
+
+    if (!list) {
+      return;
+    }
+
+    const createdItem = await models.listitem.create({
+      cocktail_id: cocktailId,
+      list_id: listId,
+    });
+
+    await list.update({
+      updated_at: Date.now(),
+    });
+
+    return createdItem;
+  }));
+
+  // TODO: needs to handle destroy too--find listitems associated with the cocktail that aren't in the listsData and remove them
+
+  return result;
 }
 
 const deleteListItem = async (itemId: string, userId: number) => {
@@ -209,6 +249,7 @@ export default {
   addList,
   updateList,
   deleteList,
-  addListItem,
+  getListInfoForCocktail,
+  updateListItems,
   deleteListItem,
 }

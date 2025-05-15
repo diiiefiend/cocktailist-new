@@ -75,6 +75,29 @@ app.route('/cocktails/:cocktailId/reviews')
     }
   });
 
+app.route('/cocktails/:id/lists')
+  .get(isLoggedIn, async (req: Request, res: Response) => {
+    // @ts-ignore
+    const userId = req.session.passport.user.id;
+
+    try {
+      res.send(await lists.getListInfoForCocktail(req.params.id, userId));
+    } catch (e) {
+      errorHandler(e, res);
+    }
+  })
+  .post(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+    const listsData = req.body;
+    // @ts-ignore
+    const userId = req.session.passport.user.id;
+    
+    try {
+      res.send(await lists.updateListItems(listsData, req.params.id, userId));
+    } catch (e) {
+      errorHandler(e, res);
+    }
+  });
+
 app.route('/cocktails/:id')
   .get(async (req: Request, res: Response) => {
     try {
@@ -232,19 +255,6 @@ app.route('/listitems/:id')
 
     try {
       res.send(await lists.deleteListItem(req.params.id, userId));
-    } catch (e) {
-      errorHandler(e, res);
-    }
-  });
-
-app.route('/listitems')
-  .post(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
-    const itemData = req.body;
-    // @ts-ignore
-    const userId = req.session.passport.user.id;
-    
-    try {
-      res.send(await lists.addListItem(itemData, userId));
     } catch (e) {
       errorHandler(e, res);
     }

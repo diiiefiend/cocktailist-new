@@ -51,13 +51,26 @@ const getCocktailReviews = async (cocktailId: string) => {
   });
 }
 
+const getListItemsForCocktail = async (cocktailId: string) => {
+  return makeCall(`${API_HOST}/cocktails/${cocktailId}/lists`, {
+    method: 'GET',
+  });
+}
+
+const addCocktailToLists = async (cocktailId: number, listsData: AddCocktailToListsSubmission) => {
+  return makeCall(`${API_HOST}/cocktails/${cocktailId}/lists`, {
+    method: 'POST',
+    body: JSON.stringify(listsData),
+  });
+};
+
+// bar routes
+
 const getBar = async (id: string) => {
   return makeCall(`${API_HOST}/bars/${id}`, {
     method: 'GET',
   });
 }
-
-// bar routes
 
 const getBarCocktails = async (id: string) => {
   return makeCall(`${API_HOST}/bars/${id}/cocktails`, {
@@ -139,7 +152,6 @@ const makeCall = async (endpoint: string, options: any) => {
   }
 
   const json = await response.json();
-  console.log(json);
   return json;
 }
 
@@ -150,6 +162,8 @@ export {
   addCocktail,
   getCocktail,
   getCocktailReviews,
+  getListItemsForCocktail,
+  addCocktailToLists,
   getBar,
   getBarCocktails,
   getLists,

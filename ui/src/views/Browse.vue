@@ -11,11 +11,13 @@ import CocktailBox from '../components/CocktailBox.vue';
 import SearchBox from '../components/SearchBox.vue';
 import AddEditCocktailModal from './modals/AddEditCocktailModal.vue';
 
+const authStore = useAuthStore();
+
 let isLoading = ref(true);
 let error = ref(null);
 
 // TODO: implement this UX and style disabled button
-let isUserLoggedIn = useAuthStore().checkIsUserLoggedIn();
+let isUserLoggedIn = authStore.checkIsUserLoggedIn();
 let cocktails: Ref<null | Array<CocktailBoxItem>> = ref(null);
 let allBars: Ref<null | Array<Bar>> = ref(null);
 let liquorTypes: Ref<null | String> = ref(null);
@@ -82,7 +84,7 @@ onMounted(async () => {
     <add-edit-cocktail-modal
       v-if="showAddCocktailModal"
       :existingCocktailInfo="null"
-      :userId="2"
+      :userId="+authStore.userId"
       @close="showAddCocktailModal = false"
     />
   </transition>

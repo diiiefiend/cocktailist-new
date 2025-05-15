@@ -1,0 +1,5 @@
+@import "../_variables.scss";
+
+.selected-list-item + .selected-list-item::before {
+  content: ", ";
+}

@@ -3,6 +3,7 @@ import { ref } from 'vue';
 
 import SiteModal from '../../components/SiteModal.vue';
 import type { List } from '../../models';
+import { addCocktailToLists } from '@/api';
 
 const props = defineProps<{
   cocktailId: number;
@@ -10,18 +11,39 @@ const props = defineProps<{
   userId: number;
   lists: List[];
   selectedLists: List[];
+  onSubmitCallback: any;
 }>();
 
 const emit = defineEmits(['close']);
 
 let selectedListIds = ref(props.selectedLists.map((selectedList) => selectedList.id));
 let isSubmitting = ref(false);
+let errors: Ref<string[]> = ref([]);
+let isSuccess = ref(false);
 
-const onSubmit = () => {
+const onSubmit = async () => {
+  errors.value = [];
+  isSuccess.value = false;
   isSubmitting.value = true;
-  // TODO: validate and submit lists
-  // and share feedback on submission success/failure
   console.log(selectedListIds.value);
+
+  const initialValues = [...props.selectedLists];
+  if (selectedListIds.value.sort().toString() != initialValues.sort().toString()) {
+    // only call API if values have changed
+    try {
+      await addCocktailToLists(props.cocktailId, {
+        listIds: selectedListIds.value,
+      });
+
+      props.onSubmitCallback(props.lists.filter((list) => selectedListIds.value.includes(list.id)));
+
+      isSuccess.value = true;
+    } catch (e) {
+      // @ts-ignore
+      errors.value.push(e);
+    }
+  }
+
   isSubmitting.value = false;
 };
 </script>
@@ -53,6 +75,13 @@ const onSubmit = () => {
       </form>
     </template>
     <template #footer>
+      <div v-if="errors.length" class="form-error">
+        Please see the following error(s):
+        <ul>
+          <li v-for="error in errors" :key="error">{{ error }}</li>
+        </ul>
+      </div>
+      <div v-if="isSuccess" class="success-message">Updated!</div>
       <button type="submit" class="primary" @click.stop="onSubmit" :disabled="isSubmitting">
         Submit
       </button>
