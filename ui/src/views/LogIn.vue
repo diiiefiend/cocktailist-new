@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, type Ref } from 'vue';
+import { onMounted, ref, type Ref } from 'vue';
 
 import { createAccount, login, logout } from '../api.js';
 import { useAuthStore } from '../stores/auth.js';
@@ -15,7 +15,7 @@ const authStore = useAuthStore();
 let isSubmitting = ref(false);
 let errors: Ref<string[]> = ref([]);
 
-let isUserLoggedIn = ref(authStore.isUserLoggedIn());
+let isUserLoggedIn = authStore.checkIsUserLoggedIn();
 let mode: Ref<'Create Account' | 'Login'> = ref('Login');
 
 let payload = ref({
@@ -56,14 +56,20 @@ async function onSubmit() {
   console.log(errors);
 
   if (!errors.value.length) {
+    let response: any;
     try {
       if (mode.value === 'Login') {
         // @ts-ignore
-        await login(payload.value);
+        response = await login(payload.value);
       } else {
         // @ts-ignore
-        await createAccount(payload.value);
+        response = await createAccount(payload.value);
       }
+
+      authStore.$patch((state) => {
+        state.isUserLoggedIn = true;
+        state.username = response.user.username;
+      });
 
       router.push('/lists');
     } catch (e) {
@@ -81,16 +87,11 @@ function onCancel() {
   router.push('/');
 }
 
-async function onLogout() {
-  try {
-    await logout();
-
-    router.push('/');
-  } catch (e) {
-    // @ts-ignore
-    errors.value.push(e);
+onMounted(() => {
+  if (isUserLoggedIn.value) {
+    router.push('/account');
   }
-}
+});
 </script>
 
 <template>
@@ -132,23 +133,6 @@ async function onLogout() {
           </button>
           <button type="reset" class="cancel" @click.stop="onCancel">Cancel</button>
         </div>
-      </grid-box>
-    </layout-container>
-  </div>
-  <div v-if="isUserLoggedIn">
-    <context-menu>
-      <div class="row-gap-1"></div>
-      <div class="span-2 justify-left">
-        <button class="primary" @click="onLogout">Logout</button>
-      </div>
-    </context-menu>
-    <layout-container>
-      <grid-box :width="6" :startCol="3" :applyBoxStyle="true" class="bar-details-box">
-        <h1>Login</h1>
-        <p>
-          You're already logged in as TODO: put active user here. Do you need to
-          <a href="#">log out?</a>
-        </p>
       </grid-box>
     </layout-container>
   </div>

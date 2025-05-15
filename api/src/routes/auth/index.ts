@@ -39,6 +39,7 @@ const configureAuth = () => {
   passport.serializeUser((user: any, cb) => {
     process.nextTick(() => {
       console.log('in the serializeUser fn!');
+      console.log(user);
       cb(null, { id: user.id, username: user.username });
     });
   });
@@ -47,6 +48,8 @@ const configureAuth = () => {
     process.nextTick(async () => {
       console.log('in the deserializeUser fn!');
       const id = serializedUser.id;
+
+      console.log(serializedUser);
 
       await dbConnect();
       const user: any = await models.user.scope('auth').findByPk(id);
@@ -101,44 +104,34 @@ const createUser = async (params: any) => {
     }
 }
 
-const createNewSessionWithPassport = (req: Request, res: Response, next: NextFunction) => {
+const doPostLoginActions = (req: Request, res: Response, next: NextFunction) => {
+  console.log('hello!');
+
+  // set extra cookie that can be parsed by FE JS
+  res.cookie(
+    CUSTOM_SESSION_COOKIE_NAME,
+    'true',
+    {
+      httpOnly: false,
+      maxAge: req.session.cookie.maxAge,
+    }
+  );
+
   // @ts-ignore
   const passportObj = req.session.passport;
   console.log('the current passport object:');
   console.dir(passportObj);
 
-  // make new session after login
-  req.session.regenerate((err) => {
-    if (err) {
-      console.error(err);
-      return next(err);
-    }
-    // @ts-ignore
-    req.session.passport = passportObj;
-    req.session.save((err) => {
-      if (err) {
-        console.error(err);
-        return next(err);
-      }
+  if (!passportObj) {
+    throw new Error('no user attached!');
+  }
 
-      // set extra cookie that can be parsed by FE JS
-      res.cookie(
-        CUSTOM_SESSION_COOKIE_NAME,
-        'true',
-        {
-          httpOnly: false,
-          maxAge: req.session.cookie.maxAge,
-        }
-      );
+  const response = {
+    status: 'success',
+    ...passportObj,
+  };
 
-      const response = {
-        status: 'success',
-        sessionInfo: req.session,
-      };
-
-      res.send(response);
-    });
-  });
+  res.send(response);  
 }
 
 const logout =  (req: Request, res: Response, next: NextFunction) => {
@@ -176,7 +169,7 @@ const getUser = async (userId: string) => {
 export default {
   configureAuth,
   createUser,
-  createNewSessionWithPassport,
+  doPostLoginActions,
   logout,
   getUser,
 };

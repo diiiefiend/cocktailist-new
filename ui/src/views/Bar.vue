@@ -29,7 +29,7 @@ let bar: Ref<null | BarDetails> = ref(null);
 let cocktails: Ref<Array<CocktailDetailItem>> = ref([]);
 
 // TODO: implement edit bar modal
-let isUserLoggedIn = useAuthStore().isUserLoggedIn();
+let isUserLoggedIn = useAuthStore().checkIsUserLoggedIn();
 const showEditBarModal = ref(false);
 
 async function fetchData() {

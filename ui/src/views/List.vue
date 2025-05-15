@@ -28,7 +28,7 @@ let listInfo: Ref<null | ListInfo> = ref(null);
 let cocktails: Ref<Array<CocktailDetailItem>> = ref([]);
 
 let showCreateListModal = ref(false);
-let isUserLoggedIn = useAuthStore().isUserLoggedIn();
+let isUserLoggedIn = useAuthStore().checkIsUserLoggedIn();
 
 async function fetchData() {
   error.value = null;

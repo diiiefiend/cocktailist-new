@@ -24,7 +24,7 @@ const props = defineProps<{
 let isLoading = ref(true);
 let error = ref(null);
 
-let isUserLoggedIn = useAuthStore().isUserLoggedIn();
+let isUserLoggedIn = useAuthStore().checkIsUserLoggedIn();
 let cocktail: Ref<null | CocktailDetailItem> = ref(null);
 let bar: Ref<null | BarDetails> = ref(null);
 let lists: Ref<Array<List>> = ref([]);

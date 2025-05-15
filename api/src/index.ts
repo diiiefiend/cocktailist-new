@@ -304,14 +304,25 @@ app.route('/users')
       return next(error || 'error'); 
     }
 
-    auth.createNewSessionWithPassport(req, res, next);
+    // create new session
+    req.login(user, (err) => {
+      if (err) { 
+        console.error(err);
+        return next(err);
+      }
+
+      auth.doPostLoginActions(req, res, next);
+    });
   });
 
 // sessions
 // uses the "local" strategy defined in auth.configureAuth
 // expected payload: username, password
 app.route('/login')
-  .post(passport.authenticate('local'), auth.createNewSessionWithPassport);
+// passport.authenticate handles logging in
+.post(passport.authenticate('local'), async (req: Request, res: Response, next: NextFunction) => {
+  auth.doPostLoginActions(req, res, next);
+});
 
 app.route('/logout')
   .post((req: Request, res: Response, next: NextFunction) => {

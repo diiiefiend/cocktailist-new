@@ -15,7 +15,7 @@ let isLoading = ref(true);
 let error = ref(null);
 
 // TODO: implement this UX and style disabled button
-let isUserLoggedIn = useAuthStore().isUserLoggedIn();
+let isUserLoggedIn = useAuthStore().checkIsUserLoggedIn();
 let cocktails: Ref<null | Array<CocktailBoxItem>> = ref(null);
 let allBars: Ref<null | Array<Bar>> = ref(null);
 let liquorTypes: Ref<null | String> = ref(null);
