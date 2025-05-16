@@ -20,9 +20,9 @@ const props = withDefaults(
 const emit = defineEmits(['ratingSet']);
 
 const HIGHEST_VALUE = 5;
-let rating = ref(props.ratingValue);
-let fullValue = ref(Math.floor(props.ratingValue));
-let stableFullValue = ref(Math.floor(props.ratingValue));
+const rating = ref(props.ratingValue);
+const fullValue = ref(Math.floor(props.ratingValue));
+const stableFullValue = ref(Math.floor(props.ratingValue));
 // doesn't need to be ref bc interactive mode doesn't allow partial values
 const partialValueWidth = Math.floor(18 * (props.ratingValue % 1));
 

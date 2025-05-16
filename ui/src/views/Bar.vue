@@ -4,6 +4,7 @@ import { onMounted, ref, type Ref } from 'vue';
 import { getBarCocktails, getBars } from '../api.js';
 import { useAuthStore } from '../stores/auth.js';
 import type { BarDetails, CocktailDetailItem } from '../models.js';
+import router from '../router/index.js';
 
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
@@ -12,7 +13,10 @@ import CocktailBox from '../components/CocktailBox.vue';
 import RatingItem from '../components/RatingItem.vue';
 import SearchBox from '../components/SearchBox.vue';
 
+import AddEditCocktailModal from './modals/AddEditCocktailModal.vue';
+
 const ALL_SPIRITS = 'All spirits';
+const authStore = useAuthStore();
 
 const props = withDefaults(
   defineProps<{
@@ -23,18 +27,20 @@ const props = withDefaults(
   },
 );
 
-let isLoading = ref(true);
-let error = ref(null);
+const isLoading = ref(true);
+const error = ref(null);
 
-let allBars: Ref<Array<BarDetails>> = ref([]);
-let bar: Ref<null | BarDetails> = ref(null);
-let cocktails: Ref<Array<CocktailDetailItem>> = ref([]);
-let liquorTypes: Ref<null | string[]> = ref(null);
-let selectedLiquorFilter: Ref<null | string> = ref(ALL_SPIRITS);
-let filteredCocktails: Ref<null | undefined | Array<CocktailDetailItem>> = ref(null);
+const allBars: Ref<Array<BarDetails>> = ref([]);
+const bar: Ref<null | BarDetails> = ref(null);
+const cocktails: Ref<Array<CocktailDetailItem>> = ref([]);
+const liquorTypes: Ref<null | string[]> = ref(null);
 
+const showAddCocktailModal = ref(false);
+const selectedLiquorFilter: Ref<null | string> = ref(ALL_SPIRITS);
+const filteredCocktails: Ref<null | undefined | Array<CocktailDetailItem>> = ref(null);
+
+const isUserLoggedIn = authStore.checkIsUserLoggedIn();
 // TODO: implement edit bar modal
-let isUserLoggedIn = useAuthStore().checkIsUserLoggedIn();
 const showEditBarModal = ref(false);
 
 const setLiquorTypes = () => {
@@ -63,8 +69,6 @@ async function fetchData() {
       barId = props.id;
     }
 
-    // TODO: feels weird to get all the bars every time. Prob can refactor to persist this list in the store or via props
-    // and go back to a single bar get
     allBars.value = await getBars();
     bar.value = allBars.value.find((bar: BarDetails) => bar.id === +barId) || null;
 
@@ -94,6 +98,10 @@ function onFilterChange() {
   filteredCocktails.value = result;
 }
 
+function onCocktailCreate(createdCocktail: CocktailDetailItem) {
+  router.push(`/cocktails/${createdCocktail.id}`);
+}
+
 onMounted(async () => {
   await fetchData();
 });
@@ -104,7 +112,13 @@ onMounted(async () => {
     <context-menu>
       <div class="row-gap-1"></div>
       <div class="span-2 justify-left">
-        <button class="primary" :disabled="!isUserLoggedIn">Add Cocktail</button>
+        <button
+          class="primary"
+          :disabled="!isUserLoggedIn"
+          @click.stop="showAddCocktailModal = true"
+        >
+          Add Cocktail
+        </button>
       </div>
       <div class="span-2">
         <select :disabled="isLoading" v-model="bar" @change="onBarUpdate">
@@ -145,6 +159,19 @@ onMounted(async () => {
       </cocktail-box>
     </layout-container>
   </div>
+
+  <!-- modals -->
+
+  <transition name="modal">
+    <add-edit-cocktail-modal
+      v-if="showAddCocktailModal"
+      :existingCocktailInfo="null"
+      :userId="+authStore.userId"
+      :allBars="allBars ?? []"
+      :onSubmitCallback="onCocktailCreate"
+      @close="showAddCocktailModal = false"
+    />
+  </transition>
 </template>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

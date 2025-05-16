@@ -16,10 +16,10 @@ const props = defineProps<{
 
 const emit = defineEmits(['close']);
 
-let selectedListIds = ref(props.selectedLists.map((selectedList) => selectedList.id));
-let isSubmitting = ref(false);
-let errors: Ref<string[]> = ref([]);
-let isSuccess = ref(false);
+const selectedListIds = ref(props.selectedLists.map((selectedList) => selectedList.id));
+const isSubmitting = ref(false);
+const errors: Ref<string[]> = ref([]);
+const isSuccess = ref(false);
 
 const onSubmit = async () => {
   errors.value = [];

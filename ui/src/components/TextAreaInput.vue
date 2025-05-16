@@ -10,7 +10,7 @@ const props = withDefaults(
 
 const emit = defineEmits(['commentSet']);
 
-let comment = ref(props.existingComment);
+const comment = ref(props.existingComment);
 </script>
 
 <template>

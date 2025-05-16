@@ -12,8 +12,8 @@ const props = defineProps<{
 
 const emit = defineEmits(['close']);
 
-let isSubmitting = ref(false);
-let errors: Ref<string[]> = ref([]);
+const isSubmitting = ref(false);
+const errors: Ref<string[]> = ref([]);
 
 const onSubmit = async () => {
   errors.value = [];

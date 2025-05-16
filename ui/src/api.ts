@@ -64,6 +64,13 @@ const addCocktailToLists = async (cocktailId: number, listsData: AddCocktailToLi
   });
 };
 
+const updateCocktail = async (cocktailId: number, cocktailData: CocktailSubmission) => {
+  return makeCall(`${API_HOST}/cocktails/${cocktailId}`, {
+    method: 'PUT',
+    body: JSON.stringify(cocktailData),
+  });
+};
+
 // bar routes
 
 const getBar = async (id: string) => {
@@ -170,6 +177,7 @@ export {
   getCocktailReviews,
   getListItemsForCocktail,
   addCocktailToLists,
+  updateCocktail,
   getBar,
   getBarCocktails,
   getLists,

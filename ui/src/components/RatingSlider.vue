@@ -12,7 +12,7 @@ const props = withDefaults(
 
 const emit = defineEmits(['ratingSet']);
 
-let rating = ref(props.sliderValue);
+const rating = ref(props.sliderValue);
 </script>
 
 <template>

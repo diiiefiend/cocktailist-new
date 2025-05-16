@@ -3,12 +3,14 @@ import { ref, onMounted, type Ref } from 'vue';
 
 import { getCocktailsWithBars, getBars, getLiquorList } from '../api.js';
 import { useAuthStore } from '../stores/auth.js';
-import type { Bar, CocktailBoxItem } from '../models.js';
+import type { Bar, CocktailBoxItem, CocktailDetailItem } from '../models.js';
+import router from '../router/index.js';
 
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
 import CocktailBox from '../components/CocktailBox.vue';
 import SearchBox from '../components/SearchBox.vue';
+
 import AddEditCocktailModal from './modals/AddEditCocktailModal.vue';
 
 const ALL_BARS = 'All bars';
@@ -16,18 +18,18 @@ const ALL_SPIRITS = 'All spirits';
 
 const authStore = useAuthStore();
 
-let isLoading = ref(true);
-let error = ref(null);
+const isLoading = ref(true);
+const error = ref(null);
 
-let isUserLoggedIn = authStore.checkIsUserLoggedIn();
-let allCocktails: Ref<null | Array<CocktailBoxItem>> = ref(null);
-let allBars: Ref<null | Array<Bar>> = ref(null);
-let liquorTypes: Ref<null | string[]> = ref(null);
+const isUserLoggedIn = authStore.checkIsUserLoggedIn();
+const allCocktails: Ref<null | Array<CocktailBoxItem>> = ref(null);
+const allBars: Ref<null | Array<Bar>> = ref(null);
+const liquorTypes: Ref<null | string[]> = ref(null);
 
-let showAddCocktailModal = ref(false);
-let selectedBarFilter: Ref<null | number | string> = ref(ALL_BARS);
-let selectedLiquorFilter: Ref<null | string> = ref(ALL_SPIRITS);
-let filteredCocktails: Ref<null | undefined | Array<CocktailBoxItem>> = ref(null);
+const showAddCocktailModal = ref(false);
+const selectedBarFilter: Ref<null | number | string> = ref(ALL_BARS);
+const selectedLiquorFilter: Ref<null | string> = ref(ALL_SPIRITS);
+const filteredCocktails: Ref<null | undefined | Array<CocktailBoxItem>> = ref(null);
 
 const handleBarFilterUpdate = (
   initialCocktailList: Array<CocktailBoxItem>,
@@ -101,6 +103,10 @@ function onFilterChange(filterKey: 'bar' | 'liquor') {
   }
 }
 
+function onCocktailCreate(createdCocktail: CocktailDetailItem) {
+  router.push(`/cocktails/${createdCocktail.id}`);
+}
+
 onMounted(async () => {
   await fetchData();
 });
@@ -156,6 +162,8 @@ onMounted(async () => {
       v-if="showAddCocktailModal"
       :existingCocktailInfo="null"
       :userId="+authStore.userId"
+      :allBars="allBars ?? []"
+      :onSubmitCallback="onCocktailCreate"
       @close="showAddCocktailModal = false"
     />
   </transition>

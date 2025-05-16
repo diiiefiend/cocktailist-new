@@ -6,7 +6,7 @@ import { useAuthStore } from '../stores/auth';
 
 const hovered = ref(false);
 const authStore = useAuthStore();
-let isUserLoggedIn = ref(authStore.isUserLoggedIn);
+const isUserLoggedIn = ref(authStore.isUserLoggedIn);
 
 const imgStandard = '/images/deco-logo.png';
 const imgHover = '/images/deco-logo-hover.png';

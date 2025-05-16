@@ -1,34 +1,48 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
-import { DRINK_TYPES, type CocktailSubmission } from '../../models';
-import { mockBarData } from '../../mocks';
-
-import SiteModal from '../../components/SiteModal.vue';
-import { addCocktail } from '../../api';
+import { DRINK_TYPES, type CocktailDetailItem, type CocktailSubmission } from '../../models';
+import router from '../../router';
+import { addCocktail, updateCocktail } from '../../api';
 import { checkRequiredFields } from '../../utils';
 
+import SiteModal from '../../components/SiteModal.vue';
+
 const props = defineProps<{
-  existingCocktailInfo: CocktailSubmission | null;
+  existingCocktailInfo: CocktailDetailItem | null;
   userId: number;
+  allBars: Bar[];
+  onSubmitCallback: any;
 }>();
 
 const emit = defineEmits(['close']);
 
-const allBars = mockBarData;
-
-let payload = ref(
-  props.existingCocktailInfo ?? {
-    name: null,
-    type: null,
-    barId: null,
-    ingredients: null,
-    imgUrl: null,
-  },
+const isEdit = computed(() => !!props.existingCocktailInfo);
+const payload = ref(
+  props.existingCocktailInfo
+    ? {
+        name: props.existingCocktailInfo.name,
+        type: props.existingCocktailInfo.liquor,
+        barId: props.existingCocktailInfo.bar.id,
+        barName: props.existingCocktailInfo.bar.name,
+        barAddress: null,
+        ingredients: props.existingCocktailInfo.ingredients,
+        imgUrl: props.existingCocktailInfo.img_file_name,
+      }
+    : {
+        name: null,
+        type: null,
+        barId: null,
+        barName: null,
+        barAddress: null,
+        ingredients: null,
+        imgUrl: null,
+      },
 );
 
-let errors: Ref<string[]> = ref([]);
-let isSubmitting = ref(false);
+const errors: Ref<string[]> = ref([]);
+const isSubmitting = ref(false);
+const isNewBar = ref(false);
 
 const onSubmit = async () => {
   errors.value = [];
@@ -36,6 +50,7 @@ const onSubmit = async () => {
 
   // validations
   console.log('hello ', payload.value);
+  // TODO: update this to require EITHER barId OR barName/address, based on "isNewBar"
   const requiredFields = ['name', 'type', 'barId', 'ingredients'];
   errors.value = errors.value.concat(checkRequiredFields(requiredFields, payload));
 
@@ -44,8 +59,19 @@ const onSubmit = async () => {
   // if no errors, continue to try to submit
   if (!errors.value.length) {
     try {
-      // @ts-ignore
-      await addCocktail(payload.value);
+      if (isEdit.value) {
+        // @ts-ignore
+        await updateCocktail(props.existingCocktailInfo!.id, payload.value);
+        emit('close');
+
+        props.onSubmitCallback();
+      } else {
+        // @ts-ignore
+        const createdCocktail = await addCocktail(payload.value);
+        emit('close');
+
+        props.onSubmitCallback(createdCocktail);
+      }
     } catch (e) {
       // @ts-ignore
       errors.value.push(e);
@@ -60,7 +86,7 @@ const onSubmit = async () => {
   <!-- bubble up the close event bc emits don't naturally bubble -->
   <site-modal @close="$emit('close')">
     <template #header>
-      <h2>Add New Cocktail</h2>
+      <h2>{{ isEdit ? 'Edit Entry' : 'Add New Cocktail' }}</h2>
     </template>
     <template #body>
       <form @submit.prevent>
@@ -79,7 +105,9 @@ const onSubmit = async () => {
           <label for="bars">Bar</label>
           <!-- TODO: add option to add bar -->
           <select id="bars" v-model="payload.barId">
-            <option v-for="bar in allBars" :key="bar.id" :value="bar.id">{{ bar.name }}</option>
+            <option v-for="bar in props.allBars" :key="bar.id" :value="bar.id">
+              {{ bar.name }}
+            </option>
           </select>
         </fieldset>
         <fieldset>

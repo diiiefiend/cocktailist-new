@@ -24,8 +24,8 @@ const defaultPayload: ReviewSubmission = {
 };
 
 // TODO: if a review exists, then this should be prepopulated with the old review
-let payload = ref(defaultPayload);
-let isSubmitting = ref(false);
+const payload = ref(defaultPayload);
+const isSubmitting = ref(false);
 
 const updateRating = (rating: number | string, ratingType: RATING_TYPES) => {
   switch (ratingType) {

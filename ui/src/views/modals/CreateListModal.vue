@@ -12,9 +12,9 @@ const props = defineProps<{
 
 const emit = defineEmits(['close']);
 
-let listName: Ref<string | null> = ref(null);
-let isSubmitting = ref(false);
-let errors: Ref<string[]> = ref([]);
+const listName: Ref<string | null> = ref(null);
+const isSubmitting = ref(false);
+const errors: Ref<string[]> = ref([]);
 
 const onSubmit = async () => {
   errors.value = [];

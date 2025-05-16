@@ -95,7 +95,9 @@ export type ChartData = CoordinatePair[];
 export interface CocktailSubmission {
   name: string;
   type: DRINK_TYPES;
-  barId: number;
+  barId?: number;
+  barName?: string;
+  barAddress?: string;
   ingredients: string;
   imgUrl?: string;
 }

@@ -16,6 +16,7 @@ import SearchBox from '../components/SearchBox.vue';
 
 import ReviewModal from './modals/ReviewModal.vue';
 import ListsModal from './modals/AddCocktailToListsModal.vue';
+import AddEditCocktailModal from './modals/AddEditCocktailModal.vue';
 
 const props = defineProps<{
   id: string;
@@ -23,16 +24,17 @@ const props = defineProps<{
 
 const authStore = useAuthStore();
 
-let isLoading = ref(true);
-let error = ref(null);
+const isLoading = ref(true);
+const error = ref(null);
+const isUserLoggedIn = authStore.checkIsUserLoggedIn();
+const showEditCocktailModal = ref(false);
 
-let isUserLoggedIn = authStore.checkIsUserLoggedIn();
-let cocktail: Ref<null | CocktailDetailItem> = ref(null);
-let bar: Ref<null | BarDetails> = ref(null);
-let lists: Ref<Array<List>> = ref([]);
-let selectedLists: Ref<Array<List>> = ref([]);
-let reviews: Ref<Array<ReviewItem>> = ref([]);
-let scatterChartData: Ref<{ xValues: Array<number>; yValues: Array<number> }> = ref({
+const cocktail: Ref<null | CocktailDetailItem> = ref(null);
+const bar: Ref<null | BarDetails> = ref(null);
+const lists: Ref<Array<List>> = ref([]);
+const selectedLists: Ref<Array<List>> = ref([]);
+const reviews: Ref<Array<ReviewItem>> = ref([]);
+const scatterChartData: Ref<{ xValues: Array<number>; yValues: Array<number> }> = ref({
   xValues: [],
   yValues: [],
 });
@@ -62,8 +64,12 @@ async function fetchData() {
   }
 }
 
-function selectedListsSubmitted(updatedSelectedLists: List[]) {
+function onSelectedListSubmit(updatedSelectedLists: List[]) {
   selectedLists.value = updatedSelectedLists;
+}
+
+async function onEntryUpdate() {
+  cocktail.value = await getCocktail(props.id);
 }
 
 onMounted(async () => {
@@ -98,8 +104,13 @@ onMounted(async () => {
         </span>
       </div>
       <div class="span-1 justify-right">
-        <!-- TODO: if user is not logged in, this button should be disabled (with a tooltip?) -->
-        <button class="secondary" :disabled="!isUserLoggedIn">Edit Entry</button>
+        <button
+          class="secondary"
+          :disabled="!isUserLoggedIn"
+          @click.stop="showEditCocktailModal = true"
+        >
+          Edit Entry
+        </button>
       </div>
       <search-box />
     </context-menu>
@@ -180,8 +191,18 @@ onMounted(async () => {
       :userId="+authStore.userId"
       :lists="lists"
       :selectedLists="selectedLists"
-      :onSubmitCallback="selectedListsSubmitted"
+      :onSubmitCallback="onSelectedListSubmit"
       @close="showListsModal = false"
+    />
+  </transition>
+  <transition name="modal">
+    <add-edit-cocktail-modal
+      v-if="showEditCocktailModal"
+      :existingCocktailInfo="cocktail"
+      :userId="+authStore.userId"
+      :allBars="[bar]"
+      :onSubmitCallback="onEntryUpdate"
+      @close="showEditCocktailModal = false"
     />
   </transition>
 </template>

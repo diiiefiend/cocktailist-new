@@ -3,7 +3,9 @@ import {dbConnect, models} from '../../db';
 
 interface CocktailData {
   name: string;
-  barId: number;
+  barId?: number;
+  barName?: string;
+  barAddress?: string;
   type: string;
   ingredients: string;
   imgUrl?: string;
@@ -61,12 +63,12 @@ const getLiquors = async () => {
 const addCocktail = async (cocktailData: CocktailData) => {
   await dbConnect();
 
-  const { name, barId, type, ingredients, imgUrl} = cocktailData;
+  const { name, barId, barName, barAddress, type, ingredients, imgUrl} = cocktailData;
 
   // TODO: support creating a bar along with a cocktail
   // can use: https://sequelize.org/docs/v6/core-concepts/assocs/#foobelongstobar
 
-  await models.cocktail.create({
+  return await models.cocktail.create({
     bar_id: barId,
     name,
     liquor: type,
@@ -80,7 +82,7 @@ const updateCocktail = async (cocktailId: string, cocktailData: CocktailData) =>
 
   const { name, barId, type, ingredients, imgUrl} = cocktailData;
 
-  await models.cocktail.update({
+  return await models.cocktail.update({
     bar_id: barId,
     name,
     liquor: type,

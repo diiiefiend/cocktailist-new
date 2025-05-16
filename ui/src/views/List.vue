@@ -22,18 +22,18 @@ const props = defineProps<{
 
 const authStore = useAuthStore();
 
-let isLoading = ref(true);
-let errors: Ref<string[]> = ref([]);
+const isLoading = ref(true);
+const errors: Ref<string[]> = ref([]);
 
-let currentList: Ref<List | undefined> = ref(undefined);
-let userLists: Ref<Array<List>> = ref([]);
-let listInfo: Ref<ListInfo | null> = ref(null);
-let currentFocusedItem: Ref<ListItem | null> = ref(null);
+const currentList: Ref<List | undefined> = ref(undefined);
+const userLists: Ref<Array<List>> = ref([]);
+const listInfo: Ref<ListInfo | null> = ref(null);
+const currentFocusedItem: Ref<ListItem | null> = ref(null);
 
-let showCreateListModal = ref(false);
-let showDeleteItemConfirmationModal = ref(false);
-let showDeleteListConfirmationModal = ref(false);
-let isUserLoggedIn = authStore.checkIsUserLoggedIn();
+const showCreateListModal = ref(false);
+const showDeleteItemConfirmationModal = ref(false);
+const showDeleteListConfirmationModal = ref(false);
+const isUserLoggedIn = authStore.checkIsUserLoggedIn();
 
 async function fetchData(activeListId?: string) {
   errors.value = [];

@@ -12,13 +12,13 @@ import { checkRequiredFields } from '../utils.js';
 
 const authStore = useAuthStore();
 
-let isSubmitting = ref(false);
-let errors: Ref<string[]> = ref([]);
+const isSubmitting = ref(false);
+const errors: Ref<string[]> = ref([]);
 
-let isUserLoggedIn = authStore.checkIsUserLoggedIn();
-let mode: Ref<'Create Account' | 'Login'> = ref('Login');
+const isUserLoggedIn = authStore.checkIsUserLoggedIn();
+const mode: Ref<'Create Account' | 'Login'> = ref('Login');
 
-let payload = ref({
+const payload = ref({
   username: null,
   password: null,
   email: null,
