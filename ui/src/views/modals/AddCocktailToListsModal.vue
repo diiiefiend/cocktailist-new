@@ -85,7 +85,7 @@ const onSubmit = async () => {
       <button type="submit" class="primary" @click.stop="onSubmit" :disabled="isSubmitting">
         Submit
       </button>
-      <button type="reset" class="cancel" @click="$emit('close')">Cancel</button>
+      <button type="reset" class="cancel" @click="$emit('close')">Close</button>
     </template>
   </site-modal>
 </template>

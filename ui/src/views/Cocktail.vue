@@ -15,7 +15,7 @@ import ScatterChart from '../components/ScatterChart.vue';
 import SearchBox from '../components/SearchBox.vue';
 
 import ReviewModal from './modals/ReviewModal.vue';
-import ListsModal from './modals/AddEditCocktailToListsModal.vue';
+import ListsModal from './modals/AddCocktailToListsModal.vue';
 
 const props = defineProps<{
   id: string;
@@ -85,7 +85,7 @@ onMounted(async () => {
         </button>
       </div>
       <div class="span-2">
-        <span v-if="isUserLoggedIn">
+        <span v-if="isUserLoggedIn && selectedLists.length">
           Listed in:
           <router-link
             class="selected-list-item"

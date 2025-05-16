@@ -57,7 +57,7 @@ async function fetchData(activeListId?: string) {
 }
 
 async function getAndSetListData() {
-  // maybe update route to reflect list id?
+  // MAYBE LATER: push id into router URL?
   listInfo.value = await getList(currentList.value!.id);
 }
 

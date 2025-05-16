@@ -12,6 +12,8 @@ import CocktailBox from '../components/CocktailBox.vue';
 import RatingItem from '../components/RatingItem.vue';
 import SearchBox from '../components/SearchBox.vue';
 
+const ALL_SPIRITS = 'All spirits';
+
 const props = withDefaults(
   defineProps<{
     id?: string;
@@ -27,10 +29,26 @@ let error = ref(null);
 let allBars: Ref<Array<BarDetails>> = ref([]);
 let bar: Ref<null | BarDetails> = ref(null);
 let cocktails: Ref<Array<CocktailDetailItem>> = ref([]);
+let liquorTypes: Ref<null | string[]> = ref(null);
+let selectedLiquorFilter: Ref<null | string> = ref(ALL_SPIRITS);
+let filteredCocktails: Ref<null | undefined | Array<CocktailDetailItem>> = ref(null);
 
 // TODO: implement edit bar modal
 let isUserLoggedIn = useAuthStore().checkIsUserLoggedIn();
 const showEditBarModal = ref(false);
+
+const setLiquorTypes = () => {
+  liquorTypes.value = [...new Set(cocktails.value.map((cocktail) => cocktail.liquor))];
+};
+
+const fetchBarCocktails = async (barId: number) => {
+  const barCocktails = await getBarCocktails('' + barId);
+  cocktails.value = barCocktails;
+  filteredCocktails.value = barCocktails;
+  setLiquorTypes();
+
+  selectedLiquorFilter.value = ALL_SPIRITS;
+};
 
 async function fetchData() {
   error.value = null;
@@ -49,12 +67,31 @@ async function fetchData() {
     // and go back to a single bar get
     allBars.value = await getBars();
     bar.value = allBars.value.find((bar: BarDetails) => bar.id === +barId) || null;
-    cocktails.value = await getBarCocktails(barId);
+
+    fetchBarCocktails(+barId);
   } catch (err: any) {
     error.value = err.toString();
   } finally {
     isLoading.value = false;
   }
+}
+
+async function onBarUpdate() {
+  if (bar.value) {
+    fetchBarCocktails(bar.value.id);
+    // MAYBE LATER: push id & filters into router URL?
+  }
+}
+
+function onFilterChange() {
+  let result: Array<CocktailDetailItem> = cocktails.value;
+
+  if (selectedLiquorFilter.value !== ALL_SPIRITS) {
+    result = result.filter((cocktail) => cocktail.liquor === selectedLiquorFilter.value);
+  }
+
+  console.log('filtered for: ', selectedLiquorFilter.value);
+  filteredCocktails.value = result;
 }
 
 onMounted(async () => {
@@ -70,13 +107,14 @@ onMounted(async () => {
         <button class="primary" :disabled="!isUserLoggedIn">Add Cocktail</button>
       </div>
       <div class="span-2">
-        <select v-if="allBars">
-          <option v-for="bar in allBars" :key="bar.id" :value="bar.id">{{ bar.name }}</option>
+        <select :disabled="isLoading" v-model="bar" @change="onBarUpdate">
+          <option v-for="bar in allBars" :key="bar.id" :value="bar">{{ bar.name }}</option>
         </select>
       </div>
       <div class="span-2">
-        <select>
+        <select :disabled="isLoading" v-model="selectedLiquorFilter" @change="onFilterChange">
           <option>All spirits</option>
+          <option v-for="type in liquorTypes" :key="type" :value="type">{{ type }}</option>
         </select>
       </div>
       <search-box />
@@ -103,7 +141,7 @@ onMounted(async () => {
           <li>hours</li>
         </ul>
       </grid-box>
-      <cocktail-box v-for="cocktail in cocktails" :key="cocktail.id" :cocktail="cocktail">
+      <cocktail-box v-for="cocktail in filteredCocktails" :key="cocktail.id" :cocktail="cocktail">
       </cocktail-box>
     </layout-container>
   </div>
