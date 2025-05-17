@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { useAuthStore } from '../stores/auth';
 import { type ReviewItem } from '../models';
+
 import RatingItem from './RatingItem.vue';
 
 const props = defineProps<{
   reviews: ReviewItem[];
+  deleteReviewCallback: any;
 }>();
 
 const dateOptions: any = {
@@ -16,11 +19,15 @@ const dateOptions: any = {
   second: 'numeric',
   hour12: false,
 };
+
+const authStore = useAuthStore();
 </script>
 
 <template>
   <ul class="reviews">
+    <!-- TODO: handle no reviews case -->
     <li v-for="review in props.reviews" :key="review.id">
+      <!-- TODO: this is not re-rendering based without a refresh -->
       <rating-item :rating-value="review.rating"></rating-item>
       <span v-if="review.scale_spirited">
         <br />
@@ -33,6 +40,13 @@ const dateOptions: any = {
         <br />
       </span>
       <p>{{ review.body }}</p>
+      <button
+        v-if="review.user_id === +authStore.userId"
+        class="link-button"
+        @click.stop="props.deleteReviewCallback(review)"
+      >
+        remove your review?
+      </button>
       <div class="reviewer">{{ review.reviewer.username }}</div>
       <div class="timestamp">
         on {{ new Date(review.updated_at).toLocaleString('en-US', dateOptions) }}

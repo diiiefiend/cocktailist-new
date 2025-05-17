@@ -37,6 +37,8 @@ h1 {
 
 ul {
   &.ingredients {
+    list-style: square;
+
     li {
       font-size: $font-md;
       text-transform: capitalize;

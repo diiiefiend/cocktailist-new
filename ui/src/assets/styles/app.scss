@@ -119,6 +119,14 @@ button {
       color: $white;
     }
   }
+
+  &.link-button {
+    padding: 0;
+    margin: 0;
+    background: none;
+    font-family: inherit;
+    font-style: italic;
+  }
 }
 
 .success-message {
@@ -155,11 +163,11 @@ input, select, textarea {
   font-family: "Montserrat", sans-serif;
 }
 
-a {
+a, button.link-button {
   color: $emerald;
   text-decoration: none;
 }
 
-a:hover {
+a:hover, button.link-button:hover {
   text-decoration: underline;
 }

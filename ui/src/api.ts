@@ -1,4 +1,4 @@
-import type { CocktailSubmission, CreateAccountSubmission, LoginSubmission } from "./models";
+import type { CocktailSubmission, CreateAccountSubmission, LoginSubmission, ReviewSubmission } from "./models";
 
 let API_HOST: string;
 switch (window.location.hostname) {
@@ -68,6 +68,26 @@ const updateCocktail = async (cocktailId: number, cocktailData: CocktailSubmissi
   return makeCall(`${API_HOST}/cocktails/${cocktailId}`, {
     method: 'PUT',
     body: JSON.stringify(cocktailData),
+  });
+};
+
+const addReview = async (cocktailId: number, reviewData: ReviewSubmission) => {
+  return makeCall(`${API_HOST}/cocktails/${cocktailId}/reviews`, {
+    method: 'POST',
+    body: JSON.stringify(reviewData),
+  });
+};
+
+const updateReview = async (reviewId: number, reviewData: ReviewSubmission) => {
+  return makeCall(`${API_HOST}/reviews/${reviewId}`, {
+    method: 'PUT',
+    body: JSON.stringify(reviewData),
+  });
+};
+
+const deleteReview = async (reviewId: number) => {
+  return makeCall(`${API_HOST}/reviews/${reviewId}`, {
+    method: 'DELETE',
   });
 };
 
@@ -178,6 +198,9 @@ export {
   getListItemsForCocktail,
   addCocktailToLists,
   updateCocktail,
+  addReview,
+  updateReview,
+  deleteReview,
   getBar,
   getBarCocktails,
   getLists,

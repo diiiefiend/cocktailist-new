@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
-import { DRINK_TYPES, type CocktailDetailItem, type CocktailSubmission } from '../../models';
-import router from '../../router';
+import { DRINK_TYPES, type CocktailDetailItem } from '../../models';
 import { addCocktail, updateCocktail } from '../../api';
 import { checkRequiredFields } from '../../utils';
 

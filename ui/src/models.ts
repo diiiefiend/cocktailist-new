@@ -104,9 +104,9 @@ export interface CocktailSubmission {
 
 export interface ReviewSubmission {
   rating: number;
-  spiritedRating: null | number;
-  innovativeRating: null | number;
-  comment: null | string;
+  scaleSpirited: null | number;
+  scaleComposition: null | number;
+  body: null | string;
 }
 
 export interface AddCocktailToListsSubmission {

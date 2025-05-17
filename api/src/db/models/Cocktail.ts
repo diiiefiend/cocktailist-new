@@ -72,6 +72,20 @@ const init = (sequelize: Sequelize) => {
           isNumeric: true,
         },
       },
+      avg_spirited: {
+        type: DataTypes.DOUBLE,
+        allowNull: true,
+        validate: {
+          isNumeric: true,
+        },
+      },
+      avg_composition: {
+        type: DataTypes.DOUBLE,
+        allowNull: true,
+        validate: {
+          isNumeric: true,
+        },
+      },
     },
     {
       // Other model options go here

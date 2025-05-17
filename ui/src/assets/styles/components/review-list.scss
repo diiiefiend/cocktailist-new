@@ -23,6 +23,7 @@ ul {
       font-size: $font-sm;
       font-style: italic;
       float: right;
+      text-align: right;
     }
 
     &::before, &::after {
@@ -42,7 +43,7 @@ ul {
       content: '\201D';
       text-align: right;
 
-      height: 50px;
+      height: 70px;
       background: no-repeat bottom center url($flourish-path);
     }
 

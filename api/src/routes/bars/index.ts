@@ -31,7 +31,7 @@ const addBar = async (barData: BarData) => {
 
   const { name, address, latitude, longitude} = barData;
 
-  await models.bar.create({
+  return await models.bar.create({
     name,
     address,
     latitude,
@@ -44,7 +44,7 @@ const updateBar = async (barId: string, barData: BarData) => {
 
   const { name, address, latitude, longitude} = barData;
 
-  await models.bar.update({
+  return await models.bar.update({
     name,
     address,
     latitude,

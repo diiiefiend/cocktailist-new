@@ -276,11 +276,9 @@ const deleteListItem = async (itemId: string, userId: number) => {
     }
   });
 
-  await list.update({
+  return await list.update({
     updated_at: Date.now(),
   });
-
-  return { status: 'success' };
 }
 
 const getExistingListItemsForOwner = async (cocktailId: number, userId: number) => {

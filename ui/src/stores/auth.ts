@@ -13,7 +13,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     if(isActive) {
       username.value = matchedCookies[1];
-      userId.value = matchedCookies[2];
+      userId.value = +matchedCookies[2];
     }
     
     return isActive;

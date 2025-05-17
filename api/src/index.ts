@@ -73,7 +73,27 @@ app.route('/cocktails/:cocktailId/reviews')
     } catch (e) {
       errorHandler(e, res);
     }
+  })
+  .post(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+    const reviewData = req.body;
+    // @ts-ignore
+    const userId = req.session.passport.user.id;
+    
+    try {
+      res.send(await reviews.addReview(req.params.cocktailId, reviewData, userId));
+    } catch (e) {
+      errorHandler(e, res);
+    }
   });
+
+app.route('/cocktails/:cocktailId/reviews/test')
+  .get(async (req: Request, res: Response) => {
+    try {
+      res.send(await reviews.testingFunction(req.params.cocktailId));
+    } catch (e) {
+      errorHandler(e, res);
+    }
+  })
 
 app.route('/cocktails/:id/lists')
   .get(isLoggedIn, async (req: Request, res: Response) => {
@@ -279,19 +299,6 @@ app.route('/reviews/:id')
 
     try {
       res.send(await reviews.deleteReview(req.params.id, userId));
-    } catch (e) {
-      errorHandler(e, res);
-    }
-  });
-
-app.route('/reviews')
-  .post(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
-    const reviewData = req.body;
-    // @ts-ignore
-    const userId = req.session.passport.user.id;
-    
-    try {
-      res.send(await reviews.addReview(reviewData, userId));
     } catch (e) {
       errorHandler(e, res);
     }

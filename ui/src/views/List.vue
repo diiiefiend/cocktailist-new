@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue';
 
-import type { CocktailBoxItem, CocktailDetailItem, List, ListInfo, ListItem } from '../models';
+import type { List, ListInfo, ListItem } from '../models';
 import { deleteItemFromList, deleteList, getList, getLists } from '../api';
 import { useAuthStore } from '../stores/auth';
 

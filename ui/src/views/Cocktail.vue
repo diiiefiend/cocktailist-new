@@ -2,7 +2,13 @@
 import { onMounted, ref, type Ref } from 'vue';
 
 import type { BarDetails, CocktailDetailItem, List, ReviewItem } from '../models';
-import { getCocktail, getCocktailReviews, getListItemsForCocktail, getLists } from '../api';
+import {
+  deleteReview,
+  getCocktail,
+  getCocktailReviews,
+  getListItemsForCocktail,
+  getLists,
+} from '../api';
 import { useAuthStore } from '../stores/auth';
 
 import ContextMenu from '../components/ContextMenu.vue';
@@ -17,6 +23,7 @@ import SearchBox from '../components/SearchBox.vue';
 import ReviewModal from './modals/ReviewModal.vue';
 import ListsModal from './modals/AddCocktailToListsModal.vue';
 import AddEditCocktailModal from './modals/AddEditCocktailModal.vue';
+import ConfirmationModal from './modals/ConfirmationModal.vue';
 
 const props = defineProps<{
   id: string;
@@ -27,7 +34,7 @@ const authStore = useAuthStore();
 const isLoading = ref(true);
 const error = ref(null);
 const isUserLoggedIn = authStore.checkIsUserLoggedIn();
-const showEditCocktailModal = ref(false);
+const hasReview = ref(false);
 
 const cocktail: Ref<null | CocktailDetailItem> = ref(null);
 const bar: Ref<null | BarDetails> = ref(null);
@@ -38,9 +45,28 @@ const scatterChartData: Ref<{ xValues: Array<number>; yValues: Array<number> }> 
   xValues: [],
   yValues: [],
 });
+const existingReview: Ref<ReviewItem | undefined> = ref(undefined);
+// currently this should always be equiv to existingReview, if both are set. but keeping them as separate values in case we ever allow multiple reviews
+const activeReview: Ref<ReviewItem | null> = ref(null);
 
 const showReviewModal = ref(false);
 const showListsModal = ref(false);
+const showEditCocktailModal = ref(false);
+const showDeleteReviewConfirmationModal = ref(false);
+
+const fetchReviewData = async () => {
+  reviews.value = await getCocktailReviews(props.id);
+  // TODO: this is not re-rendering without a refresh
+  scatterChartData.value = {
+    xValues: reviews.value.map((review: ReviewItem) => review.scale_spirited),
+    yValues: reviews.value.map((review: ReviewItem) => review.scale_composition),
+  };
+
+  if (reviews.value) {
+    existingReview.value = reviews.value.find((review) => review.user_id === +authStore.userId);
+    hasReview.value = !!existingReview.value;
+  }
+};
 
 async function fetchData() {
   error.value = null;
@@ -52,11 +78,7 @@ async function fetchData() {
     lists.value = await getLists();
     selectedLists.value = await getListItemsForCocktail(props.id);
 
-    reviews.value = await getCocktailReviews(props.id);
-    scatterChartData.value = {
-      xValues: reviews.value.map((review: ReviewItem) => review.scale_spirited),
-      yValues: reviews.value.map((review: ReviewItem) => review.scale_composition),
-    };
+    await fetchReviewData();
   } catch (err: any) {
     error.value = err.toString();
   } finally {
@@ -72,6 +94,23 @@ async function onEntryUpdate() {
   cocktail.value = await getCocktail(props.id);
 }
 
+async function onReviewSubmit() {
+  await fetchReviewData();
+}
+
+function onDeleteReviewClick(review: ReviewItem) {
+  showDeleteReviewConfirmationModal.value = true;
+  activeReview.value = review;
+}
+
+async function submitDeleteReview() {
+  console.log(activeReview.value);
+  await deleteReview(activeReview.value!.id);
+
+  showDeleteReviewConfirmationModal.value = false;
+  await fetchReviewData();
+}
+
 onMounted(async () => {
   await fetchData();
 });
@@ -82,9 +121,8 @@ onMounted(async () => {
     <context-menu>
       <div class="row-gap-1"></div>
       <div class="span-3 justify-left">
-        <!-- TODO: if a review exists, then this should say "edit review" -->
         <button class="primary" @click.stop="showReviewModal = true" :disabled="!isUserLoggedIn">
-          Add Review
+          {{ hasReview ? 'Edit Review' : 'Add Review' }}
         </button>
         <button class="primary" @click.stop="showListsModal = true" :disabled="!isUserLoggedIn">
           Modify Lists
@@ -129,7 +167,10 @@ onMounted(async () => {
           </grid-box>
           <grid-box :width="10">
             <h1 class="reviews">Guests say...</h1>
-            <review-list :reviews="reviews"></review-list>
+            <review-list
+              :reviews="reviews"
+              :deleteReviewCallback="onDeleteReviewClick"
+            ></review-list>
           </grid-box>
         </layout-container>
       </grid-box>
@@ -180,6 +221,8 @@ onMounted(async () => {
       :cocktailId="cocktail!.id"
       :cocktailName="cocktail!.name"
       :userId="+authStore.userId"
+      :existingReview="existingReview"
+      :onSubmitCallback="onReviewSubmit"
       @close="showReviewModal = false"
     />
   </transition>
@@ -203,6 +246,16 @@ onMounted(async () => {
       :allBars="[bar]"
       :onSubmitCallback="onEntryUpdate"
       @close="showEditCocktailModal = false"
+    />
+  </transition>
+  <transition name="modal">
+    <confirmation-modal
+      v-if="showDeleteReviewConfirmationModal"
+      :title="'Delete Review'"
+      :modal-text="`Are you sure you want to delete your review?`"
+      :submit-text="'Confirm'"
+      :submit-fn="submitDeleteReview"
+      @close="showDeleteReviewConfirmationModal = false"
     />
   </transition>
 </template>
