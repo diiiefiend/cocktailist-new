@@ -156,6 +156,12 @@ button {
   margin: 10px auto;
 }
 
+.divider {
+  opacity: 0.3;
+  display: inline-block;
+  margin: 0 auto;
+}
+
 // overrides
 input, select, textarea {
   background: transparent;

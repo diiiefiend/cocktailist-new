@@ -5,6 +5,7 @@ import { getCocktailsWithBars, getBars, getLiquorList } from '../api.js';
 import { useAuthStore } from '../stores/auth.js';
 import type { Bar, CocktailBoxItem, CocktailDetailItem } from '../models.js';
 import router from '../router/index.js';
+import { ALL_BARS, ALL_SPIRITS } from '../utils.js';
 
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
@@ -12,9 +13,6 @@ import CocktailBox from '../components/CocktailBox.vue';
 import SearchBox from '../components/SearchBox.vue';
 
 import AddEditCocktailModal from './modals/AddEditCocktailModal.vue';
-
-const ALL_BARS = 'All bars';
-const ALL_SPIRITS = 'All spirits';
 
 const authStore = useAuthStore();
 
@@ -127,7 +125,7 @@ onMounted(async () => {
       </div>
       <div class="span-2">
         <select :disabled="isLoading" v-model="selectedBarFilter" @change="onFilterChange('bar')">
-          <option>All bars</option>
+          <option>{{ ALL_BARS }}</option>
           <option v-for="bar in allBars" :key="bar.id" :value="bar.id">{{ bar.name }}</option>
         </select>
       </div>
@@ -137,7 +135,7 @@ onMounted(async () => {
           v-model="selectedLiquorFilter"
           @change="onFilterChange('liquor')"
         >
-          <option>All spirits</option>
+          <option>{{ ALL_SPIRITS }}</option>
           <option v-for="type in liquorTypes" :key="type" :value="type">{{ type }}</option>
         </select>
       </div>

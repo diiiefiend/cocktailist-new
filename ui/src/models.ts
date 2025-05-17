@@ -43,6 +43,8 @@ export interface CocktailBoxItem {
 
 export interface CocktailDetailItem extends CocktailBoxItem {
   ingredients: string;
+  updated_at: string;
+  created_at: string;
 }
 
 export interface User {

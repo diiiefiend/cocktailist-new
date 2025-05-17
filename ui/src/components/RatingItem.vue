@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+import { FLOURISH_IMG } from '../utils';
+
 const props = withDefaults(
   defineProps<{
     ratingValue: number;
@@ -28,7 +30,6 @@ const partialValueWidth = Math.floor(18 * (props.ratingValue % 1));
 
 const emptyImg = '/images/rating-empty.png';
 const fullImg = '/images/rating-full.png';
-const flourishImg = '/images/deco-flourish.jpg';
 
 const onMouseover = (val: number) => {
   if (props.isInteractive) {
@@ -75,7 +76,7 @@ const onClick = (ratingValue: number) => {
       </span>
     </div>
     <p v-if="props.showTotal">(based on {{ props.totalRatings }} reviews)</p>
-    <img class="divider" v-if="props.showDivider" :src="flourishImg" alt="" />
+    <img class="divider" v-if="props.showDivider" :src="FLOURISH_IMG" alt="" />
   </div>
 </template>
 

@@ -5,17 +5,16 @@ import { getBarCocktails, getBars } from '../api.js';
 import { useAuthStore } from '../stores/auth.js';
 import type { BarDetails, CocktailDetailItem } from '../models.js';
 import router from '../router/index.js';
+import { ALL_SPIRITS, FLOURISH_IMG, DATE_FORMATTING } from '../utils.js';
 
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
 import GridBox from '../components/GridBox.vue';
 import CocktailBox from '../components/CocktailBox.vue';
-import RatingItem from '../components/RatingItem.vue';
 import SearchBox from '../components/SearchBox.vue';
 
 import AddEditCocktailModal from './modals/AddEditCocktailModal.vue';
 
-const ALL_SPIRITS = 'All spirits';
 const authStore = useAuthStore();
 
 const props = withDefaults(
@@ -50,6 +49,7 @@ const setLiquorTypes = () => {
 const fetchBarCocktails = async (barId: number) => {
   const barCocktails = await getBarCocktails('' + barId);
   cocktails.value = barCocktails;
+
   filteredCocktails.value = barCocktails;
   setLiquorTypes();
 
@@ -127,7 +127,7 @@ onMounted(async () => {
       </div>
       <div class="span-2">
         <select :disabled="isLoading" v-model="selectedLiquorFilter" @change="onFilterChange">
-          <option>All spirits</option>
+          <option>{{ ALL_SPIRITS }}</option>
           <option v-for="type in liquorTypes" :key="type" :value="type">{{ type }}</option>
         </select>
       </div>
@@ -137,13 +137,11 @@ onMounted(async () => {
     <layout-container v-else>
       <grid-box :width="3" :startCol="1" :applyBoxStyle="true" class="bar-details-box">
         <h2>{{ bar!.name }}</h2>
-        <rating-item
-          :rating-value="4"
-          :show-total="true"
-          :total-ratings="10"
-          :show-divider="true"
-        ></rating-item>
         <h3>{{ bar!.address }}</h3>
+        <img class="divider" :src="FLOURISH_IMG" alt="" width="110" />
+        {{ cocktails.length }} entries<br />
+        Last updated:
+        <em>{{ new Date(cocktails[0]?.updated_at).toLocaleString('en-US', DATE_FORMATTING) }}</em>
       </grid-box>
       <grid-box :width="4" :startCol="4" :applyBoxStyle="true" class="map-box">
         <div class="placeholder-box"></div>

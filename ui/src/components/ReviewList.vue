@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAuthStore } from '../stores/auth';
 import { type ReviewItem } from '../models';
+import { DATE_FORMATTING } from '../utils';
 
 import RatingItem from './RatingItem.vue';
 
@@ -8,17 +9,6 @@ const props = defineProps<{
   reviews: ReviewItem[];
   deleteReviewCallback: any;
 }>();
-
-const dateOptions: any = {
-  year: 'numeric',
-  weekday: 'long',
-  month: 'long',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: 'numeric',
-  second: 'numeric',
-  hour12: false,
-};
 
 const authStore = useAuthStore();
 </script>
@@ -49,7 +39,7 @@ const authStore = useAuthStore();
       </button>
       <div class="reviewer">{{ review.reviewer.username }}</div>
       <div class="timestamp">
-        on {{ new Date(review.updated_at).toLocaleString('en-US', dateOptions) }}
+        on {{ new Date(review.updated_at).toLocaleString('en-US', DATE_FORMATTING) }}
       </div>
     </li>
   </ul>
