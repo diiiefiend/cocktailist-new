@@ -55,6 +55,7 @@ const getListWithCocktails = async (listId: string, userId: number) => {
       association: 'listedCocktail',
       required: true
     }],
+    order: [[ 'updated_at', 'DESC' ]],
   });
 
 

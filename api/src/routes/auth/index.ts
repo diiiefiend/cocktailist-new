@@ -97,7 +97,11 @@ const createUser = async (params: any) => {
         session_token: 'PLACEHOLDER',
       });
 
-      // TODO: set up a new user with some default lists
+      // set up a default list
+      await models.list.create({
+        name: 'to try',
+        user_id: result.dataValues.id,
+      });
       
       return { user: result, error: null};
     } catch (e) {

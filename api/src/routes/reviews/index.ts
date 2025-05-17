@@ -21,12 +21,9 @@ const getReviewsForCocktail = async (cocktailId: string) => {
         exclude: ['created_at', 'updated_at', 'password_digest', 'session_token', 'uid', 'provider'],
       },
     }],
+    order: [[ 'updated_at', 'DESC' ]],
   });
 };
-
-const testingFunction = async (cocktailId: string) => {
-  return await refreshCocktailStats(123, +cocktailId);
-}
 
 const addReview = async (cocktailId: string, reviewData: ReviewData, userId: number) => {
   await dbConnect();
@@ -172,5 +169,4 @@ export default {
   addReview,
   updateReview,
   deleteReview,
-  testingFunction,
 }

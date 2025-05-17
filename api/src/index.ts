@@ -86,15 +86,6 @@ app.route('/cocktails/:cocktailId/reviews')
     }
   });
 
-app.route('/cocktails/:cocktailId/reviews/test')
-  .get(async (req: Request, res: Response) => {
-    try {
-      res.send(await reviews.testingFunction(req.params.cocktailId));
-    } catch (e) {
-      errorHandler(e, res);
-    }
-  })
-
 app.route('/cocktails/:id/lists')
   .get(isLoggedIn, async (req: Request, res: Response) => {
     // @ts-ignore
@@ -184,7 +175,8 @@ app.route('/bars/:id')
   })
   .put(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
     const barData = req.body;
-    
+
+    // TODO: currently not called
     try {
       res.send(await bars.updateBar(req.params.id, barData));
     } catch (e) {
@@ -203,6 +195,7 @@ app.route('/bars')
   .post(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
     const barData = req.body;
     
+    // TODO: currently not called
     try {
       res.send(await bars.addBar(barData));
     } catch (e) {
@@ -227,6 +220,7 @@ app.route('/lists/:id')
     // @ts-ignore
     const userId = req.session.passport.user.id;
     
+    // TODO: currently not called
     try {
       res.send(await lists.updateList(req.params.id, listData, userId));
     } catch (e) {
@@ -308,6 +302,7 @@ app.route('/reviews/:id')
 app.route('/users/:id')
   .get(async (req: Request, res: Response) => {
     try {
+      // TODO: currently not called
       res.send(await auth.getUser(req.params.id));
     } catch (e) {
       errorHandler(e, res);
@@ -334,6 +329,8 @@ app.route('/users')
       auth.doPostLoginActions(req, res, next);
     });
   });
+
+  // should we allow deleting accounts?
 
 // sessions
 // uses the "local" strategy defined in auth.configureAuth

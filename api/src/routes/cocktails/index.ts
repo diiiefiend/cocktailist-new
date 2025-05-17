@@ -28,6 +28,7 @@ const getCocktailsWithBars = async () => {
       association: 'bar',
       required: true
     }],
+    order: [[ 'updated_at', 'DESC' ]],
   });
 
   return results;

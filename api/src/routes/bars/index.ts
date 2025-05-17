@@ -22,7 +22,8 @@ const getBarCocktails = async (barId: string) => {
   return await models.cocktail.findAll({
     where: {
       bar_id: barId,
-    }
+    },
+    order: [[ 'updated_at', 'DESC' ]],
   });
 }
 
