@@ -75,8 +75,11 @@ async function fetchData() {
   try {
     cocktail.value = await getCocktail(props.id);
     bar.value = cocktail.value!.bar;
-    lists.value = await getLists();
-    selectedLists.value = await getListItemsForCocktail(props.id);
+
+    if (isUserLoggedIn) {
+      lists.value = await getLists();
+      selectedLists.value = await getListItemsForCocktail(props.id);
+    }
 
     await fetchReviewData();
   } catch (err: any) {

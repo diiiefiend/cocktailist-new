@@ -129,6 +129,7 @@ const doPostLoginActions = (req: Request, res: Response, next: NextFunction) => 
     {
       httpOnly: false,
       maxAge: req.session.cookie.maxAge,
+      ...(process.env.ENV === 'production' ? {domain: 'cocktailist.club'} : {}),
     }
   );
 
@@ -161,8 +162,12 @@ const logout =  (req: Request, res: Response, next: NextFunction) => {
       return next(err);
     }
 
-    res.clearCookie(CUSTOM_SESSION_COOKIE_NAME);
-    res.clearCookie(CSRF_TOKEN_COOKIE_NAME);
+    res.clearCookie(CUSTOM_SESSION_COOKIE_NAME, {
+      ...(process.env.ENV === 'production' ? {domain: 'cocktailist.club'} : {}),
+    });
+    res.clearCookie(CSRF_TOKEN_COOKIE_NAME, {
+      ...(process.env.ENV === 'production' ? {domain: 'cocktailist.club'} : {}),
+    });
 
     res.send({
       status: 'success',

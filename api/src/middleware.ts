@@ -18,6 +18,7 @@ const generateCSRFToken = (req: RequestWithCsrf, res: Response, next?: NextFunct
     {
       httpOnly: false,
       maxAge: req.session.cookie.maxAge,
+      ...(process.env.ENV === 'production' ? {domain: 'cocktailist.club'} : {}),
     }
   );
 

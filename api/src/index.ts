@@ -53,12 +53,10 @@ let cookieParserOptions = {};
 
 // TODO: validate this later
 if (app.get('env') === 'production') {
+  console.log('production env setting!');
+  
   app.set('trust proxy', 1) // trust first proxy
   expressSessionSettings.cookie.secure = true // serve secure cookies
-  cookieParserOptions = {
-    //   //@ts-ignore
-      sameSite: 'strict',
-  };
 }
 
 app.use(cookieParser(process.env.COOKIE_PARSER_SECRET, cookieParserOptions));
