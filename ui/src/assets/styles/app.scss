@@ -162,6 +162,14 @@ button {
   margin: 0 auto;
 }
 
+img.preview-image {
+  display: block;
+  margin: 10px auto 0 auto;
+  height: 150px;
+  max-width: 500px;
+  border: 2px solid $light-emerald;
+}
+
 // overrides
 input, select, textarea {
   background: transparent;

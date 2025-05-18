@@ -31,10 +31,10 @@ const generateCSRFToken = (req: RequestWithCsrf, res: Response, next?: NextFunct
   const csrfToken = req.cookies[CSRF_TOKEN_COOKIE_NAME];
 
   if (req.header('X-CSRF-Token') === csrfToken) {
-    console.log('matched!');
+    console.log('token matched!');
     next();
   } else {
-    console.log('not matched');
+    console.log('token not matched');
     res.status(403).send('Invalid CSRF token');
   }
  }

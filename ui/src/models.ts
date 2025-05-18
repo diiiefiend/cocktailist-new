@@ -32,19 +32,23 @@ export interface BarDetails extends Bar {
   longitude?: number;
 }
 
-export interface CocktailBoxItem {
+export interface CocktailItem {
   id: number;
   name: string;
   liquor: DRINK_TYPES;
-  img_file_name: string;
   bar: BarDetails;
-  avg_rating: number;
-}
-
-export interface CocktailDetailItem extends CocktailBoxItem {
   ingredients: string;
-  updated_at: string;
   created_at: string;
+  updated_at: string;
+
+  avg_rating: number;
+  avg_spirited?: number;
+  avg_composition: number;
+
+  img_file_name?: string;
+  img_content_type?: string;
+  img_file_size?: number;
+  img_updated_at?: string;
 }
 
 export interface User {
@@ -83,7 +87,7 @@ export interface ListItem {
   list_id: number;
   created_at: string;
   updated_at: string;
-  listedCocktail: CocktailDetailItem;
+  listedCocktail: CocktailItem;
 }
 
 export interface CoordinatePair {
@@ -101,7 +105,7 @@ export interface CocktailSubmission {
   barName?: string;
   barAddress?: string;
   ingredients: string;
-  imgUrl?: string;
+  img?: any;
 }
 
 export interface ReviewSubmission {

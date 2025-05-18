@@ -3,7 +3,7 @@ import { onMounted, ref, type Ref } from 'vue';
 
 import { getBarCocktails, getBars } from '../api.js';
 import { useAuthStore } from '../stores/auth.js';
-import type { BarDetails, CocktailDetailItem } from '../models.js';
+import type { BarDetails, CocktailItem } from '../models.js';
 import router from '../router/index.js';
 import { ALL_SPIRITS, FLOURISH_IMG, DATE_FORMATTING } from '../utils.js';
 
@@ -31,12 +31,12 @@ const error = ref(null);
 
 const allBars: Ref<Array<BarDetails>> = ref([]);
 const bar: Ref<null | BarDetails> = ref(null);
-const cocktails: Ref<Array<CocktailDetailItem>> = ref([]);
+const cocktails: Ref<Array<CocktailItem>> = ref([]);
 const liquorTypes: Ref<null | string[]> = ref(null);
 
 const showAddCocktailModal = ref(false);
 const selectedLiquorFilter: Ref<null | string> = ref(ALL_SPIRITS);
-const filteredCocktails: Ref<null | undefined | Array<CocktailDetailItem>> = ref(null);
+const filteredCocktails: Ref<null | undefined | Array<CocktailItem>> = ref(null);
 
 const isUserLoggedIn = authStore.checkIsUserLoggedIn();
 // TODO: implement edit bar modal
@@ -88,7 +88,7 @@ async function onBarUpdate() {
 }
 
 function onFilterChange() {
-  let result: Array<CocktailDetailItem> = cocktails.value;
+  let result: Array<CocktailItem> = cocktails.value;
 
   if (selectedLiquorFilter.value !== ALL_SPIRITS) {
     result = result.filter((cocktail) => cocktail.liquor === selectedLiquorFilter.value);
@@ -98,7 +98,7 @@ function onFilterChange() {
   filteredCocktails.value = result;
 }
 
-function onCocktailCreate(createdCocktail: CocktailDetailItem) {
+function onCocktailCreate(createdCocktail: CocktailItem) {
   router.push(`/cocktails/${createdCocktail.id}`);
 }
 

@@ -31,10 +31,11 @@ const getBars = async () => {
 }
 
 const addCocktail = async (cocktailData: CocktailSubmission) => {
+  // this call expects the payload to be FormData!
   return makeCall(`${API_HOST}/cocktails`, {
     method: 'POST',
-    body: JSON.stringify(cocktailData),
-  });
+    body: cocktailData,
+  }, true);
 };
 
 // cocktail detail routes
@@ -65,10 +66,11 @@ const addCocktailToLists = async (cocktailId: number, listsData: AddCocktailToLi
 };
 
 const updateCocktail = async (cocktailId: number, cocktailData: CocktailSubmission) => {
+  // this call expects the payload to be FormData!
   return makeCall(`${API_HOST}/cocktails/${cocktailId}`, {
     method: 'PUT',
-    body: JSON.stringify(cocktailData),
-  });
+    body: cocktailData,
+  }, true);
 };
 
 const addReview = async (cocktailId: number, reviewData: ReviewSubmission) => {
@@ -160,19 +162,17 @@ const createAccount = async (createAccountData: CreateAccountSubmission) => {
   });
 }
 
-const makeCall = async (endpoint: string, options: any) => {
+const makeCall = async (endpoint: string, options: any, isFormData?: boolean) => {
   const csrfTokenMatcher = document.cookie.match(new RegExp('(^| )' + 'cocktailist.token' + '=([^;]+)'));
   let csrfToken = '';
   if (csrfTokenMatcher) {
     csrfToken = csrfTokenMatcher[2];
   }
 
-  const additionalHeaders = csrfTokenMatcher ? { "X-CSRF-Token": csrfToken } : {};
-
   const decoratedOptions = {
     headers: {
-      "Content-Type": "application/json",
-      ...additionalHeaders,
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
+      ...(csrfTokenMatcher ? { "X-CSRF-Token": csrfToken } : {}),
     },
     credentials: 'include',
     ...options,

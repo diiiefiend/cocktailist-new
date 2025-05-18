@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { type CocktailDetailItem } from '../models';
+import { type CocktailItem } from '../models';
 
 const props = defineProps<{
-  cocktail: CocktailDetailItem;
+  cocktail: CocktailItem;
   barId: number;
   barName: string;
 }>();

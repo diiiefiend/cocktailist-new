@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { type CocktailBoxItem, type ListItem } from '../models';
+import { type CocktailItem, type ListItem } from '../models';
 import TrashIcon from './TrashIcon.vue';
 import { ref } from 'vue';
 
 const props = withDefaults(
   defineProps<{
-    cocktail: CocktailBoxItem;
+    cocktail: CocktailItem;
     addedToListDate?: string;
     listItem?: ListItem;
     deleteListItemCallback?: (listItem: ListItem) => void;

@@ -3,6 +3,7 @@ import cors from 'cors';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
+import multer from 'multer';
 import session from 'express-session';
 import connectSession from 'connect-session-sequelize';
 
@@ -16,6 +17,7 @@ import auth from './routes/auth';
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
+const multerMiddleware = multer();
 
 // passport configure auth stuff
 auth.configureAuth();
@@ -136,11 +138,12 @@ app.route('/cocktails')
       errorHandler(e, res);
     }
   })
-  .post(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+  .post(isLoggedIn, validateCSRFToken, multerMiddleware.single('img'), async (req:Request, res: Response) => {
     const cocktailData = req.body;
+    const cocktailImage = req.file;
 
     try {
-      res.send(await cocktails.addCocktail(cocktailData));
+      res.send(await cocktails.addCocktail(cocktailData, cocktailImage));
     } catch (e) {
       errorHandler(e, res);
     }

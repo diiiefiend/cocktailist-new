@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
-import { DRINK_TYPES, type CocktailDetailItem } from '../../models';
+import { DRINK_TYPES, type CocktailItem } from '../../models';
 import { addCocktail, updateCocktail } from '../../api';
 import { checkRequiredFields } from '../../utils';
 
 import SiteModal from '../../components/SiteModal.vue';
 
 const props = defineProps<{
-  existingCocktailInfo: CocktailDetailItem | null;
+  existingCocktailInfo: CocktailItem | null;
   userId: number;
   allBars: Bar[];
   onSubmitCallback: any;
@@ -26,7 +26,6 @@ const payload = ref(
         barName: props.existingCocktailInfo.bar.name,
         barAddress: null,
         ingredients: props.existingCocktailInfo.ingredients,
-        imgUrl: props.existingCocktailInfo.img_file_name,
       }
     : {
         name: null,
@@ -35,13 +34,14 @@ const payload = ref(
         barName: null,
         barAddress: null,
         ingredients: null,
-        imgUrl: null,
       },
 );
 
 const errors: Ref<string[]> = ref([]);
 const isSubmitting = ref(false);
 const isNewBar = ref(false);
+const imageFile = ref(null);
+const previewImage: Ref<string | ArrayBuffer | null> = ref(null);
 
 const onSubmit = async () => {
   errors.value = [];
@@ -58,15 +58,27 @@ const onSubmit = async () => {
   // if no errors, continue to try to submit
   if (!errors.value.length) {
     try {
+      // turn the payload into FormData so we can send the image
+      const formData = new FormData();
+
+      Object.keys(payload.value).forEach((key) => {
+        // @ts-ignore
+        formData.append(key, payload.value[key]);
+      });
+
+      if (imageFile.value) {
+        formData.append('img', imageFile.value);
+      }
+
       if (isEdit.value) {
         // @ts-ignore
-        await updateCocktail(props.existingCocktailInfo!.id, payload.value);
+        await updateCocktail(props.existingCocktailInfo!.id, formData);
         emit('close');
 
         props.onSubmitCallback();
       } else {
         // @ts-ignore
-        const createdCocktail = await addCocktail(payload.value);
+        const createdCocktail = await addCocktail(formData);
         emit('close');
 
         props.onSubmitCallback(createdCocktail);
@@ -79,6 +91,23 @@ const onSubmit = async () => {
 
   isSubmitting.value = false;
 };
+
+function onUpdateImage(event: any) {
+  const file = event.target.files[0];
+
+  if (file && file.type.match('image.*')) {
+    imageFile.value = file;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      previewImage.value = reader.result;
+    };
+
+    reader.readAsDataURL(file);
+  } else {
+    previewImage.value = null;
+  }
+}
 </script>
 
 <template>
@@ -116,7 +145,9 @@ const onSubmit = async () => {
         <fieldset>
           <label>Image</label>
           <!-- TODO: image upload form -->
-          <input type="text" v-model="payload.imgUrl" />
+          <input type="file" @change="onUpdateImage" accept="image/*" ref="imgFile" />
+          <img v-if="previewImage" class="preview-image" :src="previewImage" />
+          <!-- TODO: add flow for removing image -->
         </fieldset>
       </form>
     </template>
@@ -136,6 +167,4 @@ const onSubmit = async () => {
 </template>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-// @import '../assets/styles/views/modals/review-modal.scss';
-</style>
+<style scoped lang="scss"></style>

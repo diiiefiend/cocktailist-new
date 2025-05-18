@@ -3,7 +3,7 @@ import { ref, onMounted, type Ref } from 'vue';
 
 import { getCocktailsWithBars, getBars, getLiquorList } from '../api.js';
 import { useAuthStore } from '../stores/auth.js';
-import type { Bar, CocktailBoxItem, CocktailDetailItem } from '../models.js';
+import type { Bar, CocktailItem } from '../models.js';
 import router from '../router/index.js';
 import { ALL_BARS, ALL_SPIRITS } from '../utils.js';
 
@@ -20,20 +20,20 @@ const isLoading = ref(true);
 const error = ref(null);
 
 const isUserLoggedIn = authStore.checkIsUserLoggedIn();
-const allCocktails: Ref<null | Array<CocktailBoxItem>> = ref(null);
+const allCocktails: Ref<null | Array<CocktailItem>> = ref(null);
 const allBars: Ref<null | Array<Bar>> = ref(null);
 const liquorTypes: Ref<null | string[]> = ref(null);
 
 const showAddCocktailModal = ref(false);
 const selectedBarFilter: Ref<null | number | string> = ref(ALL_BARS);
 const selectedLiquorFilter: Ref<null | string> = ref(ALL_SPIRITS);
-const filteredCocktails: Ref<null | undefined | Array<CocktailBoxItem>> = ref(null);
+const filteredCocktails: Ref<null | undefined | Array<CocktailItem>> = ref(null);
 
 const handleBarFilterUpdate = (
-  initialCocktailList: Array<CocktailBoxItem>,
+  initialCocktailList: Array<CocktailItem>,
   isInternalCall: boolean,
 ) => {
-  let result: Array<CocktailBoxItem> = initialCocktailList;
+  let result: Array<CocktailItem> = initialCocktailList;
   if (selectedBarFilter.value !== ALL_BARS) {
     result = initialCocktailList.filter(
       // @ts-ignore
@@ -51,10 +51,10 @@ const handleBarFilterUpdate = (
 };
 
 const handleLiquorFilterUpdate = (
-  initialCocktailList: Array<CocktailBoxItem>,
+  initialCocktailList: Array<CocktailItem>,
   isInternalCall: boolean,
 ) => {
-  let result: Array<CocktailBoxItem> = initialCocktailList;
+  let result: Array<CocktailItem> = initialCocktailList;
 
   if (selectedLiquorFilter.value !== ALL_SPIRITS) {
     result = initialCocktailList.filter(
@@ -101,7 +101,7 @@ function onFilterChange(filterKey: 'bar' | 'liquor') {
   }
 }
 
-function onCocktailCreate(createdCocktail: CocktailDetailItem) {
+function onCocktailCreate(createdCocktail: CocktailItem) {
   router.push(`/cocktails/${createdCocktail.id}`);
 }
 

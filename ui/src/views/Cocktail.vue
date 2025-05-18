@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue';
 
-import type { BarDetails, CocktailDetailItem, List, ReviewItem } from '../models';
+import type { BarDetails, CocktailItem, List, ReviewItem } from '../models';
 import {
   deleteReview,
   getCocktail,
@@ -36,7 +36,7 @@ const error = ref(null);
 const isUserLoggedIn = authStore.checkIsUserLoggedIn();
 const hasReview = ref(false);
 
-const cocktail: Ref<null | CocktailDetailItem> = ref(null);
+const cocktail: Ref<null | CocktailItem> = ref(null);
 const bar: Ref<null | BarDetails> = ref(null);
 const lists: Ref<Array<List>> = ref([]);
 const selectedLists: Ref<Array<List>> = ref([]);
