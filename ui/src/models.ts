@@ -49,6 +49,9 @@ export interface CocktailItem {
   img_content_type?: string;
   img_file_size?: number;
   img_updated_at?: string;
+  
+  // the camelcasing is intentional here, to show this prop does not come from the db but is computed in the API
+  imgUrl?: string;
 }
 
 export interface User {

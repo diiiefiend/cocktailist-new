@@ -10,20 +10,20 @@ const s3Client = new S3Client({
 })
 
 // overly convoluted filepath thanks to not knowing what i was doing in 2015
-const awsFolderPath = 'cocktails/imgs/000/000';
+const AWS_SUBDIR_PATH = 'cocktails/imgs/000/000';
 
 // fileName should be something like "[cocktailId]/{original|small}/cocktail_name.jpg"
 const uploadImage = async (fileName: string, imageBlob: any) => {
   try {
     const uploadParams = {
       Bucket: process.env.AWS_BUCKET,
-      Key: `${awsFolderPath}/${fileName}`,
+      Key: `${AWS_SUBDIR_PATH}/${fileName}`,
       Body: imageBlob, 
     };
 
     // Upload the file to S3
     const response = await s3Client.send(new PutObjectCommand(uploadParams));
-    console.log(`uploaded image: ${process.env.AWS_BUCKET}:${awsFolderPath}/${fileName}`);
+    console.log(`uploaded image: ${process.env.AWS_BUCKET}:${AWS_SUBDIR_PATH}/${fileName}`);
 
     return response;
   } catch (err: any) {
@@ -34,16 +34,18 @@ const uploadImage = async (fileName: string, imageBlob: any) => {
 
 const isFileAvailableInBucket = async (fileName: string) => {
   try {
-      // Check if the object exists
-      await s3Client.send(new HeadObjectCommand({
-          Bucket: process.env.AWS_BUCKET,
-          Key: fileName,
-      }));
+    console.log(`looking for: ${process.env.AWS_BUCKET}:${AWS_SUBDIR_PATH}/${fileName}`);
+  
+    // Check if the object exists
+    await s3Client.send(new HeadObjectCommand({
+        Bucket: process.env.AWS_BUCKET,
+        Key: `${AWS_SUBDIR_PATH}/${fileName}`,
+    }));
 
-      return true;
+    return true;
   } catch (err) {
-      console.error(err);
-      return false;
+    console.error(err);
+    return false;
   }
 }
 
@@ -55,7 +57,7 @@ const getImageUrl = async (fileName: string) => {
       if (doesFileExist) {
           const command = new GetObjectCommand({
               Bucket: process.env.AWS_BUCKET,
-              Key: fileName,
+              Key: `${AWS_SUBDIR_PATH}/${fileName}`,
           });
 
           // Generate a signed URL without expiration time

@@ -170,6 +170,12 @@ img.preview-image {
   border: 2px solid $light-emerald;
 }
 
+button.remove-image-link.link-button {
+  color: $light-ruby;
+  font-style: normal;
+  font-weight: bold;
+}
+
 // overrides
 input, select, textarea {
   background: transparent;

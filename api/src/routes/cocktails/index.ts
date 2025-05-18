@@ -1,6 +1,7 @@
 import { Sequelize } from 'sequelize';
 import {dbConnect, models} from '../../db';
 import * as aws from '../../aws';
+import sharp from 'sharp';
 
 interface CocktailData {
   name: string;
@@ -24,12 +25,27 @@ interface CocktailImage {
 
 const getCocktail = async (id: string) => {
   await dbConnect();
-  return await models.cocktail.findByPk(id, {
+  let cocktail: any = await models.cocktail.findByPk(id, {
     include: [{
       association: 'bar',
       required: true
     }],
   });
+
+  cocktail = cocktail?.dataValues;
+
+  if (cocktail?.img_file_name) {
+    const filePath = `${cocktail.id}/original/${cocktail.img_file_name}`;
+
+    try {
+      // @ts-ignore
+      cocktail.imgUrl = await aws.getImageUrl(filePath);
+    } catch (e) {
+      console.warn('image not found, proceeding anyway...');
+    }
+  }
+
+  return cocktail;
 }
 
 const getCocktailsWithBars = async () => {
@@ -100,50 +116,77 @@ const addCocktail = async (cocktailData: CocktailData, cocktailImage?: CocktailI
   };
 
   // upload image, if provided, to aws
-  // need to create and upload a thumbnail version too
   if (cocktailImage) {
-    const {
-      originalname,
-      mimetype,
-      buffer,
-      size,
-    } = cocktailImage;
-    
-    await aws.uploadImage(`${cocktail.dataValues.id}/original/${originalname}`, buffer);
-
-    const addImageResult = await cocktail.update({
-      img_file_name: originalname,
-      img_content_type: mimetype,
-      img_file_size: size,
-      img_updated_at: Date.now(),
-    });
-
-    result = addImageResult.dataValues;
+    const addImageStatus = uploadCocktailImages(cocktail.dataValues.id, cocktailImage);
+    result.addImageStatus = addImageStatus;
   }
 
   return result;
 }
 
-const updateCocktail = async (cocktailId: string, cocktailData: CocktailData) => {
+const updateCocktail = async (cocktailId: string, cocktailData: CocktailData, cocktailImage?: CocktailImage) => {
   await dbConnect();
 
-  const { name, barId, type, ingredients, imgFileName, imgContentType, imgFileSize, imgUpdatedAt } = cocktailData;
+  const { name, barId, type, ingredients } = cocktailData;
 
-  return await models.cocktail.update({
+  const cocktailUpdate = await models.cocktail.update({
     bar_id: barId,
     name,
     liquor: type,
     ingredients,
-    img_file_name: imgFileName,
-    img_content_type: imgContentType,
-    img_file_size: imgFileSize,
-    img_updated_at: imgUpdatedAt,
     updated_at: Date.now(),
   }, {
     where: {
       id: cocktailId,
     }
   });
+
+  let result: any = {
+    cocktailUpdateStatus: cocktailUpdate,
+  };
+
+  // upload image, if provided, to aws
+  if (cocktailImage) {
+    const addImageStatus = uploadCocktailImages(+cocktailId, cocktailImage);
+    result.addImageStatus = addImageStatus;
+  } else {
+    // TODO: should handle case where one wants to unset the image
+  }
+
+  return result;
+}
+
+const uploadCocktailImages = async (cocktailId: number, cocktailImage: CocktailImage) => {
+  const {
+    originalname,
+    mimetype,
+    buffer,
+    size,
+  } = cocktailImage;
+
+  const originalFolderPath = `${cocktailId}/original/${originalname}`;
+  const smallFolderPath = `${cocktailId}/small/${originalname}`;
+  
+  await aws.uploadImage(originalFolderPath, buffer);
+
+  // make thumbnail that is 150px tall
+  // @ts-ignore
+  const sharpInstance: sharp.Sharp = new sharp(buffer);
+  const smallVersion = await sharpInstance.resize(null, 150).jpeg().toBuffer();
+  await aws.uploadImage(smallFolderPath, smallVersion);
+
+  const addImageResult = await models.cocktail.update({
+    img_file_name: originalname,
+    img_content_type: mimetype,
+    img_file_size: size,
+    img_updated_at: Date.now(),
+  }, {
+    where: {
+      id: cocktailId,
+    }
+  });
+
+  return addImageResult;
 }
 
 export default {

@@ -92,6 +92,7 @@ function onSelectedListSubmit(updatedSelectedLists: List[]) {
 
 async function onEntryUpdate() {
   cocktail.value = await getCocktail(props.id);
+  // TODO: the image is not re-rendering without a refresh
 }
 
 async function onReviewSubmit() {

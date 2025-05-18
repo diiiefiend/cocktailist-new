@@ -40,6 +40,7 @@ const payload = ref(
 const errors: Ref<string[]> = ref([]);
 const isSubmitting = ref(false);
 const isNewBar = ref(false);
+const fileInput: Ref<any> = ref(null);
 const imageFile = ref(null);
 const previewImage: Ref<string | ArrayBuffer | null> = ref(null);
 
@@ -105,8 +106,14 @@ function onUpdateImage(event: any) {
 
     reader.readAsDataURL(file);
   } else {
-    previewImage.value = null;
+    resetImages();
   }
+}
+
+function resetImages() {
+  previewImage.value = null;
+  imageFile.value = null;
+  fileInput.value.value = null;
 }
 </script>
 
@@ -144,10 +151,11 @@ function onUpdateImage(event: any) {
         </fieldset>
         <fieldset>
           <label>Image</label>
-          <!-- TODO: image upload form -->
-          <input type="file" @change="onUpdateImage" accept="image/*" ref="imgFile" />
+          <input type="file" @change="onUpdateImage" accept="image/*" ref="fileInput" />
+          <button v-if="imageFile" class="link-button remove-image-link" @click.stop="resetImages">
+            X
+          </button>
           <img v-if="previewImage" class="preview-image" :src="previewImage" />
-          <!-- TODO: add flow for removing image -->
         </fieldset>
       </form>
     </template>

@@ -19,7 +19,8 @@ const props = defineProps<{
       </span>
     </h1>
     <div class="cocktail-image">
-      <img :src="props.cocktail.img_file_name" :alt="props.cocktail.name + ' image'" />
+      <!-- TODO: handle no image case -->
+      <img :src="props.cocktail.imgUrl" :alt="props.cocktail.name + ' image'" />
     </div>
     <h2>
       from

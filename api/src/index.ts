@@ -119,16 +119,17 @@ app.route('/cocktails/:id')
       errorHandler(e, res);
     }
   })
-  .put(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+  .put(isLoggedIn, validateCSRFToken, multerMiddleware.single('img'), async (req:Request, res: Response) => {
     const cocktailData = req.body;
+    const cocktailImage = req.file;
     
     try { 
-      res.send(await cocktails.updateCocktail(req.params.id, cocktailData));
+      res.send(await cocktails.updateCocktail(req.params.id, cocktailData, cocktailImage));
     } catch (e) {
       errorHandler(e, res);
     }
   });
-  // Should I let cocktails be deleted?
+  // Should I let cocktails be deleted? if so, relationships have to be cleaned up too (reviews, listitems, imgs)
 
 app.route('/cocktails')
   .get(async (req: Request, res: Response) => {
