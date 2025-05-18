@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, type Ref } from 'vue';
 
 import SiteModal from '../../components/SiteModal.vue';
 import type { List } from '../../models';
@@ -8,7 +8,7 @@ import { addCocktailToLists } from '@/api';
 const props = defineProps<{
   cocktailId: number;
   cocktailName: string;
-  userId: number;
+  userId: number | null;
   lists: List[];
   selectedLists: List[];
   onSubmitCallback: any;

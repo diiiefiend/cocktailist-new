@@ -159,7 +159,7 @@ onMounted(async () => {
     <add-edit-cocktail-modal
       v-if="showAddCocktailModal"
       :existingCocktailInfo="null"
-      :userId="+authStore.userId"
+      :userId="+authStore.userId!"
       :allBars="allBars ?? []"
       :onSubmitCallback="onCocktailCreate"
       @close="showAddCocktailModal = false"

@@ -63,7 +63,7 @@ const fetchReviewData = async () => {
   };
 
   if (reviews.value) {
-    existingReview.value = reviews.value.find((review) => review.user_id === +authStore.userId);
+    existingReview.value = reviews.value.find((review) => review.user_id === +authStore.userId!);
     hasReview.value = !!existingReview.value;
   }
 };
@@ -221,7 +221,7 @@ onMounted(async () => {
       v-if="showReviewModal"
       :cocktailId="cocktail!.id"
       :cocktailName="cocktail!.name"
-      :userId="+authStore.userId"
+      :userId="+authStore.userId!"
       :existingReview="existingReview"
       :onSubmitCallback="onReviewSubmit"
       @close="showReviewModal = false"
@@ -232,7 +232,7 @@ onMounted(async () => {
       v-if="showListsModal"
       :cocktailId="cocktail!.id"
       :cocktailName="cocktail!.name"
-      :userId="+authStore.userId"
+      :userId="+authStore.userId!"
       :lists="lists"
       :selectedLists="selectedLists"
       :onSubmitCallback="onSelectedListSubmit"
@@ -243,8 +243,8 @@ onMounted(async () => {
     <add-edit-cocktail-modal
       v-if="showEditCocktailModal"
       :existingCocktailInfo="cocktail"
-      :userId="+authStore.userId"
-      :allBars="[bar]"
+      :userId="+authStore.userId!"
+      :allBars="[bar!]"
       :onSubmitCallback="onEntryUpdate"
       @close="showEditCocktailModal = false"
     />

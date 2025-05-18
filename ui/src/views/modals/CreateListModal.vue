@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, type Ref } from 'vue';
 
 import { checkRequiredFields } from '../../utils';
 import { addList } from '../../api';
 import SiteModal from '../../components/SiteModal.vue';
 
 const props = defineProps<{
-  userId: number;
+  userId: number | null;
   onSubmitCallback?: any;
 }>();
 

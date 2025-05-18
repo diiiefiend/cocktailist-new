@@ -1,4 +1,4 @@
-import type { CocktailSubmission, CreateAccountSubmission, LoginSubmission, ReviewSubmission } from "./models";
+import type { AddCocktailToListsSubmission, CocktailSubmission, CreateAccountSubmission, LoginSubmission, ReviewSubmission } from "./models";
 
 let API_HOST: string;
 switch (window.location.hostname) {

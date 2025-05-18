@@ -89,7 +89,7 @@ function onCancel() {
 }
 
 onMounted(() => {
-  if (isUserLoggedIn.value) {
+  if (isUserLoggedIn) {
     router.push('/account');
   }
 });

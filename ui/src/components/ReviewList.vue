@@ -31,7 +31,7 @@ const authStore = useAuthStore();
       </span>
       <p>{{ review.body }}</p>
       <button
-        v-if="review.user_id === +authStore.userId"
+        v-if="authStore.userId && review.user_id === +authStore.userId"
         class="link-button"
         @click.stop="props.deleteReviewCallback(review)"
       >

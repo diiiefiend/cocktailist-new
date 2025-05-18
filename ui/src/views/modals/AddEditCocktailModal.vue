@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, type Ref } from 'vue';
 
-import { DRINK_TYPES, type CocktailItem } from '../../models';
+import { DRINK_TYPES, type Bar, type CocktailItem } from '../../models';
 import { addCocktail, updateCocktail } from '../../api';
 import { checkRequiredFields } from '../../utils';
 
@@ -9,7 +9,7 @@ import SiteModal from '../../components/SiteModal.vue';
 
 const props = defineProps<{
   existingCocktailInfo: CocktailItem | null;
-  userId: number;
+  userId: number | null;
   allBars: Bar[];
   onSubmitCallback: any;
 }>();
@@ -42,7 +42,7 @@ const isSubmitting = ref(false);
 const isNewBar = ref(false);
 const fileInput: Ref<any> = ref(null);
 const imageFile = ref(null);
-const previewImage: Ref<string | ArrayBuffer | null> = ref(null);
+const previewImage: Ref<string | null> = ref(null);
 
 const onSubmit = async () => {
   errors.value = [];
@@ -101,7 +101,7 @@ function onUpdateImage(event: any) {
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      previewImage.value = reader.result;
+      previewImage.value = reader.result as string;
     };
 
     reader.readAsDataURL(file);

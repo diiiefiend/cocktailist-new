@@ -71,7 +71,6 @@ const onClickDeleteItem = (listItem: ListItem) => {
 };
 
 const submitDeleteItem = async () => {
-  // TODO: finish this
   console.log(currentFocusedItem.value);
 
   await deleteItemFromList(currentFocusedItem.value!.id);
@@ -113,7 +112,6 @@ onMounted(async () => {
         </select>
       </div>
       <div class="span-1">
-        <!-- TODO: add confirmation modal -->
         <button
           class="secondary"
           :disabled="!isUserLoggedIn"
@@ -161,7 +159,7 @@ onMounted(async () => {
   <transition name="modal">
     <add-edit-list-modal
       v-if="showCreateListModal"
-      :userId="+authStore.userId"
+      :userId="+authStore.userId!"
       :on-submit-callback="onCreateCallback"
       @close="showCreateListModal = false"
     />

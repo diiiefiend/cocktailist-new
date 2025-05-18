@@ -115,7 +115,7 @@ export interface ReviewSubmission {
   rating: number;
   scaleSpirited: null | number;
   scaleComposition: null | number;
-  body: null | string;
+  body?: null | string;
 }
 
 export interface AddCocktailToListsSubmission {

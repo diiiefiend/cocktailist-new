@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, type Ref } from 'vue';
 
-import { type ReviewSubmission, RATING_TYPES } from '../../models';
+import { type ReviewItem, type ReviewSubmission, RATING_TYPES } from '../../models';
 import { addReview, updateReview } from '../../api';
 import { checkRequiredFields } from '../../utils';
 
@@ -14,7 +14,7 @@ const props = defineProps<{
   existingReview?: ReviewItem;
   cocktailId: number;
   cocktailName: string;
-  userId: number;
+  userId: number | null;
   onSubmitCallback: any;
 }>();
 
@@ -24,7 +24,7 @@ const defaultPayload: ReviewSubmission = {
   rating: 0,
   scaleSpirited: 0,
   scaleComposition: 0,
-  body: null,
+  body: undefined,
 };
 
 const payload = ref(
