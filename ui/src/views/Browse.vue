@@ -141,14 +141,9 @@ onMounted(async () => {
       </div>
       <search-box />
     </context-menu>
-    <layout-container>
-      <div v-if="isLoading">LOADING</div>
-      <cocktail-box
-        v-else
-        v-for="cocktail in filteredCocktails"
-        :key="cocktail.id"
-        :cocktail="cocktail"
-      >
+    <div v-if="isLoading" class="loader">LOADING</div>
+    <layout-container v-else>
+      <cocktail-box v-for="cocktail in filteredCocktails" :key="cocktail.id" :cocktail="cocktail">
       </cocktail-box>
     </layout-container>
   </div>

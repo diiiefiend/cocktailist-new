@@ -131,7 +131,7 @@ onMounted(async () => {
       </layout-container>
     </div>
     <div v-else>
-      <div v-if="isLoading">LOADING</div>
+      <div v-if="isLoading" class="loader">LOADING</div>
       <layout-container v-else>
         <grid-box :width="4" :startCol="1" :applyBoxStyle="true" class="list-details-box">
           <h2>{{ listInfo!.name }}</h2>

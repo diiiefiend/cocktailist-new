@@ -133,7 +133,7 @@ onMounted(async () => {
       </div>
       <search-box />
     </context-menu>
-    <div v-if="isLoading">LOADING</div>
+    <div v-if="isLoading" class="loader">LOADING</div>
     <layout-container v-else>
       <grid-box :width="3" :startCol="1" :applyBoxStyle="true" class="bar-details-box">
         <h2>{{ bar!.name }}</h2>

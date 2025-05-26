@@ -156,7 +156,7 @@ onMounted(async () => {
       </div>
       <search-box />
     </context-menu>
-    <div v-if="isLoading">LOADING</div>
+    <div v-if="isLoading" class="loader">LOADING</div>
     <layout-container v-else>
       <!-- main content -->
       <grid-box :width="6" :startCol="1" :applyBoxStyle="false">
