@@ -23,6 +23,8 @@ const isUserLoggedIn = authStore.checkIsUserLoggedIn();
 const allCocktails: Ref<null | Array<CocktailItem>> = ref(null);
 const allBars: Ref<null | Array<Bar>> = ref(null);
 const liquorTypes: Ref<null | string[]> = ref(null);
+const currentPage = ref(1);
+const totalPages = ref(1);
 
 const showAddCocktailModal = ref(false);
 const selectedBarFilter: Ref<null | number | string> = ref(ALL_BARS);
@@ -76,8 +78,10 @@ async function fetchData() {
 
   try {
     const apiRes = await getCocktailsWithBars();
-    allCocktails.value = apiRes;
-    filteredCocktails.value = apiRes;
+    allCocktails.value = apiRes.cocktails;
+    filteredCocktails.value = apiRes.cocktails;
+    currentPage.value = apiRes.currentPage;
+    totalPages.value = apiRes.totalPages;
 
     allBars.value = await getBars();
     liquorTypes.value = await getLiquorList();

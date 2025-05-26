@@ -48,17 +48,24 @@ const getCocktail = async (id: string) => {
   return cocktail;
 }
 
-const getCocktailsWithBars = async () => {
+const getCocktailsWithBars = async (page: number, limit: number) => {
   await dbConnect();
-  const results = await models.cocktail.findAll({
+  // get a page of cocktails
+  const results = await models.cocktail.findAndCountAll({
     include: [{
       association: 'bar',
       required: true
     }],
     order: [[ 'updated_at', 'DESC' ]],
+    limit,
+    offset: (page - 1) * limit,
   });
 
-  return results;
+  return {
+    cocktails: results.rows,
+    totalPages: Math.ceil(results.count / limit),
+    currentPage: page,
+  };
 }
 
 const getLiquors = async () => {

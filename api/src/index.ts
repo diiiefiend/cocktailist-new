@@ -132,7 +132,8 @@ app.route('/cocktails/:id')
 app.route('/cocktails')
   .get(async (req: Request, res: Response) => {
     try {
-      res.send(await cocktails.getCocktailsWithBars());
+      const {page = 1, limit = 50}  = req.query;
+      res.send(await cocktails.getCocktailsWithBars(+page, +limit));
     } catch (e) {
       errorHandler(e, res);
     }
