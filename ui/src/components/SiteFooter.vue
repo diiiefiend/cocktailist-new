@@ -21,7 +21,11 @@
       </li>
     </ul>
     <div class="quicklinks">
-      <a href="javascript:void(0);" class="toplink scrollToTop">back to top?</a>
+      <a
+        href="javascript:window.scrollTo({ top: 0, behavior: 'smooth' });"
+        class="toplink scrollToTop"
+        >back to top?</a
+      >
     </div>
   </footer>
 </template>
