@@ -27,8 +27,8 @@ const hovered = ref(false);
         :class="[hovered ? `hovered ${props.cocktail.liquor}` : props.cocktail.liquor]"
       >
         <li>{{ props.cocktail.bar ? props.cocktail.bar.name : '' }}</li>
-        <li>
-          {{ props.cocktail.avg_rating }}
+        <li v-if="props.cocktail.avg_rating && props.cocktail.avg_rating > -1" class="rating">
+          rated {{ props.cocktail.avg_rating }}
         </li>
         <li v-if="!!props.addedToListDate" class="list-info">
           Added on {{ props.addedToListDate }}

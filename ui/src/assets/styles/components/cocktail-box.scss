@@ -31,6 +31,10 @@
     position: relative;
     margin: 0;
 
+    .rating {
+      font: italic $font-lg "LibreBaskerville", "Garamond", serif;
+    }
+
     .list-info {
       margin-top: 10px;
       font-size: $font-sm;
