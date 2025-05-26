@@ -12,8 +12,10 @@ switch (window.location.hostname) {
 
 // browse routes
 
-const getCocktailsWithBars = async () => {
-  return makeCall(`${API_HOST}/cocktails`, {
+const getCocktailsWithBars = async (pageNumber?: number) => {
+  const queryParams = pageNumber ? `?${new URLSearchParams({ page: ''+pageNumber })}` : '';
+
+  return makeCall(`${API_HOST}/cocktails${queryParams}`, {
     method: 'GET',
   });
 }

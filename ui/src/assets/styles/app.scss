@@ -126,6 +126,10 @@ button {
     background: none;
     font-family: inherit;
     font-style: italic;
+
+    &:hover {
+        color: $light-gold;
+      }
   }
 }
 
@@ -162,6 +166,8 @@ button {
   margin: 0 auto;
 }
 
+// upload image stuff
+
 img.preview-image {
   display: block;
   margin: 10px auto 0 auto;
@@ -174,6 +180,36 @@ button.remove-image-link.link-button {
   color: $light-ruby;
   font-style: normal;
   font-weight: bold;
+}
+
+// pagination
+
+.pages-list {
+  text-align: right;
+  color: $gold;
+  
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: inline-block;
+
+    button {
+      font-size: $font-lg;
+
+      &.active {
+        font-size: $font-xl;
+        color: $gold;
+      }
+    }
+  }
+
+  li + li {
+    margin-left: 10px;
+  }
 }
 
 // overrides

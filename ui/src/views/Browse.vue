@@ -72,17 +72,20 @@ const handleLiquorFilterUpdate = (
   return result;
 };
 
+const fetchCocktailData = async (pageNumber?: number) => {
+  const apiRes = await getCocktailsWithBars(pageNumber);
+  allCocktails.value = apiRes.cocktails;
+  filteredCocktails.value = apiRes.cocktails;
+  currentPage.value = apiRes.currentPage;
+  totalPages.value = apiRes.totalPages;
+};
+
 async function fetchData() {
   error.value = null;
   isLoading.value = true;
 
   try {
-    const apiRes = await getCocktailsWithBars();
-    allCocktails.value = apiRes.cocktails;
-    filteredCocktails.value = apiRes.cocktails;
-    currentPage.value = apiRes.currentPage;
-    totalPages.value = apiRes.totalPages;
-
+    await fetchCocktailData();
     allBars.value = await getBars();
     liquorTypes.value = await getLiquorList();
   } catch (err: any) {
@@ -107,6 +110,20 @@ function onFilterChange(filterKey: 'bar' | 'liquor') {
 
 function onCocktailCreate(createdCocktail: CocktailItem) {
   router.push(`/cocktails/${createdCocktail.id}`);
+}
+
+async function fetchPage(pageNumber: number) {
+  isLoading.value = true;
+  error.value = null;
+
+  try {
+    await fetchCocktailData(pageNumber);
+    currentPage.value = pageNumber;
+  } catch (err: any) {
+    error.value = err.toString();
+  } finally {
+    isLoading.value = false;
+  }
 }
 
 onMounted(async () => {
@@ -150,6 +167,19 @@ onMounted(async () => {
       <cocktail-box v-for="cocktail in filteredCocktails" :key="cocktail.id" :cocktail="cocktail">
       </cocktail-box>
     </layout-container>
+    <div v-if="totalPages > 1" class="pages-list">
+      <ul>
+        <li>Page</li>
+        <li v-for="pageNumber in totalPages" :key="pageNumber">
+          <button
+            :class="{ 'link-button': true, active: pageNumber === currentPage }"
+            @click="fetchPage(pageNumber)"
+          >
+            {{ pageNumber }}
+          </button>
+        </li>
+      </ul>
+    </div>
   </div>
 
   <!-- modals -->
