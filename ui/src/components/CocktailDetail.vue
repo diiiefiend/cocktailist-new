@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { type CocktailItem } from '../models';
 
 const props = defineProps<{
@@ -6,6 +7,8 @@ const props = defineProps<{
   barId: number;
   barName: string;
 }>();
+
+const cocktailImage = props.cocktail.imgUrl ?? '/images/placeholder.png';
 </script>
 
 <template>
@@ -19,8 +22,7 @@ const props = defineProps<{
       </span>
     </h1>
     <div class="cocktail-image">
-      <!-- TODO: handle no image case -->
-      <img :src="props.cocktail.imgUrl" :alt="props.cocktail.name + ' image'" />
+      <img :src="cocktailImage" :alt="props.cocktail.name + ' image'" />
     </div>
     <h2>
       from

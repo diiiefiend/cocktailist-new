@@ -4,6 +4,7 @@ import { onMounted, ref, type Ref } from 'vue';
 import type { List, ListInfo, ListItem } from '../models';
 import { deleteItemFromList, deleteList, getList, getLists } from '../api';
 import { useAuthStore } from '../stores/auth';
+import { DATE_FORMATTING } from '../utils';
 
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
@@ -43,7 +44,7 @@ async function fetchData(activeListId?: string) {
     userLists.value = await getLists();
 
     if (!activeListId) {
-      currentList.value = userLists.value[0];
+      currentList.value = userLists.value[0] ?? null;
     } else {
       currentList.value = userLists.value.find((list) => list.id === +activeListId);
     }
@@ -58,7 +59,9 @@ async function fetchData(activeListId?: string) {
 
 async function getAndSetListData() {
   // MAYBE LATER: push id into router URL?
-  listInfo.value = await getList(currentList.value!.id);
+  if (currentList.value) {
+    listInfo.value = await getList(currentList.value.id);
+  }
 }
 
 const onCreateCallback = (newListId: number) => {
@@ -132,17 +135,23 @@ onMounted(async () => {
     </div>
     <div v-else>
       <div v-if="isLoading" class="loader">LOADING</div>
-      <layout-container v-else>
+      <layout-container v-else-if="listInfo">
         <grid-box :width="4" :startCol="1" :applyBoxStyle="true" class="list-details-box">
-          <h2>{{ listInfo!.name }}</h2>
+          <h2>{{ listInfo.name }}</h2>
           <ul>
-            <li>Created on {{ listInfo!.created_at }}</li>
-            <li>Last updated on {{ listInfo!.updated_at }}</li>
+            <li>
+              Created on
+              {{ new Date(listInfo.created_at).toLocaleString('en-US', DATE_FORMATTING) }}
+            </li>
+            <li>
+              Last updated on
+              {{ new Date(listInfo.updated_at).toLocaleString('en-US', DATE_FORMATTING) }}
+            </li>
           </ul>
-          <h3>{{ listInfo!.listItems.length }} items</h3>
+          <h3>{{ listInfo.listItems.length }} items</h3>
         </grid-box>
         <cocktail-box
-          v-for="item in listInfo!.listItems"
+          v-for="item in listInfo.listItems"
           :key="item.listedCocktail.id"
           :cocktail="item.listedCocktail"
           :addedToListDate="item.updated_at"
@@ -150,6 +159,15 @@ onMounted(async () => {
           :deleteListItemCallback="onClickDeleteItem"
         >
         </cocktail-box>
+      </layout-container>
+      <layout-container v-else>
+        <grid-box :width="4" :startCol="1" :applyBoxStyle="true" class="list-details-box">
+          <h2>No lists</h2>
+          <p>Currently you have no lists.</p>
+          <button class="link-button" @click.stop="showCreateListModal = true">
+            Create a list?
+          </button>
+        </grid-box>
       </layout-container>
     </div>
   </div>

@@ -173,7 +173,7 @@ onMounted(async () => {
         <li v-for="pageNumber in totalPages" :key="pageNumber">
           <button
             :class="{ 'link-button': true, active: pageNumber === currentPage }"
-            @click="fetchPage(pageNumber)"
+            @click.stop="fetchPage(pageNumber)"
           >
             {{ pageNumber }}
           </button>

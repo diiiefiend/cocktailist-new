@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { type CocktailItem, type ListItem } from '../models';
-import TrashIcon from './TrashIcon.vue';
 import { ref } from 'vue';
+
+import TrashIcon from './TrashIcon.vue';
+import { DATE_FORMATTING } from '../utils';
+import { type CocktailItem, type ListItem } from '../models';
 
 const props = withDefaults(
   defineProps<{
@@ -31,7 +33,7 @@ const hovered = ref(false);
           rated {{ props.cocktail.avg_rating }}
         </li>
         <li v-if="!!props.addedToListDate" class="list-info">
-          Added on {{ props.addedToListDate }}
+          Added on {{ new Date(props.addedToListDate).toLocaleString('en-US', DATE_FORMATTING) }}
         </li>
         <li class="label">{{ props.cocktail.liquor }}</li>
       </ul>

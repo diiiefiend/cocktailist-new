@@ -42,6 +42,10 @@ const authStore = useAuthStore();
         on {{ new Date(review.updated_at).toLocaleString('en-US', DATE_FORMATTING) }}
       </div>
     </li>
+    <!-- if no reviews -->
+    <li v-if="!props.reviews.length">
+      <p class="no-reviews">(No reviews yet. Be the first!)</p>
+    </li>
   </ul>
 </template>
 

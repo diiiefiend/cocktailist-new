@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { MutationType } from 'pinia';
 
 import { useAuthStore } from '../stores/auth';
 

@@ -26,6 +26,11 @@ ul {
       text-align: right;
     }
 
+    .no-reviews {
+      font-style: italic;
+      font-size: $font-lg;
+    }
+
     &::before, &::after {
       display: block;
       font-size: 64px;          // special case
