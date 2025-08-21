@@ -224,9 +224,9 @@ input, select, textarea {
   font-family: "Montserrat", sans-serif;
 }
 
-option {
-  background-color: $white;
-  color: $black;
+option, .context-menu option {
+  background-color: $emerald;
+  color: $white;
 }
 
 a, button.link-button {

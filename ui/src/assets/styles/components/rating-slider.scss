@@ -20,14 +20,6 @@ input[type="range"] {
   overflow: hidden;
   width: $modal-input-width;
 
-  &.spirited {
-    color: $light-amethyst;
-  }
-
-  &.innovation {
-    color: $light-navy;
-  }
-
   // variables
   --thumb-height: 1.125em;
   --track-height: 0.125em;
@@ -35,6 +27,14 @@ input[type="range"] {
   --brightness-hover: 120%;
   --brightness-down: 80%;
   --clip-edges: 0.125em;
+
+  &.spirited {
+    color: $light-amethyst;
+  }
+
+  &.innovation {
+    color: $light-navy;
+  }
 }
 
 input[type="range"]:disabled {
