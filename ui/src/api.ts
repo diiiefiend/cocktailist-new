@@ -183,7 +183,21 @@ const makeCall = async (endpoint: string, options: any, isFormData?: boolean) =>
   const response = await fetch(endpoint, decoratedOptions);
 
   if (!response.ok) {
-    throw new Error(`Response status: ${response.status}`);
+    const errorMessages: Array<string> = [];
+    try {
+      const errorDetails = await response.json();
+      if (errorDetails.errors) {
+        // this is to accommodate an error object like:
+        // { errors: [ {message: "blahblah", ...}, ... ], name: "something" };
+        errorDetails.errors.forEach((error: any) => {
+          errorMessages.push(error.message);
+        })
+      }
+    } catch (e) {
+      // do nothing 
+    }
+
+    throw new Error(`Response status: ${response.status}. ${errorMessages.length > 0 ? errorMessages.join('; ') : ''}`);
   }
 
   const json = await response.json();

@@ -115,6 +115,7 @@ const deleteReview = async (reviewId: string, userId: number) => {
 }
 
 const refreshCocktailStats = async (reviewId: number, cocktailId?: number) => {
+  console.log('IN REFRESH COCKTAIL STATS');
   let finalCocktailId = cocktailId;
   if (!finalCocktailId) {
     const existingReview = await models.rating.findByPk(reviewId);
@@ -140,9 +141,20 @@ const refreshCocktailStats = async (reviewId: number, cocktailId?: number) => {
     group: ['cocktail_id'],
   });
 
+  console.log("UPDATING STATS FOR THE COCKTAIL! FETCHING CURRENT STATS");
   console.log(statsForCocktails);
 
-  const statsForCocktail = statsForCocktails[0].dataValues;
+  let statsForCocktail;
+  if (statsForCocktails.length) {
+    statsForCocktail = statsForCocktails[0].dataValues;
+  } else {
+    // if there are no stats found in the ratings table, we have deleted our only review for the cocktail, so reset everything
+    statsForCocktail = {
+      avgRating: -1,
+      avgSpirited: null,
+      avgComposition: null,
+    }
+  }
 
   const cocktailUpdate = await models.cocktail.update({
     // @ts-ignore

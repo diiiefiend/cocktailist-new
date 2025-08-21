@@ -143,10 +143,12 @@ button {
   border: 1px solid $ruby;
   color: $ruby;
   font-weight: bold;
+  font-style: italic;
   margin: 10px 0;
   padding: 10px 20px;
 
   ul {
+    font-style: normal;
     margin: 0;
     padding-left: 0;
   }
