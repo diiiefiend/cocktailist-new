@@ -90,7 +90,7 @@ const getLiquors = async () => {
 
   const result = list.map(liquorObj => {
     return liquorObj.liquor;
-  });
+  }).sort();
 
   return result;
 }

@@ -9,7 +9,11 @@ interface BarData {
 
 const getBars = async () => {
   await dbConnect();
-  return await models.bar.findAll();
+  return await models.bar.findAll({
+    order: [
+      ['name', 'ASC'],
+    ]
+  });
 };
 
 const getBar = async (id: string) => {

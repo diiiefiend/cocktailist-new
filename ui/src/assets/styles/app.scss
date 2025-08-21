@@ -139,10 +139,15 @@ button {
 }
 
 .form-error {
+  background: $super-light-ruby;
+  border: 1px solid $ruby;
   color: $ruby;
+  font-weight: bold;
+  margin: 10px 0;
+  padding: 10px 20px;
 
   ul {
-    margin-left: 0;
+    margin: 0;
     padding-left: 0;
   }
 
@@ -217,6 +222,11 @@ input, select, textarea {
   background: transparent;
   border: 0;
   font-family: "Montserrat", sans-serif;
+}
+
+option {
+  background-color: $white;
+  color: $black;
 }
 
 a, button.link-button {

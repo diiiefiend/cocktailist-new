@@ -43,7 +43,7 @@ const isUserLoggedIn = authStore.checkIsUserLoggedIn();
 const showEditBarModal = ref(false);
 
 const setLiquorTypes = () => {
-  liquorTypes.value = [...new Set(cocktails.value.map((cocktail) => cocktail.liquor))];
+  liquorTypes.value = [...new Set(cocktails.value.map((cocktail) => cocktail.liquor).sort())];
 };
 
 const fetchBarCocktails = async (barId: number) => {

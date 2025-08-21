@@ -14,6 +14,7 @@ $napkin-path:   '/images/imgborderbg-black.png';
 
 // colors
 $light-percent: 10%;
+$super-light-percent: 80%;
 $white: #fff;
 $dark-gray: #1B1B1A; // background color
 $gold: #D8C263;
@@ -23,6 +24,7 @@ $light-emerald: lighten($emerald, $light-percent);
 $dark-green: #132A13; // context menu color
 $ruby: #53000c;       // tequila
 $light-ruby: lighten($ruby, $light-percent);
+$super-light-ruby: lighten($ruby, $super-light-percent);
 $navy: #03242f;       // gin
 $light-navy: lighten($navy, $light-percent);
 $amethyst: #330928;   // vodka

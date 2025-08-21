@@ -17,6 +17,7 @@ const props = defineProps<{
 const emit = defineEmits(['close']);
 
 const isEdit = computed(() => !!props.existingCocktailInfo);
+const sortedDrinkTypes = computed(() => Object.values(DRINK_TYPES).sort());
 const payload = ref(
   props.existingCocktailInfo
     ? {
@@ -133,7 +134,7 @@ function resetImages() {
           <label for="cocktail-types">Type</label>
           <!-- TODO: add option to add type? -->
           <select id="cocktail-type" v-model="payload.type">
-            <option v-for="type in DRINK_TYPES" :key="type" :value="type">{{ type }}</option>
+            <option v-for="type in sortedDrinkTypes" :key="type" :value="type">{{ type }}</option>
           </select>
         </fieldset>
         <fieldset>
