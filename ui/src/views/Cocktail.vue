@@ -94,12 +94,13 @@ function onSelectedListSubmit(updatedSelectedLists: List[]) {
 }
 
 async function onEntryUpdate() {
-  cocktail.value = await getCocktail(props.id);
-  // TODO: the image is not re-rendering without a refresh
+  // refetch and refresh the view
+  await fetchData();
 }
 
 async function onReviewSubmit() {
-  await fetchReviewData();
+  // refetch and refresh the view
+  await fetchData();
 }
 
 function onDeleteReviewClick(review: ReviewItem) {
@@ -112,7 +113,8 @@ async function submitDeleteReview() {
   await deleteReview(activeReview.value!.id);
 
   showDeleteReviewConfirmationModal.value = false;
-  await fetchReviewData();
+  // refetch and refresh the view
+  await fetchData();
 }
 
 onMounted(async () => {

@@ -124,7 +124,7 @@ const addCocktail = async (cocktailData: CocktailData, cocktailImage?: CocktailI
 
   // upload image, if provided, to aws
   if (cocktailImage) {
-    const addImageStatus = uploadCocktailImages(cocktail.dataValues.id, cocktailImage);
+    const addImageStatus = await uploadCocktailImages(cocktail.dataValues.id, cocktailImage);
     result.addImageStatus = addImageStatus;
   }
 
@@ -154,7 +154,7 @@ const updateCocktail = async (cocktailId: string, cocktailData: CocktailData, co
 
   // upload image, if provided, to aws
   if (cocktailImage) {
-    const addImageStatus = uploadCocktailImages(+cocktailId, cocktailImage);
+    const addImageStatus = await uploadCocktailImages(+cocktailId, cocktailImage);
     result.addImageStatus = addImageStatus;
   } else {
     // TODO: should handle case where one wants to unset the image
