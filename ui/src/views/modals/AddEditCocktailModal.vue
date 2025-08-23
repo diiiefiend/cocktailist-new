@@ -21,9 +21,11 @@ const emit = defineEmits(['close']);
 
 const isEdit = computed(() => !!props.existingCocktailInfo);
 const liquorTypeList = computed(() => {
+  // TODO: new drink types don't show up in this dropdown until DRINK_TYPES is updated!
   return [NEW_LIQUOR_TYPE_VALUE, ...Object.values(DRINK_TYPES).sort()];
 });
 const barList = computed(() => {
+  // TODO: if this is in "edit" mode, only "add new bar" and the existing bar are provided as choices
   const newBarPlaceholder: Bar = {
     id: NEW_BAR_PLACEHOLDER_ID,
     name: '--Add new bar--',
