@@ -94,6 +94,12 @@ button.close-modal {
         padding: 10px 10px 5px 10px;
         outline: none;
       }
+
+      select + input.subfield {
+        display: flex;
+        flex: 1;
+        margin-left: 26%;
+      }
     }
 
     // if we end up using checkboxes elsewhere, can make this a checkbox component

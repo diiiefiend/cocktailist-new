@@ -7,6 +7,9 @@ import { checkRequiredFields } from '../../utils';
 
 import SiteModal from '../../components/SiteModal.vue';
 
+const NEW_LIQUOR_TYPE_VALUE = '--Add new liquor type--';
+const NEW_BAR_PLACEHOLDER_ID = -1;
+
 const props = defineProps<{
   existingCocktailInfo: CocktailItem | null;
   userId: number | null;
@@ -17,8 +20,24 @@ const props = defineProps<{
 const emit = defineEmits(['close']);
 
 const isEdit = computed(() => !!props.existingCocktailInfo);
-const sortedDrinkTypes = computed(() => Object.values(DRINK_TYPES).sort());
-const payload = ref(
+const liquorTypeList = computed(() => {
+  return [NEW_LIQUOR_TYPE_VALUE, ...Object.values(DRINK_TYPES).sort()];
+});
+const barList = computed(() => {
+  const newBarPlaceholder: Bar = {
+    id: NEW_BAR_PLACEHOLDER_ID,
+    name: '--Add new bar--',
+  };
+  return [newBarPlaceholder, ...props.allBars];
+});
+const payload: Ref<{
+  name: string | null,
+  type: string | null,
+  barId: number | null,
+  barName: string | null,
+  barAddress: string | null,
+  ingredients: string | null,
+}> = ref(
   props.existingCocktailInfo
     ? {
         name: props.existingCocktailInfo.name,
@@ -37,22 +56,58 @@ const payload = ref(
         ingredients: null,
       },
 );
+const newBarInfo: Ref<{
+  name: string | null,
+  address: string | null,
+}> = ref(
+  {
+    name: null,
+    address: null,
+  }
+);
 
 const errors: Ref<string[]> = ref([]);
 const isSubmitting = ref(false);
-const isNewBar = ref(false);
+const liquorTypeValue: Ref<string | null> = ref(null);
+const newLiquorType: Ref<string | null> = ref(null);
 const fileInput: Ref<any> = ref(null);
 const imageFile = ref(null);
 const previewImage: Ref<string | null> = ref(null);
+  
+const showNewLiquorTypeInput = computed(() => {
+  return liquorTypeValue.value === NEW_LIQUOR_TYPE_VALUE;
+});
+const showNewBarInputs = computed(() => {
+  return payload.value.barId === NEW_BAR_PLACEHOLDER_ID;
+})
 
 const onSubmit = async () => {
   errors.value = [];
   isSubmitting.value = true;
 
   // validations
+  if (newLiquorType.value && newLiquorType.value.trim() !== '') {
+    payload.value.type = newLiquorType.value;
+  } else if (liquorTypeValue.value && liquorTypeValue.value !== NEW_LIQUOR_TYPE_VALUE) {
+    payload.value.type = liquorTypeValue.value;
+  };
+
+  const isNewBar = payload.value.barId === NEW_BAR_PLACEHOLDER_ID;
+  if (isNewBar) {
+    if (newBarInfo.value.name && newBarInfo.value.name.trim() !== '') {
+      payload.value.barName = newBarInfo.value.name;
+    }
+    if (newBarInfo.value.address && newBarInfo.value.address.trim() !== '') {
+      payload.value.barAddress = newBarInfo.value.address;
+    }
+  }
+
   console.log('hello ', payload.value);
-  // TODO: update this to require EITHER barId OR barName/address, based on "isNewBar"
   const requiredFields = ['name', 'type', 'barId', 'ingredients'];
+  if (isNewBar) {
+    requiredFields.push('barName');
+    requiredFields.push('barAddress');
+  };
   errors.value = errors.value.concat(checkRequiredFields(requiredFields, payload));
 
   console.log(errors);
@@ -132,19 +187,21 @@ function resetImages() {
         </fieldset>
         <fieldset>
           <label for="cocktail-types">Type</label>
-          <!-- TODO: add option to add type? -->
-          <select id="cocktail-type" v-model="payload.type">
-            <option v-for="type in sortedDrinkTypes" :key="type" :value="type">{{ type }}</option>
+          <select id="cocktail-type" v-model="liquorTypeValue">
+            <option v-for="type in liquorTypeList" :key="type" :value="type">{{ type }}</option>
           </select>
+          <input v-if="showNewLiquorTypeInput" class="subfield" type="text" v-model="newLiquorType" placeholder="new liquor type"></input>
         </fieldset>
         <fieldset>
           <label for="bars">Bar</label>
           <!-- TODO: add option to add bar -->
           <select id="bars" v-model="payload.barId">
-            <option v-for="bar in props.allBars" :key="bar.id" :value="bar.id">
+            <option v-for="bar in barList" :key="bar.id" :value="bar.id">
               {{ bar.name }}
             </option>
           </select>
+          <input v-if="showNewBarInputs" class="subfield" type="text" v-model="newBarInfo.name" placeholder="new bar name"></input>
+          <input v-if="showNewBarInputs" class="subfield" type="text" v-model="newBarInfo.address" placeholder="new bar address"></input>
         </fieldset>
         <fieldset>
           <label>Ingredients</label>

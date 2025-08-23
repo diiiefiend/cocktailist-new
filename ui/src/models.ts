@@ -35,7 +35,7 @@ export interface BarDetails extends Bar {
 export interface CocktailItem {
   id: number;
   name: string;
-  liquor: DRINK_TYPES;
+  liquor: DRINK_TYPES | string;
   bar: BarDetails;
   ingredients: string;
   created_at: string;
@@ -103,7 +103,7 @@ export type ChartData = CoordinatePair[];
 // form-related models
 export interface CocktailSubmission {
   name: string;
-  type: DRINK_TYPES;
+  type: DRINK_TYPES | string;
   barId?: number;
   barName?: string;
   barAddress?: string;
