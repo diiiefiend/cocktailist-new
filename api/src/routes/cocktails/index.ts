@@ -62,8 +62,29 @@ const getCocktailsWithBars = async (page: number, limit: number) => {
     offset: (page - 1) * limit,
   });
 
+  let cocktails;
+  // all this just to get the img url...
+  if (results.rows) {
+    cocktails = await Promise.all(results.rows.map(async (cocktail: any) => {
+      const copy = {...cocktail.dataValues};
+
+      if (copy.img_file_name) {
+        const thumbnailFilePath = `${copy.id}/small/${copy.img_file_name}`;
+    
+        try {
+          // @ts-ignore
+          copy.imgUrl = await aws.getImageUrl(thumbnailFilePath);
+        } catch (e) {
+          console.warn('image not found');
+        }
+      }
+
+      return copy;
+    }));
+  }
+
   return {
-    cocktails: results.rows,
+    cocktails,
     totalPages: Math.ceil(results.count / limit),
     currentPage: page,
   };

@@ -19,6 +19,8 @@ const app: Express = express();
 const port = process.env.PORT || 3000;
 const multerMiddleware = multer();
 
+const PAGINATION_DEFAULT_ITEMS_PER_PAGE = 30;
+
 // passport configure auth stuff
 auth.configureAuth();
 
@@ -132,7 +134,8 @@ app.route('/cocktails/:id')
 app.route('/cocktails')
   .get(async (req: Request, res: Response) => {
     try {
-      const {page = 1, limit = 50}  = req.query;
+      // PAGINATION DEFAULTS
+      const {page = 1, limit = PAGINATION_DEFAULT_ITEMS_PER_PAGE}  = req.query;
       res.send(await cocktails.getCocktailsWithBars(+page, +limit));
     } catch (e) {
       errorHandler(e, res);

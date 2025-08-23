@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import TrashIcon from './TrashIcon.vue';
 import { DATE_FORMATTING } from '../utils';
@@ -14,6 +14,10 @@ const props = withDefaults(
   }>(),
   {},
 );
+
+const boxImage = computed(() => {
+  return `url(${props.cocktail.imgUrl})`;
+});
 
 const hovered = ref(false);
 </script>
@@ -51,4 +55,12 @@ const hovered = ref(false);
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 @import '../assets/styles/components/cocktail-box.scss';
+
+.cocktail-box {
+  background-image: v-bind(boxImage);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  box-shadow: inset 0 0 0 2000px rgba(255, 255, 255, 0.8);
+}
 </style>
