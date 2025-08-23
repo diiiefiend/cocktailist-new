@@ -1,11 +1,12 @@
 import { Sequelize } from 'sequelize';
 import {dbConnect, models} from '../../db';
 import * as aws from '../../aws';
+import barFns from '../bars';
 import sharp from 'sharp';
 
 interface CocktailData {
   name: string;
-  barId?: number;
+  barId?: string; // annoyingly, this comes thru as a string in the request payload
   barName?: string;
   barAddress?: string;
   type: string;
@@ -107,12 +108,11 @@ const addCocktail = async (cocktailData: CocktailData, cocktailImage?: CocktailI
     ingredients,
   } = cocktailData;
 
-  // TODO: support creating a bar along with a cocktail
-  // can use: https://sequelize.org/docs/v6/core-concepts/assocs/#foobelongstobar
+  const finalizedBarId = await addNewBarIfNeeded(barId, barName, barAddress);
 
   // first save the cocktail so we get an id
   const cocktail = await models.cocktail.create({
-    bar_id: barId,
+    bar_id: finalizedBarId,
     name,
     liquor: type,
     ingredients,
@@ -124,7 +124,7 @@ const addCocktail = async (cocktailData: CocktailData, cocktailImage?: CocktailI
 
   // upload image, if provided, to aws
   if (cocktailImage) {
-    const addImageStatus = await uploadCocktailImages(cocktail.dataValues.id, cocktailImage);
+    const addImageStatus = await uploadCocktailImages(cocktail.getDataValue('id'), cocktailImage);
     result.addImageStatus = addImageStatus;
   }
 
@@ -134,10 +134,19 @@ const addCocktail = async (cocktailData: CocktailData, cocktailImage?: CocktailI
 const updateCocktail = async (cocktailId: string, cocktailData: CocktailData, cocktailImage?: CocktailImage) => {
   await dbConnect();
 
-  const { name, barId, type, ingredients } = cocktailData;
+  const {
+    name,
+    barId,
+    barName,
+    barAddress,
+    type,
+    ingredients,
+  } = cocktailData;
+
+  const finalizedBarId = await addNewBarIfNeeded(barId, barName, barAddress);
 
   const cocktailUpdate = await models.cocktail.update({
-    bar_id: barId,
+    bar_id: finalizedBarId,
     name,
     liquor: type,
     ingredients,
@@ -194,6 +203,27 @@ const uploadCocktailImages = async (cocktailId: number, cocktailImage: CocktailI
   });
 
   return addImageResult;
+}
+
+// unexported private fns
+
+const addNewBarIfNeeded = async (barId?: string, barName?: string, barAddress?: string) => {
+  let resultId: any = -1;
+
+  if (barId === '-1' && barName && barAddress) {
+    // create new bar
+    const addBarResult = (await barFns.addBar({
+      name: barName,
+      address: barAddress,
+    })).getDataValue('id');
+
+    console.log('in cocktail helper fn addNewBarIfNeeded');
+    console.log(addBarResult);
+
+    resultId = addBarResult;
+  }
+
+  return resultId;
 }
 
 export default {
