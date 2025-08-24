@@ -3,7 +3,7 @@
 .cocktail-box {
   position: relative;
   grid-column-end: span 2;
-  background: $white;
+  background-color: $white;
   min-height: 200px;
 
   a:hover {
@@ -13,12 +13,13 @@
   h3 {
     color: $black;
     font-size: $font-xl;
+    text-shadow: 1px 1px 2px $white;
     margin: 10px;
     min-height: 80px;
     transition: $transition-fast;
 
     &.hovered {
-      color: $lighter-black;
+      // color: $lighter-black;
     }
   }
 
