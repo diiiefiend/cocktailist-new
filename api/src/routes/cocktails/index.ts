@@ -42,7 +42,7 @@ const getCocktail = async (id: string) => {
       // @ts-ignore
       cocktail.imgUrl = await aws.getImageUrl(filePath);
     } catch (e) {
-      console.warn('image not found, proceeding anyway...');
+      console.warn(`image not found, proceeding anyway: ${e}`);
     }
   }
 
@@ -62,26 +62,7 @@ const getCocktailsWithBars = async (page: number, limit: number) => {
     offset: (page - 1) * limit,
   });
 
-  let cocktails;
-  // all this just to get the img url...
-  if (results.rows) {
-    cocktails = await Promise.all(results.rows.map(async (cocktail: any) => {
-      const copy = {...cocktail.dataValues};
-
-      if (copy.img_file_name) {
-        const thumbnailFilePath = `${copy.id}/small/${copy.img_file_name}`;
-    
-        try {
-          // @ts-ignore
-          copy.imgUrl = await aws.getImageUrl(thumbnailFilePath);
-        } catch (e) {
-          console.warn('image not found');
-        }
-      }
-
-      return copy;
-    }));
-  }
+  const cocktails = await aws.addImgUrlToCocktails(results.rows);
 
   return {
     cocktails,
@@ -238,8 +219,8 @@ const addNewBarIfNeeded = async (barId?: string, barName?: string, barAddress?: 
       address: barAddress,
     })).getDataValue('id');
 
-    console.log('in cocktail helper fn addNewBarIfNeeded');
-    console.log(addBarResult);
+    console.info('in cocktail helper fn addNewBarIfNeeded');
+    console.dir(addBarResult);
 
     resultId = addBarResult;
   }

@@ -12,7 +12,7 @@ const configureAuth = () => {
   // login logic (called from POST /login)
   passport.use('local', new Strategy(
     async (username: string, password: string, cb: any) => {
-      console.log('im in here!');
+      console.trace('im in here!');
 
       await dbConnect();
       // TODO: define User type
@@ -40,18 +40,18 @@ const configureAuth = () => {
   // this is used to attach user info to the active session
   passport.serializeUser((user: any, cb) => {
     process.nextTick(() => {
-      console.log('in the serializeUser fn!');
-      console.log(user);
+      console.trace('in the serializeUser fn!');
+      console.trace(user);
       cb(null, { id: user.id, username: user.username });
     });
   });
 
   passport.deserializeUser((serializedUser: any, cb) => {
     process.nextTick(async () => {
-      console.log('in the deserializeUser fn!');
+      console.trace('in the deserializeUser fn!');
       const id = serializedUser.id;
 
-      console.log(serializedUser);
+      console.trace(serializedUser);
 
       await dbConnect();
       const user: any = await models.user.scope('auth').findByPk(id);
@@ -66,7 +66,7 @@ const configureAuth = () => {
 }
 
 const createUser = async (params: any) => {
-  console.log(params);
+  console.trace(params);
   const {email, username, password} = params;
 
   if (!(email && username && password)) {
@@ -111,11 +111,9 @@ const createUser = async (params: any) => {
 }
 
 const doPostLoginActions = (req: Request, res: Response, next: NextFunction) => {
-  console.log('hello!');
-
   // @ts-ignore
   const passportObj = req.session.passport;
-  console.log('the current passport object:');
+  console.trace('the current passport object:');
   console.dir(passportObj);
 
   if (!passportObj) {
@@ -147,8 +145,8 @@ const doPostLoginActions = (req: Request, res: Response, next: NextFunction) => 
 const logout =  (req: Request, res: Response, next: NextFunction) => {
   const user = req.user;
 
-  console.log('in logout function');
-  console.log('current user: ', user);
+  console.trace('in logout function');
+  console.trace('current user: ', user);
 
   if (!user) {
     const errorMessage = 'No user associated with session!';

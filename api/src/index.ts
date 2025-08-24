@@ -317,7 +317,7 @@ app.route('/users/:id')
 
 app.route('/users')
   .post(async (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.body);
+    console.trace(req.body);
     const {user, error} = await auth.createUser(req.body);
 
     if (error || !user) { 

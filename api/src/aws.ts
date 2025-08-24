@@ -1,5 +1,6 @@
-import { S3Client, GetObjectCommand, ListObjectsV2Command, HeadObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, GetObjectCommand, HeadObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { Model } from 'sequelize';
 
 const s3Client = new S3Client({
     region: process.env.AWS_REGION,
@@ -34,7 +35,7 @@ const uploadImage = async (fileName: string, imageBlob: any) => {
 
 const isFileAvailableInBucket = async (fileName: string) => {
   try {
-    console.log(`looking for: ${process.env.AWS_BUCKET}:${AWS_SUBDIR_PATH}/${fileName}`);
+    console.info(`img lookup: ${process.env.AWS_BUCKET}:${AWS_SUBDIR_PATH}/${fileName}`);
   
     // Check if the object exists
     await s3Client.send(new HeadObjectCommand({
@@ -44,7 +45,7 @@ const isFileAvailableInBucket = async (fileName: string) => {
 
     return true;
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     return false;
   }
 }
@@ -65,15 +66,41 @@ const getImageUrl = async (fileName: string) => {
           return url;
       } else {
           // Return an error message if the file is not available in the bucket
-          throw new Error('image not found');
+          throw new Error(`image not found: ${fileName}`);
       }
   } catch (err: any) {
-    console.error(err);
     throw new Error(err);
   }
+}
+
+// all this just to get the img url...
+const addImgUrlToCocktails = async (cocktailDbResults: Array<Model<any, any>>) => {
+  let cocktails;
+  if (cocktailDbResults) {
+    // cocktail is a Model obj representing a cocktail entry
+    cocktails = await Promise.all(cocktailDbResults.map(async (cocktail: any) => {
+      const copy = {...cocktail.dataValues};
+
+      if (copy.img_file_name) {
+        const thumbnailFilePath = `${copy.id}/small/${copy.img_file_name}`;
+    
+        try {
+          // @ts-ignore
+          copy.imgUrl = await getImageUrl(thumbnailFilePath);
+        } catch (e) {
+          // do nothing -- too noisy to log all the "img not found" msgs
+        }
+      }
+
+      return copy;
+    }));
+  }
+
+  return cocktails;
 }
 
 export {
   uploadImage,
   getImageUrl,
+  addImgUrlToCocktails,
 }

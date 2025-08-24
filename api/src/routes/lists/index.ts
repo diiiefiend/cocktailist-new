@@ -1,4 +1,5 @@
 import { dbConnect, models } from '../../db';
+import { getImageUrl } from '../../aws';
 
 /*
   // @ts-ignore
@@ -58,10 +59,33 @@ const getListWithCocktails = async (listId: string, userId: number) => {
     order: [[ 'updated_at', 'DESC' ]],
   });
 
+  // get images--we don't use the helper in the 'aws' file because this object is a bit different
+  let listItemsWithImgs = [];
+  if (listItems) {
+    // listItemWithListedCocktail is a Model obj representing a cocktail entry
+    listItemsWithImgs = await Promise.all(listItems.map(async (listItemWithListedCocktail: any) => {
+      const copy = {...listItemWithListedCocktail.dataValues};
+      const listedCocktail = copy.listedCocktail.dataValues;
+
+      if (listedCocktail.img_file_name) {
+        const thumbnailFilePath = `${listedCocktail.id}/small/${listedCocktail.img_file_name}`;
+    
+        try {
+          // @ts-ignore
+          listedCocktail.imgUrl = await getImageUrl(thumbnailFilePath);
+        } catch (e) {
+          // do nothing -- too noisy to log all the "img not found" msgs
+        }
+      }
+
+      return copy;
+    }));
+  }
+
 
   const response = {
     ...list.toJSON(),
-    listItems: !!listItems ? listItems : [],
+    listItems: listItemsWithImgs,
   };
 
   return response;

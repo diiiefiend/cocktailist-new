@@ -12,7 +12,7 @@ interface RequestWithCsrf extends Request {
 const generateCSRFToken = (req: RequestWithCsrf, res: Response, next?: NextFunction) => {
   // expected to be used after login
   const csrfToken = crypto.randomBytes(16).toString('hex');
-  console.log(csrfToken)
+  console.trace(csrfToken)
 
   res.cookie(CSRF_TOKEN_COOKIE_NAME, csrfToken,
     {
@@ -32,10 +32,10 @@ const generateCSRFToken = (req: RequestWithCsrf, res: Response, next?: NextFunct
   const csrfToken = req.cookies[CSRF_TOKEN_COOKIE_NAME];
 
   if (req.header('X-CSRF-Token') === csrfToken) {
-    console.log('token matched!');
+    console.trace('token matched!');
     next();
   } else {
-    console.log('token not matched');
+    console.warn('token not matched');
     res.status(403).send('Invalid CSRF token');
   }
  }

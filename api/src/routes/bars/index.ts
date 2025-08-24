@@ -1,4 +1,5 @@
 import { dbConnect, models } from '../../db';
+import { addImgUrlToCocktails } from '../../aws';
 
 interface BarData {
   name: string;
@@ -23,12 +24,16 @@ const getBar = async (id: string) => {
 
 const getBarCocktails = async (barId: string) => {
   await dbConnect();
-  return await models.cocktail.findAll({
+  const results =  await models.cocktail.findAll({
     where: {
       bar_id: barId,
     },
     order: [[ 'updated_at', 'DESC' ]],
   });
+
+  const cocktails = await addImgUrlToCocktails(results);
+
+  return cocktails;
 }
 
 const addBar = async (barData: BarData) => {

@@ -115,7 +115,7 @@ const deleteReview = async (reviewId: string, userId: number) => {
 }
 
 const refreshCocktailStats = async (reviewId: number, cocktailId?: number) => {
-  console.log('IN REFRESH COCKTAIL STATS');
+  console.trace('IN REFRESH COCKTAIL STATS');
   let finalCocktailId = cocktailId;
   if (!finalCocktailId) {
     const existingReview = await models.rating.findByPk(reviewId);
@@ -141,7 +141,7 @@ const refreshCocktailStats = async (reviewId: number, cocktailId?: number) => {
     group: ['cocktail_id'],
   });
 
-  console.log("UPDATING STATS FOR THE COCKTAIL! FETCHING CURRENT STATS");
+  console.trace('UPDATING STATS FOR THE COCKTAIL! FETCHING CURRENT STATS');
   console.log(statsForCocktails);
 
   let statsForCocktail;
