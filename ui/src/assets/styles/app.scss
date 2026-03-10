@@ -31,14 +31,15 @@ body {
   transition: $transition-fast;
 
   &.hovered {
-    background: $light-black;
+    // background: $light-black;
+    opacity: 0.8;
   }
   
   &.gin {
     background: $navy;
 
     &.hovered {
-      background: $light-navy;
+      // background: $light-navy;
     }
   }
   
@@ -46,7 +47,7 @@ body {
     background: $amethyst;
 
     &.hovered {
-      background: $light-amethyst;
+      // background: $light-amethyst;
     }
   }
   
@@ -54,7 +55,7 @@ body {
     background: $ruby;
 
     &.hovered {
-      background: $light-ruby;
+      // background: $light-ruby;
     }
   }
   
@@ -62,7 +63,7 @@ body {
     background: $russet;
 
     &.hovered {
-      background: $light-russet;
+      // background: $light-russet;
     }
   }
   
@@ -70,7 +71,7 @@ body {
     background: $marigold;
 
     &.hovered {
-      background: $light-marigold;
+      // background: $light-marigold;
     }
   }
 }

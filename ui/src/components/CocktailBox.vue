@@ -61,6 +61,11 @@ const hovered = ref(false);
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  box-shadow: inset 0 0 0 2000px rgba(255, 255, 255, 0.65);
+  box-shadow: inset 0 0 0 2000px rgba(255, 255, 255, 0.75);
+
+  &:hover {
+    box-shadow: inset 0 0 0 2000px rgba(255, 255, 255, 0.1);
+    transition: $transition-fast;
+  }
 }
 </style>
