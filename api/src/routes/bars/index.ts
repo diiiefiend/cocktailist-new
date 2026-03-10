@@ -11,9 +11,7 @@ interface BarData {
 const getBars = async () => {
   await dbConnect();
   return await models.bar.findAll({
-    order: [
-      ['name', 'ASC'],
-    ]
+    order: [['name', 'ASC']],
   });
 };
 
@@ -24,24 +22,24 @@ const getBar = async (id: string) => {
 
 const getBarCocktails = async (barId: string) => {
   await dbConnect();
-  const results =  await models.cocktail.findAll({
+  const results = await models.cocktail.findAll({
     where: {
       bar_id: barId,
     },
-    order: [[ 'updated_at', 'DESC' ]],
+    order: [['updated_at', 'DESC']],
   });
 
   const cocktails = await addImgUrlToCocktails(results);
 
   return cocktails;
-}
+};
 
 const addBar = async (barData: BarData) => {
   await dbConnect();
 
-  const { name, address, latitude, longitude} = barData;
+  const { name, address, latitude, longitude } = barData;
 
-  // TODO: later, look up longitude/latitude (if not passed in) using Google API
+  // TODO: later, look up longitude/latitude (if not passed in) using Google Geocoding API
 
   return await models.bar.create({
     name,
@@ -49,24 +47,27 @@ const addBar = async (barData: BarData) => {
     latitude,
     longitude,
   });
-}
+};
 
 const updateBar = async (barId: string, barData: BarData) => {
   await dbConnect();
 
-  const { name, address, latitude, longitude} = barData;
+  const { name, address, latitude, longitude } = barData;
 
-  return await models.bar.update({
-    name,
-    address,
-    latitude,
-    longitude,
-    }, {
-    where: {
-      id: barId,
-    }
-  });
-}
+  return await models.bar.update(
+    {
+      name,
+      address,
+      latitude,
+      longitude,
+    },
+    {
+      where: {
+        id: barId,
+      },
+    },
+  );
+};
 
 export default {
   getBars,
@@ -74,4 +75,4 @@ export default {
   getBarCocktails,
   addBar,
   updateBar,
-}
+};

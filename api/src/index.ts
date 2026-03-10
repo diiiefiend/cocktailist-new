@@ -25,10 +25,12 @@ const PAGINATION_DEFAULT_ITEMS_PER_PAGE = 30;
 auth.configureAuth();
 
 // global middleware
-app.use(cors({
-  origin: ['http://localhost:5173', 'https://cocktailist.club'],
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: ['http://localhost:5173', 'https://cocktailist.club'],
+    credentials: true,
+  }),
+);
 
 app.use(bodyParser.json());
 
@@ -53,12 +55,14 @@ sessionStore.sync();
 
 let cookieParserOptions = {};
 
-// TODO: validate this later
 if (app.get('env') === 'production') {
   console.log('production env setting!');
-  
-  app.set('trust proxy', 1) // trust first proxy
-  expressSessionSettings.cookie.secure = true // serve secure cookies
+
+  console.trace = () => {}; // remove trace logs
+
+  // TODO: validate this later
+  app.set('trust proxy', 1); // trust first proxy
+  expressSessionSettings.cookie.secure = true; // serve secure cookies
 }
 
 app.use(cookieParser(process.env.COOKIE_PARSER_SECRET, cookieParserOptions));
@@ -68,7 +72,8 @@ app.use(session(expressSessionSettings));
 app.use(passport.authenticate('session'));
 
 // cocktails
-app.route('/cocktails/:cocktailId/reviews')
+app
+  .route('/cocktails/:cocktailId/reviews')
   .get(async (req: Request, res: Response) => {
     try {
       res.send(await reviews.getReviewsForCocktail(req.params.cocktailId));
@@ -76,11 +81,11 @@ app.route('/cocktails/:cocktailId/reviews')
       errorHandler(e, res);
     }
   })
-  .post(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+  .post(isLoggedIn, validateCSRFToken, async (req: Request, res: Response) => {
     const reviewData = req.body;
     // @ts-ignore
     const userId = req.session.passport.user.id;
-    
+
     try {
       res.send(await reviews.addReview(req.params.cocktailId, reviewData, userId));
     } catch (e) {
@@ -88,7 +93,8 @@ app.route('/cocktails/:cocktailId/reviews')
     }
   });
 
-app.route('/cocktails/:id/lists')
+app
+  .route('/cocktails/:id/lists')
   .get(isLoggedIn, async (req: Request, res: Response) => {
     // @ts-ignore
     const userId = req.session.passport.user.id;
@@ -99,11 +105,11 @@ app.route('/cocktails/:id/lists')
       errorHandler(e, res);
     }
   })
-  .post(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+  .post(isLoggedIn, validateCSRFToken, async (req: Request, res: Response) => {
     const listsData = req.body;
     // @ts-ignore
     const userId = req.session.passport.user.id;
-    
+
     try {
       res.send(await lists.updateListItems(listsData, req.params.id, userId));
     } catch (e) {
@@ -111,7 +117,8 @@ app.route('/cocktails/:id/lists')
     }
   });
 
-app.route('/cocktails/:id')
+app
+  .route('/cocktails/:id')
   .get(async (req: Request, res: Response) => {
     try {
       res.send(await cocktails.getCocktail(req.params.id));
@@ -119,59 +126,69 @@ app.route('/cocktails/:id')
       errorHandler(e, res);
     }
   })
-  .put(isLoggedIn, validateCSRFToken, multerMiddleware.single('img'), async (req:Request, res: Response) => {
-    const cocktailData = req.body;
-    const cocktailImage = req.file;
-    
-    try { 
-      res.send(await cocktails.updateCocktail(req.params.id, cocktailData, cocktailImage));
-    } catch (e) {
-      errorHandler(e, res);
-    }
-  });
-  // Should I let cocktails be deleted? if so, relationships have to be cleaned up too (reviews, listitems, imgs)
+  .put(
+    isLoggedIn,
+    validateCSRFToken,
+    multerMiddleware.single('img'),
+    async (req: Request, res: Response) => {
+      const cocktailData = req.body;
+      const cocktailImage = req.file;
 
-app.route('/cocktails')
+      try {
+        res.send(await cocktails.updateCocktail(req.params.id, cocktailData, cocktailImage));
+      } catch (e) {
+        errorHandler(e, res);
+      }
+    },
+  );
+// Should I let cocktails be deleted? if so, relationships have to be cleaned up too (reviews, listitems, imgs)
+
+app
+  .route('/cocktails')
   .get(async (req: Request, res: Response) => {
     try {
       // PAGINATION DEFAULTS
-      const {page = 1, limit = PAGINATION_DEFAULT_ITEMS_PER_PAGE}  = req.query;
+      const { page = 1, limit = PAGINATION_DEFAULT_ITEMS_PER_PAGE } = req.query;
       res.send(await cocktails.getCocktailsWithBars(+page, +limit));
     } catch (e) {
       errorHandler(e, res);
     }
   })
-  .post(isLoggedIn, validateCSRFToken, multerMiddleware.single('img'), async (req:Request, res: Response) => {
-    const cocktailData = req.body;
-    const cocktailImage = req.file;
+  .post(
+    isLoggedIn,
+    validateCSRFToken,
+    multerMiddleware.single('img'),
+    async (req: Request, res: Response) => {
+      const cocktailData = req.body;
+      const cocktailImage = req.file;
 
-    try {
-      res.send(await cocktails.addCocktail(cocktailData, cocktailImage));
-    } catch (e) {
-      errorHandler(e, res);
-    }
-  });
+      try {
+        res.send(await cocktails.addCocktail(cocktailData, cocktailImage));
+      } catch (e) {
+        errorHandler(e, res);
+      }
+    },
+  );
 
-app.route('/liquors')
-  .get(async (req: Request, res: Response) => {
-    try {
-      res.send(await cocktails.getLiquors());
-    } catch (e) {
-      errorHandler(e, res);
-    }
-  });
+app.route('/liquors').get(async (req: Request, res: Response) => {
+  try {
+    res.send(await cocktails.getLiquors());
+  } catch (e) {
+    errorHandler(e, res);
+  }
+});
 
 // bars
-app.route('/bars/:id/cocktails')
-  .get(async (req: Request, res: Response) => {
-    try {
-      res.send(await bars.getBarCocktails(req.params.id));
-    } catch (e) {
-      errorHandler(e, res);
-    }
-  });
+app.route('/bars/:id/cocktails').get(async (req: Request, res: Response) => {
+  try {
+    res.send(await bars.getBarCocktails(req.params.id));
+  } catch (e) {
+    errorHandler(e, res);
+  }
+});
 
-app.route('/bars/:id')
+app
+  .route('/bars/:id')
   .get(async (req: Request, res: Response) => {
     try {
       res.send(await bars.getBar(req.params.id));
@@ -179,7 +196,7 @@ app.route('/bars/:id')
       errorHandler(e, res);
     }
   })
-  .put(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+  .put(isLoggedIn, validateCSRFToken, async (req: Request, res: Response) => {
     const barData = req.body;
 
     // TODO: currently not called
@@ -190,7 +207,8 @@ app.route('/bars/:id')
     }
   });
 
-app.route('/bars')
+app
+  .route('/bars')
   .get(async (req: Request, res: Response) => {
     try {
       res.send(await bars.getBars());
@@ -198,9 +216,9 @@ app.route('/bars')
       errorHandler(e, res);
     }
   })
-  .post(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+  .post(isLoggedIn, validateCSRFToken, async (req: Request, res: Response) => {
     const barData = req.body;
-    
+
     // TODO: currently not called
     try {
       res.send(await bars.addBar(barData));
@@ -210,22 +228,23 @@ app.route('/bars')
   });
 
 // lists : all routes require a session
-app.route('/lists/:id')
+app
+  .route('/lists/:id')
   .get(isLoggedIn, async (req: Request, res: Response) => {
     // @ts-ignore
     const userId = req.session.passport.user.id;
 
-    try{
+    try {
       res.send(await lists.getListWithCocktails(req.params.id, userId));
     } catch (e) {
       errorHandler(e, res);
     }
   })
-  .put(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+  .put(isLoggedIn, validateCSRFToken, async (req: Request, res: Response) => {
     const listData = req.body;
     // @ts-ignore
     const userId = req.session.passport.user.id;
-    
+
     // TODO: currently not called
     try {
       res.send(await lists.updateList(req.params.id, listData, userId));
@@ -233,7 +252,7 @@ app.route('/lists/:id')
       errorHandler(e, res);
     }
   })
-  .delete(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+  .delete(isLoggedIn, validateCSRFToken, async (req: Request, res: Response) => {
     // @ts-ignore
     const userId = req.session.passport.user.id;
 
@@ -244,22 +263,23 @@ app.route('/lists/:id')
     }
   });
 
-app.route('/lists')
+app
+  .route('/lists')
   .get(isLoggedIn, async (req: Request, res: Response) => {
     // @ts-ignore
     const userId = req.session.passport.user.id;
-    
-    try{
+
+    try {
       res.send(await lists.getLists(userId));
     } catch (e) {
       errorHandler(e, res);
     }
   })
-  .post(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+  .post(isLoggedIn, validateCSRFToken, async (req: Request, res: Response) => {
     const listData = req.body;
     // @ts-ignore
     const userId = req.session.passport.user.id;
-    
+
     try {
       res.send(await lists.addList(listData, userId));
     } catch (e) {
@@ -268,8 +288,9 @@ app.route('/lists')
   });
 
 // listitem : all routes require a session
-app.route('/listitems/:id')
-  .delete(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+app
+  .route('/listitems/:id')
+  .delete(isLoggedIn, validateCSRFToken, async (req: Request, res: Response) => {
     // @ts-ignore
     const userId = req.session.passport.user.id;
 
@@ -281,19 +302,20 @@ app.route('/listitems/:id')
   });
 
 // reviews
-app.route('/reviews/:id')
-  .put(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+app
+  .route('/reviews/:id')
+  .put(isLoggedIn, validateCSRFToken, async (req: Request, res: Response) => {
     const reviewData = req.body;
     // @ts-ignore
     const userId = req.session.passport.user.id;
-    
+
     try {
       res.send(await reviews.updateReview(req.params.id, reviewData, userId));
     } catch (e) {
       errorHandler(e, res);
     }
   })
-  .delete(isLoggedIn, validateCSRFToken, async (req:Request, res: Response) => {
+  .delete(isLoggedIn, validateCSRFToken, async (req: Request, res: Response) => {
     // @ts-ignore
     const userId = req.session.passport.user.id;
 
@@ -305,52 +327,50 @@ app.route('/reviews/:id')
   });
 
 // users
-app.route('/users/:id')
-  .get(async (req: Request, res: Response) => {
-    try {
-      // TODO: currently not called
-      res.send(await auth.getUser(req.params.id));
-    } catch (e) {
-      errorHandler(e, res);
+app.route('/users/:id').get(async (req: Request, res: Response) => {
+  try {
+    // TODO: currently not called
+    res.send(await auth.getUser(req.params.id));
+  } catch (e) {
+    errorHandler(e, res);
+  }
+});
+
+app.route('/users').post(async (req: Request, res: Response, next: NextFunction) => {
+  console.trace(req.body);
+  const { user, error } = await auth.createUser(req.body);
+
+  if (error || !user) {
+    console.error(error);
+    return next(error || 'error');
+  }
+
+  // create new session
+  req.login(user, (err) => {
+    if (err) {
+      console.error(err);
+      return next(err);
     }
+
+    auth.doPostLoginActions(req, res, next);
   });
+});
 
-app.route('/users')
-  .post(async (req: Request, res: Response, next: NextFunction) => {
-    console.trace(req.body);
-    const {user, error} = await auth.createUser(req.body);
-
-    if (error || !user) { 
-      console.error(error);
-      return next(error || 'error'); 
-    }
-
-    // create new session
-    req.login(user, (err) => {
-      if (err) { 
-        console.error(err);
-        return next(err);
-      }
-
-      auth.doPostLoginActions(req, res, next);
-    });
-  });
-
-  // should we allow deleting accounts?
+// should we allow deleting accounts?
 
 // sessions
 // uses the "local" strategy defined in auth.configureAuth
 // expected payload: username, password
-app.route('/login')
-// passport.authenticate handles logging in
-.post(passport.authenticate('local'), async (req: Request, res: Response, next: NextFunction) => {
-  auth.doPostLoginActions(req, res, next);
-});
-
-app.route('/logout')
-  .post((req: Request, res: Response, next: NextFunction) => {
-    auth.logout(req, res, next);
+app
+  .route('/login')
+  // passport.authenticate handles logging in
+  .post(passport.authenticate('local'), async (req: Request, res: Response, next: NextFunction) => {
+    auth.doPostLoginActions(req, res, next);
   });
+
+app.route('/logout').post((req: Request, res: Response, next: NextFunction) => {
+  auth.logout(req, res, next);
+});
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
@@ -360,4 +380,4 @@ app.listen(port, () => {
 const errorHandler = (error: any, res: Response) => {
   console.error(error);
   res.status(403).send(error);
-}
+};

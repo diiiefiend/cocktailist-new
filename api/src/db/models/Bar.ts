@@ -1,7 +1,9 @@
 import { DataTypes, Sequelize } from 'sequelize';
 
 const init = (sequelize: Sequelize) => {
-  const Bar = sequelize.define('Bar', {
+  const Bar = sequelize.define(
+    'Bar',
+    {
       // Model attributes are defined here
       id: {
         type: DataTypes.INTEGER,
@@ -43,4 +45,3 @@ const init = (sequelize: Sequelize) => {
 };
 
 export default init;
-

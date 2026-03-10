@@ -19,7 +19,7 @@ const initModelsAndAssociations = (sequelize: Sequelize) => {
   // cocktail <> bar
   models.cocktail.belongsTo(models.bar, {
     foreignKey: 'bar_id',
-    as: 'bar',  // this is the name of the RELATIONSHIP, not the individual item!
+    as: 'bar', // this is the name of the RELATIONSHIP, not the individual item!
   });
   models.bar.hasMany(models.cocktail, {
     foreignKey: 'bar_id',
@@ -76,8 +76,8 @@ const initModelsAndAssociations = (sequelize: Sequelize) => {
   });
 
   return models;
-}
+};
 
 export default {
   initModelsAndAssociations,
-}
+};

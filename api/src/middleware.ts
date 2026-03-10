@@ -12,23 +12,21 @@ interface RequestWithCsrf extends Request {
 const generateCSRFToken = (req: RequestWithCsrf, res: Response, next?: NextFunction) => {
   // expected to be used after login
   const csrfToken = crypto.randomBytes(16).toString('hex');
-  console.trace(csrfToken)
+  console.trace(csrfToken);
 
-  res.cookie(CSRF_TOKEN_COOKIE_NAME, csrfToken,
-    {
-      httpOnly: false,
-      maxAge: req.session.cookie.maxAge,
-      ...(process.env.ENV === 'production' ? {domain: 'cocktailist.club'} : {}),
-    }
-  );
+  res.cookie(CSRF_TOKEN_COOKIE_NAME, csrfToken, {
+    httpOnly: false,
+    maxAge: req.session.cookie.maxAge,
+    ...(process.env.ENV === 'production' ? { domain: 'cocktailist.club' } : {}),
+  });
 
   if (next) {
     next();
   }
- }
- 
- // validate CSRF token
- const validateCSRFToken = (req: Request, res: Response, next: NextFunction) => {
+};
+
+// validate CSRF token
+const validateCSRFToken = (req: Request, res: Response, next: NextFunction) => {
   const csrfToken = req.cookies[CSRF_TOKEN_COOKIE_NAME];
 
   if (req.header('X-CSRF-Token') === csrfToken) {
@@ -38,10 +36,10 @@ const generateCSRFToken = (req: RequestWithCsrf, res: Response, next?: NextFunct
     console.warn('token not matched');
     res.status(403).send('Invalid CSRF token');
   }
- }
+};
 
- // validate there is an active logged-in session
- const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
+// validate there is an active logged-in session
+const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
   // @ts-ignore
   if (req.session.passport?.user.id) {
     next();
@@ -50,9 +48,4 @@ const generateCSRFToken = (req: RequestWithCsrf, res: Response, next?: NextFunct
   }
 };
 
- export {
-  CSRF_TOKEN_COOKIE_NAME,
-  generateCSRFToken,
-  validateCSRFToken,
-  isLoggedIn,
- };
+export { CSRF_TOKEN_COOKIE_NAME, generateCSRFToken, validateCSRFToken, isLoggedIn };

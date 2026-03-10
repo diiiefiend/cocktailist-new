@@ -32,7 +32,7 @@ const getLists = async (userId: number) => {
   return await models.list.findAll({
     where: {
       user_id: userId,
-    }
+    },
   });
 };
 
@@ -43,45 +43,48 @@ const getListWithCocktails = async (listId: string, userId: number) => {
     where: {
       id: listId,
       user_id: userId,
-    }
+    },
   });
 
   if (!list) {
     throw new Error('no list associated with logged in user');
-  };
+  }
 
   // @ts-ignore
-    const listItems = await list.getListitems({
-    include: [{
-      association: 'listedCocktail',
-      required: true
-    }],
-    order: [[ 'updated_at', 'DESC' ]],
+  const listItems = await list.getListitems({
+    include: [
+      {
+        association: 'listedCocktail',
+        required: true,
+      },
+    ],
+    order: [['updated_at', 'DESC']],
   });
 
   // get images--we don't use the helper in the 'aws' file because this object is a bit different
   let listItemsWithImgs = [];
   if (listItems) {
     // listItemWithListedCocktail is a Model obj representing a cocktail entry
-    listItemsWithImgs = await Promise.all(listItems.map(async (listItemWithListedCocktail: any) => {
-      const copy = {...listItemWithListedCocktail.dataValues};
-      const listedCocktail = copy.listedCocktail.dataValues;
+    listItemsWithImgs = await Promise.all(
+      listItems.map(async (listItemWithListedCocktail: any) => {
+        const copy = { ...listItemWithListedCocktail.dataValues };
+        const listedCocktail = copy.listedCocktail.dataValues;
 
-      if (listedCocktail.img_file_name) {
-        const thumbnailFilePath = `${listedCocktail.id}/small/${listedCocktail.img_file_name}`;
-    
-        try {
-          // @ts-ignore
-          listedCocktail.imgUrl = await getImageUrl(thumbnailFilePath);
-        } catch (e) {
-          // do nothing -- too noisy to log all the "img not found" msgs
+        if (listedCocktail.img_file_name) {
+          const thumbnailFilePath = `${listedCocktail.id}/small/${listedCocktail.img_file_name}`;
+
+          try {
+            // @ts-ignore
+            listedCocktail.imgUrl = await getImageUrl(thumbnailFilePath);
+          } catch (e) {
+            // do nothing -- too noisy to log all the "img not found" msgs
+          }
         }
-      }
 
-      return copy;
-    }));
+        return copy;
+      }),
+    );
   }
-
 
   const response = {
     ...list.toJSON(),
@@ -101,7 +104,7 @@ const addList = async (listData: ListData, userId: number) => {
     where: {
       name,
       user_id: userId,
-    }
+    },
   });
 
   if (list) {
@@ -112,23 +115,26 @@ const addList = async (listData: ListData, userId: number) => {
     name,
     user_id: userId,
   });
-}
+};
 
 const updateList = async (listId: string, listData: ListData, userId: number) => {
   await dbConnect();
 
   const { name } = listData;
 
-  return await models.list.update({
-    name,
-    updated_at: Date.now(),
-    }, {
-    where: {
-      id: listId,
-      user_id: userId,
-    }
-  });
-}
+  return await models.list.update(
+    {
+      name,
+      updated_at: Date.now(),
+    },
+    {
+      where: {
+        id: listId,
+        user_id: userId,
+      },
+    },
+  );
+};
 
 const deleteList = async (listId: string, userId: number) => {
   await dbConnect();
@@ -137,7 +143,7 @@ const deleteList = async (listId: string, userId: number) => {
     where: {
       id: listId,
       user_id: userId,
-    }
+    },
   });
 
   if (!list) {
@@ -152,7 +158,7 @@ const deleteList = async (listId: string, userId: number) => {
   const removedItemsCount = await models.listitem.destroy({
     where: {
       list_id: listId,
-    }
+    },
   });
 
   console.log(`removed ${removedItemsCount} listitems`);
@@ -160,35 +166,38 @@ const deleteList = async (listId: string, userId: number) => {
   await list.destroy();
 
   return { status: 'success' };
-}
+};
 
 // list item functions
 const getListInfoForCocktail = async (cocktailId: string, userId: number) => {
   await dbConnect();
 
-  const {userLists, listItems} = await getExistingListItemsForOwner(+cocktailId, userId);
+  const { userLists, listItems } = await getExistingListItemsForOwner(+cocktailId, userId);
 
   // we want the list objects
   // @ts-ignore
-  return listItems.map((item) => userLists.find(list => list.id === item.list_id));
-}
+  return listItems.map((item) => userLists.find((list) => list.id === item.list_id));
+};
 
-const updateListItems = async (listsData: AddCocktailToListsData, cocktailId: string, userId: number) => {
+const updateListItems = async (
+  listsData: AddCocktailToListsData,
+  cocktailId: string,
+  userId: number,
+) => {
   await dbConnect();
 
   const { listIds } = listsData;
 
-  const {userLists, listItems} = await getExistingListItemsForOwner(+cocktailId, userId);
+  const { userLists, listItems } = await getExistingListItemsForOwner(+cocktailId, userId);
 
   // @ts-ignore
-  const existingListIds = listItems.map(existingItem => existingItem.list_id);
+  const existingListIds = listItems.map((existingItem) => existingItem.list_id);
 
   console.log('existingListIds: ', existingListIds);
   console.log('newListIds: ', listIds);
 
-  const idsToDelete = existingListIds.filter(id => !listIds.includes(id));
-  const idsToAdd = listIds.filter(id => !existingListIds.includes(id));
-
+  const idsToDelete = existingListIds.filter((id) => !listIds.includes(id));
+  const idsToAdd = listIds.filter((id) => !existingListIds.includes(id));
 
   console.log('ids to delete: ', idsToDelete);
   console.log('ids to add: ', idsToAdd);
@@ -199,7 +208,7 @@ const updateListItems = async (listsData: AddCocktailToListsData, cocktailId: st
       where: {
         list_id: listId,
         cocktail_id: cocktailId,
-      }
+      },
     });
 
     if (existingListitem) {
@@ -211,7 +220,7 @@ const updateListItems = async (listsData: AddCocktailToListsData, cocktailId: st
       where: {
         id: listId,
         user_id: userId,
-      }
+      },
     });
 
     if (!list) {
@@ -236,7 +245,7 @@ const updateListItems = async (listsData: AddCocktailToListsData, cocktailId: st
       where: {
         list_id: listId,
         cocktail_id: cocktailId,
-      }
+      },
     });
 
     if (!existingListitem) {
@@ -248,7 +257,7 @@ const updateListItems = async (listsData: AddCocktailToListsData, cocktailId: st
       where: {
         id: listId,
         user_id: userId,
-      }
+      },
     });
 
     if (!list) {
@@ -264,15 +273,12 @@ const updateListItems = async (listsData: AddCocktailToListsData, cocktailId: st
     return { deleteResult: 'success' };
   });
 
-  const allPromises: Promise<any>[] = [
-    ...createPromises,
-    ...deletePromises,
-  ];
+  const allPromises: Promise<any>[] = [...createPromises, ...deletePromises];
 
   const result = await Promise.all(allPromises);
 
   return result;
-}
+};
 
 const deleteListItem = async (itemId: string, userId: number) => {
   await dbConnect();
@@ -288,7 +294,7 @@ const deleteListItem = async (itemId: string, userId: number) => {
       // @ts-ignore
       id: listItem.list_id,
       user_id: userId,
-    }
+    },
   });
 
   if (!list) {
@@ -298,33 +304,33 @@ const deleteListItem = async (itemId: string, userId: number) => {
   await models.listitem.destroy({
     where: {
       id: itemId,
-    }
+    },
   });
 
   return await list.update({
     updated_at: Date.now(),
   });
-}
+};
 
 const getExistingListItemsForOwner = async (cocktailId: number, userId: number) => {
   const userLists = await models.list.findAll({
     where: {
       user_id: userId,
-    }
+    },
   });
 
   // @ts-ignore
-  const userListIds = userLists.map(list => list.id);
+  const userListIds = userLists.map((list) => list.id);
 
   const listItems = await models.listitem.findAll({
     where: {
       cocktail_id: cocktailId,
       list_id: userListIds,
-    }
+    },
   });
 
-  return {userLists, listItems}; 
-}
+  return { userLists, listItems };
+};
 
 export default {
   getLists,
@@ -335,4 +341,4 @@ export default {
   getListInfoForCocktail,
   updateListItems,
   deleteListItem,
-}
+};

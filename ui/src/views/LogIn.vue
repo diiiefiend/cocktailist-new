@@ -46,7 +46,6 @@ function switchMode() {
 async function onSubmit() {
   errors.value = [];
   isSubmitting.value = true;
-  console.log('hello ', payload.value);
   const requiredFields = ['username', 'password'];
   if (mode.value === 'Create Account') {
     requiredFields.push('email');

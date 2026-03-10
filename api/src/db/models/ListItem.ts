@@ -1,7 +1,9 @@
 import { DataTypes, Sequelize } from 'sequelize';
 
 const init = (sequelize: Sequelize) => {
-  const ListItem = sequelize.define('ListItem', {
+  const ListItem = sequelize.define(
+    'ListItem',
+    {
       // Model attributes are defined here
       id: {
         type: DataTypes.INTEGER,

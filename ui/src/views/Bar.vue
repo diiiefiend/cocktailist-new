@@ -144,9 +144,11 @@ onMounted(async () => {
         <em>{{ new Date(cocktails[0]?.updated_at).toLocaleString('en-US', DATE_FORMATTING) }}</em>
       </grid-box>
       <grid-box :width="4" :startCol="4" :applyBoxStyle="true" class="map-box">
+        <!-- TODO: call google maps api -->
         <div class="placeholder-box"></div>
       </grid-box>
       <grid-box :width="3" :startCol="8" :applyBoxStyle="true" class="bar-details-box">
+        <!-- TODO: call google places api - uses place details enterprise api -->
         <ul>
           <li>hours</li>
           <li>hours</li>

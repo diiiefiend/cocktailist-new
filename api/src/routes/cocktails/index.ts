@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import {dbConnect, models} from '../../db';
+import { dbConnect, models } from '../../db';
 import * as aws from '../../aws';
 import barFns from '../bars';
 import sharp from 'sharp';
@@ -15,7 +15,7 @@ interface CocktailData {
   imgContentType?: string;
   imgFileSize?: number;
   imgUpdatedAt?: string;
-};
+}
 
 interface CocktailImage {
   originalname: string;
@@ -27,10 +27,12 @@ interface CocktailImage {
 const getCocktail = async (id: string) => {
   await dbConnect();
   let cocktail: any = await models.cocktail.findByPk(id, {
-    include: [{
-      association: 'bar',
-      required: true
-    }],
+    include: [
+      {
+        association: 'bar',
+        required: true,
+      },
+    ],
   });
 
   cocktail = cocktail?.dataValues;
@@ -47,17 +49,19 @@ const getCocktail = async (id: string) => {
   }
 
   return cocktail;
-}
+};
 
 const getCocktailsWithBars = async (page: number, limit: number) => {
   await dbConnect();
   // get a page of cocktails
   const results = await models.cocktail.findAndCountAll({
-    include: [{
-      association: 'bar',
-      required: true
-    }],
-    order: [[ 'updated_at', 'DESC' ]],
+    include: [
+      {
+        association: 'bar',
+        required: true,
+      },
+    ],
+    order: [['updated_at', 'DESC']],
     limit,
     offset: (page - 1) * limit,
   });
@@ -69,18 +73,16 @@ const getCocktailsWithBars = async (page: number, limit: number) => {
     totalPages: Math.ceil(results.count / limit),
     currentPage: page,
   };
-}
+};
 
 const getLiquors = async () => {
   await dbConnect();
 
-  type List = Array<{liquor: string}>;
-  
-  const list = await models.cocktail.findAll({
-    attributes: [
-      [Sequelize.fn('DISTINCT', Sequelize.col('liquor')), 'liquor']
-    ],
-  }) as unknown as List;
+  type List = Array<{ liquor: string }>;
+
+  const list = (await models.cocktail.findAll({
+    attributes: [[Sequelize.fn('DISTINCT', Sequelize.col('liquor')), 'liquor']],
+  })) as unknown as List;
 
   // list currently looks like
   // [
@@ -89,26 +91,21 @@ const getLiquors = async () => {
   //   },
   //  ...
   // ]
-  // so let's flatten it    
+  // so let's flatten it
 
-  const result = list.map(liquorObj => {
-    return liquorObj.liquor;
-  }).sort();
+  const result = list
+    .map((liquorObj) => {
+      return liquorObj.liquor;
+    })
+    .sort();
 
   return result;
-}
+};
 
 const addCocktail = async (cocktailData: CocktailData, cocktailImage?: CocktailImage) => {
   await dbConnect();
 
-  const {
-    name,
-    barId,
-    barName,
-    barAddress,
-    type,
-    ingredients,
-  } = cocktailData;
+  const { name, barId, barName, barAddress, type, ingredients } = cocktailData;
 
   const finalizedBarId = await addNewBarIfNeeded(barId, barName, barAddress);
 
@@ -121,7 +118,7 @@ const addCocktail = async (cocktailData: CocktailData, cocktailImage?: CocktailI
   });
 
   let result = {
-    ...cocktail.dataValues
+    ...cocktail.dataValues,
   };
 
   // upload image, if provided, to aws
@@ -131,33 +128,33 @@ const addCocktail = async (cocktailData: CocktailData, cocktailImage?: CocktailI
   }
 
   return result;
-}
+};
 
-const updateCocktail = async (cocktailId: string, cocktailData: CocktailData, cocktailImage?: CocktailImage) => {
+const updateCocktail = async (
+  cocktailId: string,
+  cocktailData: CocktailData,
+  cocktailImage?: CocktailImage,
+) => {
   await dbConnect();
 
-  const {
-    name,
-    barId,
-    barName,
-    barAddress,
-    type,
-    ingredients,
-  } = cocktailData;
+  const { name, barId, barName, barAddress, type, ingredients } = cocktailData;
 
   const finalizedBarId = await addNewBarIfNeeded(barId, barName, barAddress);
 
-  const cocktailUpdate = await models.cocktail.update({
-    bar_id: finalizedBarId,
-    name,
-    liquor: type,
-    ingredients,
-    updated_at: Date.now(),
-  }, {
-    where: {
-      id: cocktailId,
-    }
-  });
+  const cocktailUpdate = await models.cocktail.update(
+    {
+      bar_id: finalizedBarId,
+      name,
+      liquor: type,
+      ingredients,
+      updated_at: Date.now(),
+    },
+    {
+      where: {
+        id: cocktailId,
+      },
+    },
+  );
 
   let result: any = {
     cocktailUpdateStatus: cocktailUpdate,
@@ -172,19 +169,14 @@ const updateCocktail = async (cocktailId: string, cocktailData: CocktailData, co
   }
 
   return result;
-}
+};
 
 const uploadCocktailImages = async (cocktailId: number, cocktailImage: CocktailImage) => {
-  const {
-    originalname,
-    mimetype,
-    buffer,
-    size,
-  } = cocktailImage;
+  const { originalname, mimetype, buffer, size } = cocktailImage;
 
   const originalFolderPath = `${cocktailId}/original/${originalname}`;
   const smallFolderPath = `${cocktailId}/small/${originalname}`;
-  
+
   await aws.uploadImage(originalFolderPath, buffer);
 
   // make thumbnail that is 150px tall
@@ -193,19 +185,22 @@ const uploadCocktailImages = async (cocktailId: number, cocktailImage: CocktailI
   const smallVersion = await sharpInstance.resize(null, 150).jpeg().toBuffer();
   await aws.uploadImage(smallFolderPath, smallVersion);
 
-  const addImageResult = await models.cocktail.update({
-    img_file_name: originalname,
-    img_content_type: mimetype,
-    img_file_size: size,
-    img_updated_at: Date.now(),
-  }, {
-    where: {
-      id: cocktailId,
-    }
-  });
+  const addImageResult = await models.cocktail.update(
+    {
+      img_file_name: originalname,
+      img_content_type: mimetype,
+      img_file_size: size,
+      img_updated_at: Date.now(),
+    },
+    {
+      where: {
+        id: cocktailId,
+      },
+    },
+  );
 
   return addImageResult;
-}
+};
 
 // unexported private fns
 
@@ -214,10 +209,12 @@ const addNewBarIfNeeded = async (barId?: string, barName?: string, barAddress?: 
 
   if (barId === '-1' && barName && barAddress) {
     // create new bar
-    const addBarResult = (await barFns.addBar({
-      name: barName,
-      address: barAddress,
-    })).getDataValue('id');
+    const addBarResult = (
+      await barFns.addBar({
+        name: barName,
+        address: barAddress,
+      })
+    ).getDataValue('id');
 
     console.info('in cocktail helper fn addNewBarIfNeeded');
     console.dir(addBarResult);
@@ -226,7 +223,7 @@ const addNewBarIfNeeded = async (barId?: string, barName?: string, barAddress?: 
   }
 
   return resultId;
-}
+};
 
 export default {
   getCocktail,
@@ -234,4 +231,4 @@ export default {
   getLiquors,
   addCocktail,
   updateCocktail,
-}
+};

@@ -10,8 +10,9 @@ const CUSTOM_SESSION_COOKIE_NAME = 'cocktailist.activeSession';
 
 const configureAuth = () => {
   // login logic (called from POST /login)
-  passport.use('local', new Strategy(
-    async (username: string, password: string, cb: any) => {
+  passport.use(
+    'local',
+    new Strategy(async (username: string, password: string, cb: any) => {
       console.trace('im in here!');
 
       await dbConnect();
@@ -29,12 +30,16 @@ const configureAuth = () => {
       const hashedPw = crypto.pbkdf2Sync(password, user.salt, 310000, 32, 'sha256');
 
       // validate hashedPw against db value
-      if (!hashedPw || !crypto.timingSafeEqual(Buffer.from(user.password_digest, 'base64'), hashedPw)) {
+      if (
+        !hashedPw ||
+        !crypto.timingSafeEqual(Buffer.from(user.password_digest, 'base64'), hashedPw)
+      ) {
         return cb(null, false, { message: 'Incorrect username or password.' });
       }
 
       return cb(null, user);
-  }));
+    }),
+  );
 
   // session stuff
   // this is used to attach user info to the active session
@@ -55,7 +60,7 @@ const configureAuth = () => {
 
       await dbConnect();
       const user: any = await models.user.scope('auth').findByPk(id);
-  
+
       if (!user) {
         return cb(null, false);
       }
@@ -63,52 +68,52 @@ const configureAuth = () => {
       return cb(null, user);
     });
   });
-}
+};
 
 const createUser = async (params: any) => {
   console.trace(params);
-  const {email, username, password} = params;
+  const { email, username, password } = params;
 
   if (!(email && username && password)) {
-      return { user: null, error: 'Missing required fields' };
+    return { user: null, error: 'Missing required fields' };
   }
 
   const salt = crypto.randomBytes(32).toString('base64');
   const hashedPwStr = crypto.pbkdf2Sync(password, salt, 310000, 32, 'sha256').toString('base64');
-  
+
   await dbConnect();
   const user: any = await models.user.findOne({
-      where: {
-        email,
-      },
+    where: {
+      email,
+    },
+  });
+
+  if (user) {
+    return { user: null, error: 'User with that email already exists!' };
+  }
+
+  try {
+    const result = await models.user.create({
+      username,
+      email,
+      password_digest: hashedPwStr,
+      salt,
+      // this column isn't used anymore
+      session_token: 'PLACEHOLDER',
     });
 
-    if (user) {
-      return { user: null, error: 'User with that email already exists!' };
-    }
+    // set up a default list
+    await models.list.create({
+      name: 'to try',
+      user_id: result.dataValues.id,
+    });
 
-    try {
-      const result = await models.user.create({
-        username,
-        email,
-        password_digest: hashedPwStr,
-        salt,
-        // this column isn't used anymore
-        session_token: 'PLACEHOLDER',
-      });
-
-      // set up a default list
-      await models.list.create({
-        name: 'to try',
-        user_id: result.dataValues.id,
-      });
-      
-      return { user: result, error: null};
-    } catch (e) {
-      // if the model fails validation, it ends up here
-      return { user: null, error: e};
-    }
-}
+    return { user: result, error: null };
+  } catch (e) {
+    // if the model fails validation, it ends up here
+    return { user: null, error: e };
+  }
+};
 
 const doPostLoginActions = (req: Request, res: Response, next: NextFunction) => {
   // @ts-ignore
@@ -119,7 +124,7 @@ const doPostLoginActions = (req: Request, res: Response, next: NextFunction) => 
   if (!passportObj) {
     throw new Error('no user attached!');
   }
-  
+
   // set extra cookie that can be parsed by FE JS
   res.cookie(
     CUSTOM_SESSION_COOKIE_NAME,
@@ -127,8 +132,8 @@ const doPostLoginActions = (req: Request, res: Response, next: NextFunction) => 
     {
       httpOnly: false,
       maxAge: req.session.cookie.maxAge,
-      ...(process.env.ENV === 'production' ? {domain: 'cocktailist.club'} : {}),
-    }
+      ...(process.env.ENV === 'production' ? { domain: 'cocktailist.club' } : {}),
+    },
   );
 
   // set csrf token
@@ -139,10 +144,10 @@ const doPostLoginActions = (req: Request, res: Response, next: NextFunction) => 
     ...passportObj,
   };
 
-  res.send(response);  
-}
+  res.send(response);
+};
 
-const logout =  (req: Request, res: Response, next: NextFunction) => {
+const logout = (req: Request, res: Response, next: NextFunction) => {
   const user = req.user;
 
   console.trace('in logout function');
@@ -155,24 +160,24 @@ const logout =  (req: Request, res: Response, next: NextFunction) => {
   }
 
   req.logout(user, (err) => {
-    if (err) { 
+    if (err) {
       console.error(err);
       return next(err);
     }
 
     res.clearCookie(CUSTOM_SESSION_COOKIE_NAME, {
-      ...(process.env.ENV === 'production' ? {domain: 'cocktailist.club'} : {}),
+      ...(process.env.ENV === 'production' ? { domain: 'cocktailist.club' } : {}),
     });
     res.clearCookie(CSRF_TOKEN_COOKIE_NAME, {
-      ...(process.env.ENV === 'production' ? {domain: 'cocktailist.club'} : {}),
+      ...(process.env.ENV === 'production' ? { domain: 'cocktailist.club' } : {}),
     });
 
     res.send({
       status: 'success',
-      message: 'logged out'
+      message: 'logged out',
     });
   });
-}
+};
 
 const getUser = async (userId: string) => {
   await dbConnect();

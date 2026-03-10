@@ -1,7 +1,9 @@
 import { DataTypes, Sequelize } from 'sequelize';
 
 const init = (sequelize: Sequelize) => {
-  const User = sequelize.define('User', {
+  const User = sequelize.define(
+    'User',
+    {
       // Model attributes are defined here
       id: {
         type: DataTypes.INTEGER,
@@ -66,8 +68,8 @@ const init = (sequelize: Sequelize) => {
       scopes: {
         auth: {
           attributes: { include: ['password_digest', 'session_token', 'uid', 'provider', 'salt'] },
-        }
-      }
+        },
+      },
     },
   );
 
