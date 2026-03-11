@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref, type Ref } from 'vue';
+import { onMounted, useTemplateRef, ref, type Ref } from 'vue';
 
 import { getBarCocktails, getBars } from '../api.js';
 import { useAuthStore } from '../stores/auth.js';
 import type { BarDetails, CocktailItem } from '../models.js';
 import router from '../router/index.js';
 import { ALL_SPIRITS, FLOURISH_IMG, DATE_FORMATTING } from '../utils.js';
+import { getMap } from '../google.js';
 
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
@@ -28,6 +29,7 @@ const props = withDefaults(
 
 const isLoading = ref(true);
 const error = ref(null);
+const googleMapEl = useTemplateRef('googleMapEl');
 
 const allBars: Ref<Array<BarDetails>> = ref([]);
 const bar: Ref<null | BarDetails> = ref(null);
@@ -54,6 +56,12 @@ const fetchBarCocktails = async (barId: number) => {
   setLiquorTypes();
 
   selectedLiquorFilter.value = ALL_SPIRITS;
+};
+
+const fetchBarGoogleInfo = async (bar: BarDetails) => {
+  if (googleMapEl.value) {
+    await getMap(googleMapEl.value, bar);
+  }
 };
 
 async function fetchData() {
@@ -83,6 +91,7 @@ async function fetchData() {
 async function onBarUpdate() {
   if (bar.value) {
     fetchBarCocktails(bar.value.id);
+    fetchBarGoogleInfo(bar.value);
     // MAYBE LATER: push id & filters into router URL?
   }
 }
@@ -104,6 +113,9 @@ function onCocktailCreate(createdCocktail: CocktailItem) {
 
 onMounted(async () => {
   await fetchData();
+  if (bar.value) {
+    await fetchBarGoogleInfo(bar.value);
+  }
 });
 </script>
 
@@ -145,7 +157,7 @@ onMounted(async () => {
       </grid-box>
       <grid-box :width="4" :startCol="4" :applyBoxStyle="true" class="map-box">
         <!-- TODO: call google maps api -->
-        <div class="placeholder-box"></div>
+        <div ref="googleMapEl" class="placeholder-box"></div>
       </grid-box>
       <grid-box :width="3" :startCol="8" :applyBoxStyle="true" class="bar-details-box">
         <!-- TODO: call google places api - uses place details enterprise api -->

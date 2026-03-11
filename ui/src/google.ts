@@ -1,7 +1,7 @@
 import { setOptions, importLibrary } from '@googlemaps/js-api-loader';
 
 // google stuff
-setOptions({key: process.env.VUE_APP_GOOGLE_API_KEY});
+setOptions({key: import.meta.env.VITE_GOOGLE_API_KEY});
 
 let MapsLib: google.maps.MapsLibrary; 
 let MapsMarkerLib: google.maps.MarkerLibrary;
@@ -21,7 +21,7 @@ const addMarker = async (map: google.maps.Map, coordinates: google.maps.LatLng) 
 }
 
 // return a Google Map centered on 1 bar's address
-const getMap = async (anchorElement: any, bar: Bar) => {
+const getMap = async (anchorElement: HTMLElement, bar: Bar) => {
   if (!MapsLib) {
     MapsLib = (await importLibrary('maps'));
   };
@@ -30,15 +30,15 @@ const getMap = async (anchorElement: any, bar: Bar) => {
 
   const options: google.maps.MapOptions = {
     center: coords,
-    zoom: 15,
+    zoom: 14,
     maxZoom: 15,
     scrollwheel: false,
     disableDoubleClickZoom: false,
     mapTypeId: MapsLib.MapTypeId.ROADMAP,
     draggable: true,
-    // overviewMapControl: false,
     zoomControl: true,
-    disableDefaultUI: true
+    disableDefaultUI: true,
+    mapId: 'DEMO_MAP_ID',
   };
 
   const map = new MapsLib.Map(anchorElement, options);
