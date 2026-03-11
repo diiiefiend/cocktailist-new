@@ -9,7 +9,7 @@ api/dist
 api/app_log.txt
 
 # env files
-api/.env*
+**/.env*
 
 # Log files
 npm-debug.log*

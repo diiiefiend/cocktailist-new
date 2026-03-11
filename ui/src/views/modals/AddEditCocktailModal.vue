@@ -196,7 +196,7 @@ function resetImages() {
         </fieldset>
         <fieldset>
           <label for="bars">Bar</label>
-          <!-- TODO: add option to add bar -->
+          <!-- TODO: add option to add bar -- in the add bar modal, use Google's Geocoding API to generate longitude and latitude and pass to BE -->
           <select id="bars" v-model="payload.barId">
             <option v-for="bar in barList" :key="bar.id" :value="bar.id">
               {{ bar.name }}

@@ -1,4 +1,4 @@
-import type { Ref } from "vue";
+import type { Ref } from 'vue';
 
 const checkRequiredFields = (requiredFields: string[], payload: Ref) => {
   const errors: string[] = [];

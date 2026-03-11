@@ -39,8 +39,6 @@ const addBar = async (barData: BarData) => {
 
   const { name, address, latitude, longitude } = barData;
 
-  // TODO: later, look up longitude/latitude (if not passed in) using Google Geocoding API
-
   return await models.bar.create({
     name,
     address,
