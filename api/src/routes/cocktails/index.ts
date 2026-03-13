@@ -9,6 +9,8 @@ interface CocktailData {
   barId?: string; // annoyingly, this comes thru as a string in the request payload
   barName?: string;
   barAddress?: string;
+  barLat?: string;
+  barLng?: string;
   type: string;
   ingredients: string;
   imgFileName?: string;
@@ -105,9 +107,9 @@ const getLiquors = async () => {
 const addCocktail = async (cocktailData: CocktailData, cocktailImage?: CocktailImage) => {
   await dbConnect();
 
-  const { name, barId, barName, barAddress, type, ingredients } = cocktailData;
+  const { name, barId, barName, barAddress, barLat, barLng, type, ingredients } = cocktailData;
 
-  const finalizedBarId = await addNewBarIfNeeded(barId, barName, barAddress);
+  const finalizedBarId = await addNewBarIfNeeded(barId, barName, barAddress, barLat, barLng);
 
   // first save the cocktail so we get an id
   const cocktail = await models.cocktail.create({
@@ -204,7 +206,7 @@ const uploadCocktailImages = async (cocktailId: number, cocktailImage: CocktailI
 
 // unexported private fns
 
-const addNewBarIfNeeded = async (barId?: string, barName?: string, barAddress?: string) => {
+const addNewBarIfNeeded = async (barId?: string, barName?: string, barAddress?: string, barLat?: string, barLng?: string) => {
   let resultId: any = -1;
 
   if (barId === '-1' && barName && barAddress) {
@@ -213,6 +215,8 @@ const addNewBarIfNeeded = async (barId?: string, barName?: string, barAddress?: 
       await barFns.addBar({
         name: barName,
         address: barAddress,
+        latitude: barLat ? +barLat : undefined,
+        longitude: barLng ? +barLng : undefined,
       })
     ).getDataValue('id');
 

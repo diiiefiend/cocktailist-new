@@ -4,6 +4,7 @@ import { computed, ref, type Ref } from 'vue';
 import { DRINK_TYPES, type Bar, type CocktailItem } from '../../models';
 import { addCocktail, updateCocktail } from '../../api';
 import { checkRequiredFields } from '../../utils';
+import { convertAddressToLatLng } from '../../google.js';
 
 import SiteModal from '../../components/SiteModal.vue';
 
@@ -38,6 +39,8 @@ const payload: Ref<{
   barId: number | null,
   barName: string | null,
   barAddress: string | null,
+  barLat: number | null,
+  barLng: number | null,
   ingredients: string | null,
 }> = ref(
   props.existingCocktailInfo
@@ -47,6 +50,8 @@ const payload: Ref<{
         barId: props.existingCocktailInfo.bar.id,
         barName: props.existingCocktailInfo.bar.name,
         barAddress: null,
+        barLat: null,
+        barLng: null,
         ingredients: props.existingCocktailInfo.ingredients,
       }
     : {
@@ -55,6 +60,8 @@ const payload: Ref<{
         barId: null,
         barName: null,
         barAddress: null,
+        barLat: null,
+        barLng: null,
         ingredients: null,
       },
 );
@@ -101,6 +108,10 @@ const onSubmit = async () => {
     }
     if (newBarInfo.value.address && newBarInfo.value.address.trim() !== '') {
       payload.value.barAddress = newBarInfo.value.address;
+      // look up coordinates using Google Geocoding API
+      const coords = await convertAddressToLatLng(newBarInfo.value.address);
+      payload.value.barLat = coords?.lat() ?? null;
+      payload.value.barLng = coords?.lng() ?? null;
     }
   }
 
@@ -196,7 +207,6 @@ function resetImages() {
         </fieldset>
         <fieldset>
           <label for="bars">Bar</label>
-          <!-- TODO: add option to add bar -- in the add bar modal, use Google's Geocoding API to generate longitude and latitude and pass to BE -->
           <select id="bars" v-model="payload.barId">
             <option v-for="bar in barList" :key="bar.id" :value="bar.id">
               {{ bar.name }}

@@ -6,7 +6,7 @@ import { useAuthStore } from '../stores/auth.js';
 import type { BarDetails, CocktailItem } from '../models.js';
 import router from '../router/index.js';
 import { ALL_SPIRITS, FLOURISH_IMG, DATE_FORMATTING } from '../utils.js';
-import { getHours, getMap } from '../google.js';
+import { getHours, getMap, getPlaceDetails } from '../google.js';
 
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
@@ -37,6 +37,7 @@ const cocktails: Ref<Array<CocktailItem>> = ref([]);
 const liquorTypes: Ref<null | string[]> = ref(null);
 const barDays: Ref<string[]> = ref([]);
 const barHours: Ref<string[]> = ref([]);
+const barSite: Ref<null | string> = ref(null);
 
 const showAddCocktailModal = ref(false);
 const selectedLiquorFilter: Ref<null | string> = ref(ALL_SPIRITS);
@@ -64,7 +65,9 @@ const fetchBarGoogleInfo = async (bar: BarDetails) => {
   if (googleMapEl.value) {
     await getMap(googleMapEl.value, bar);
   }
-  const barDaysAndHours = (await getHours(bar)) ?? [];
+
+  const placeDetails = await getPlaceDetails(bar);
+  const barDaysAndHours = placeDetails.hours ?? [];
 
   barDays.value = [];
   barHours.value = [];
@@ -78,6 +81,8 @@ const fetchBarGoogleInfo = async (bar: BarDetails) => {
       barHours.value.push(infoArr[1]);
     });
   }
+
+  barSite.value = placeDetails.website ?? null;
 };
 
 async function fetchData() {
@@ -164,7 +169,10 @@ onMounted(async () => {
     <div v-if="isLoading" class="loader">LOADING</div>
     <layout-container v-else>
       <grid-box :width="3" :startCol="1" :applyBoxStyle="true" class="bar-details-box">
-        <h2>{{ bar!.name }}</h2>
+        <h2 v-if="barSite">
+          <a :href="barSite" target="_blank">{{ bar!.name }}</a>
+        </h2>
+        <h2 v-else>{{ bar!.name }}</h2>
         <h3>{{ bar!.address }}</h3>
         <img class="divider" :src="FLOURISH_IMG" alt="" width="110" />
         {{ cocktails.length }} entries<br />

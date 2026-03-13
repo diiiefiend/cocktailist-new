@@ -6,7 +6,7 @@ setOptions({key: import.meta.env.VITE_GOOGLE_API_KEY});
 let MapsLib: google.maps.MapsLibrary; 
 let MapsMarkerLib: google.maps.MarkerLibrary;
 let PlacesLib: google.maps.PlacesLibrary;
-let GeocodingLib: google.maps.Geocoder; // TODO: not sure if this is a library
+let GeocodingLib: google.maps.GeocodingLibrary;
 
 // add a Map Marker to a Google Map
 const addMarker = async (map: google.maps.Map, coordinates: google.maps.LatLng) => {
@@ -48,6 +48,7 @@ const getMap = async (anchorElement: HTMLElement, bar: Bar) => {
   return map;
 };
 
+// just returns the place id. uses Google Text Search Essentials, so should be a free API lookup
 const getPlaceId = async (bar: Bar) => {
   if (!PlacesLib) {
     PlacesLib = await importLibrary('places');
@@ -67,12 +68,13 @@ const getPlaceId = async (bar: Bar) => {
   return places[0].id;
 };
 
+// gets hours using the Place Details Enterprise API and a place ID. Free up to 5k calls in a month
 const getHours = async (bar: Bar, placeId?: string) => {
   if (!PlacesLib) {
     PlacesLib = await importLibrary('places');
   }
 
-  // this is a separate API call, but apparently this saves on API cost because looking up a place id is free?
+  // this is a separate API call which should be free
   const placeIdToUse = placeId ? placeId : (await getPlaceId(bar));
   const place = new PlacesLib.Place({
     id: placeIdToUse,
@@ -88,8 +90,53 @@ const getHours = async (bar: Bar, placeId?: string) => {
   return hours;
 };
 
+// uses Google Text Search Enterprise API to get id, hours, and website. Free up to 5k calls in a month
+const getPlaceDetails = async (bar: Bar) => {
+  if (!PlacesLib) {
+    PlacesLib = await importLibrary('places');
+  }
+
+  const coords = new google.maps.LatLng(bar.latitude, bar.longitude);
+
+  const searchRequest = {
+    locationBias: coords,
+    textQuery: bar.name,
+    fields: ['id', 'regularOpeningHours', 'websiteURI'],
+    maxResultCount: 1,
+  };
+
+  const { places } = await PlacesLib.Place.searchByText(searchRequest);
+
+  const barPlace = places[0];
+
+  return {
+    id: barPlace.id,
+    hours: barPlace.regularOpeningHours?.weekdayDescriptions,
+    website: barPlace.websiteURI,
+  };
+}
+
+// uses Places Geocoding Essentials API, free up to 10k requests per month
+const convertAddressToLatLng = async (address: string) => {
+  if (!GeocodingLib) {
+    GeocodingLib = await importLibrary('geocoding');
+  }
+
+  const geocoder = new GeocodingLib.Geocoder();
+  const request = {
+    address,
+  };
+
+  const {results} = await geocoder.geocode(request);
+
+  if (results.length) {
+    return results[0].geometry.location;
+  }
+}
+
 export {
-  // convertAddressToLatLng,
+  convertAddressToLatLng,
   getHours,
+  getPlaceDetails,
   getMap,
 };
