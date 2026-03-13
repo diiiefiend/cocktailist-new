@@ -23,7 +23,7 @@ const addMarker = async (map: google.maps.Map, coordinates: google.maps.LatLng) 
 // return a Google Map centered on 1 bar's address
 const getMap = async (anchorElement: HTMLElement, bar: Bar) => {
   if (!MapsLib) {
-    MapsLib = (await importLibrary('maps'));
+    MapsLib = await importLibrary('maps');
   };
 
   const coords = new google.maps.LatLng(bar.latitude, bar.longitude);
@@ -46,11 +46,50 @@ const getMap = async (anchorElement: HTMLElement, bar: Bar) => {
   addMarker(map, coords);
 
   return map;
-}
+};
 
+const getPlaceId = async (bar: Bar) => {
+  if (!PlacesLib) {
+    PlacesLib = await importLibrary('places');
+  }
+
+  const coords = new google.maps.LatLng(bar.latitude, bar.longitude);
+
+  const searchRequest = {
+    locationBias: coords,
+    textQuery: bar.name,
+    fields: ['id'],
+    maxResultCount: 1,
+  };
+
+  const { places } = await PlacesLib.Place.searchByText(searchRequest);
+
+  return places[0].id;
+};
+
+const getHours = async (bar: Bar, placeId?: string) => {
+  if (!PlacesLib) {
+    PlacesLib = await importLibrary('places');
+  }
+
+  // this is a separate API call, but apparently this saves on API cost because looking up a place id is free?
+  const placeIdToUse = placeId ? placeId : (await getPlaceId(bar));
+  const place = new PlacesLib.Place({
+    id: placeIdToUse,
+  });
+
+  const placeDetails = await place.fetchFields({
+    fields: [ 'regularOpeningHours' ],
+  });
+
+  const hours = placeDetails.place.regularOpeningHours?.weekdayDescriptions;
+  console.log(hours);
+
+  return hours;
+};
 
 export {
   // convertAddressToLatLng,
-  // getHours,
+  getHours,
   getMap,
 };

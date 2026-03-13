@@ -6,7 +6,7 @@ import { useAuthStore } from '../stores/auth.js';
 import type { BarDetails, CocktailItem } from '../models.js';
 import router from '../router/index.js';
 import { ALL_SPIRITS, FLOURISH_IMG, DATE_FORMATTING } from '../utils.js';
-import { getMap } from '../google.js';
+import { getHours, getMap } from '../google.js';
 
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
@@ -35,6 +35,8 @@ const allBars: Ref<Array<BarDetails>> = ref([]);
 const bar: Ref<null | BarDetails> = ref(null);
 const cocktails: Ref<Array<CocktailItem>> = ref([]);
 const liquorTypes: Ref<null | string[]> = ref(null);
+const barDays: Ref<string[]> = ref([]);
+const barHours: Ref<string[]> = ref([]);
 
 const showAddCocktailModal = ref(false);
 const selectedLiquorFilter: Ref<null | string> = ref(ALL_SPIRITS);
@@ -61,6 +63,20 @@ const fetchBarCocktails = async (barId: number) => {
 const fetchBarGoogleInfo = async (bar: BarDetails) => {
   if (googleMapEl.value) {
     await getMap(googleMapEl.value, bar);
+  }
+  const barDaysAndHours = (await getHours(bar)) ?? [];
+
+  barDays.value = [];
+  barHours.value = [];
+
+  if (!barDaysAndHours.length) {
+    barDays.value = ['Hours of operation not available'];
+  } else {
+    barDaysAndHours.forEach((info: any) => {
+      const infoArr = info.split(': ');
+      barDays.value.push(infoArr[0]);
+      barHours.value.push(infoArr[1]);
+    });
   }
 };
 
@@ -152,19 +168,20 @@ onMounted(async () => {
         <h3>{{ bar!.address }}</h3>
         <img class="divider" :src="FLOURISH_IMG" alt="" width="110" />
         {{ cocktails.length }} entries<br />
-        Last updated:
-        <em>{{ new Date(cocktails[0]?.updated_at).toLocaleString('en-US', DATE_FORMATTING) }}</em>
+        <span class="last-updated">
+          Updated
+          {{ new Date(cocktails[0]?.updated_at).toLocaleString('en-US', DATE_FORMATTING) }}</span
+        >
       </grid-box>
       <grid-box :width="4" :startCol="4" :applyBoxStyle="true" class="map-box">
-        <!-- TODO: call google maps api -->
         <div ref="googleMapEl" class="placeholder-box"></div>
       </grid-box>
       <grid-box :width="3" :startCol="8" :applyBoxStyle="true" class="bar-details-box">
-        <!-- TODO: call google places api - uses place details enterprise api -->
-        <ul>
-          <li>hours</li>
-          <li>hours</li>
-          <li>hours</li>
+        <ul class="barHours">
+          <li v-for="(day, index) in barDays" :key="day">
+            <span class="day">{{ day }}</span>
+            <span class="hours">{{ barHours[index] }}</span>
+          </li>
         </ul>
       </grid-box>
       <cocktail-box v-for="cocktail in filteredCocktails" :key="cocktail.id" :cocktail="cocktail">

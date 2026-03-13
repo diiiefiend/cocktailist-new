@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, type Ref } from 'vue';
+import { onMounted, ref, useTemplateRef, type Ref } from 'vue';
 
 import type { BarDetails, CocktailItem, List, ReviewItem } from '../models';
 import {
@@ -10,6 +10,7 @@ import {
   getLists,
 } from '../api';
 import { useAuthStore } from '../stores/auth';
+import { getMap } from '../google.js';
 
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
@@ -35,6 +36,7 @@ const isLoading = ref(true);
 const error = ref(null);
 const isUserLoggedIn = authStore.checkIsUserLoggedIn();
 const hasReview = ref(false);
+const googleMapEl = useTemplateRef('googleMapEl');
 
 const cocktail: Ref<null | CocktailItem> = ref(null);
 const bar: Ref<null | BarDetails> = ref(null);
@@ -68,6 +70,12 @@ const fetchReviewData = async () => {
   }
 };
 
+const fetchBarGoogleInfo = async (bar: BarDetails) => {
+  if (googleMapEl.value) {
+    await getMap(googleMapEl.value, bar);
+  }
+};
+
 async function fetchData() {
   error.value = null;
   isLoading.value = true;
@@ -96,6 +104,9 @@ function onSelectedListSubmit(updatedSelectedLists: List[]) {
 async function onEntryUpdate() {
   // refetch and refresh the view
   await fetchData();
+  if (bar.value) {
+    await fetchBarGoogleInfo(bar.value);
+  }
 }
 
 async function onReviewSubmit() {
@@ -119,6 +130,9 @@ async function submitDeleteReview() {
 
 onMounted(async () => {
   await fetchData();
+  if (bar.value) {
+    await fetchBarGoogleInfo(bar.value);
+  }
 });
 </script>
 
@@ -207,7 +221,7 @@ onMounted(async () => {
           <grid-box :width="10">
             <h2>{{ bar!.name }}</h2>
             {{ bar!.address }}
-            <div class="placeholder-box"></div>
+            <div ref="googleMapEl" class="placeholder-box"></div>
             <div class="teaser-link">
               <router-link :to="{ name: 'Bar', params: { id: bar!.id } }">
                 View all drinks
