@@ -67,5 +67,9 @@ const hovered = ref(false);
     box-shadow: inset 0 0 0 2000px rgba(255, 255, 255, 0.1);
     transition: $transition-fast;
   }
+
+  &:not(:hover) {
+    transition: $transition-fast;
+  }
 }
 </style>
