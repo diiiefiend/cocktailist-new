@@ -34,14 +34,14 @@ const barList = computed(() => {
   return [newBarPlaceholder, ...props.allBars];
 });
 const payload: Ref<{
-  name: string | null,
-  type: string | null,
-  barId: number | null,
-  barName: string | null,
-  barAddress: string | null,
-  barLat: number | null,
-  barLng: number | null,
-  ingredients: string | null,
+  name: string | null;
+  type: string | null;
+  barId: number | null;
+  barName: string | null;
+  barAddress: string | null;
+  barLat: number | null;
+  barLng: number | null;
+  ingredients: string | null;
 }> = ref(
   props.existingCocktailInfo
     ? {
@@ -66,14 +66,12 @@ const payload: Ref<{
       },
 );
 const newBarInfo: Ref<{
-  name: string | null,
-  address: string | null,
-}> = ref(
-  {
-    name: null,
-    address: null,
-  }
-);
+  name: string | null;
+  address: string | null;
+}> = ref({
+  name: null,
+  address: null,
+});
 
 const errors: Ref<string[]> = ref([]);
 const isSubmitting = ref(false);
@@ -82,13 +80,13 @@ const newLiquorType: Ref<string | null> = ref(null);
 const fileInput: Ref<any> = ref(null);
 const imageFile = ref(null);
 const previewImage: Ref<string | null> = ref(null);
-  
+
 const showNewLiquorTypeInput = computed(() => {
   return liquorTypeValue.value === NEW_LIQUOR_TYPE_VALUE;
 });
 const showNewBarInputs = computed(() => {
   return payload.value.barId === NEW_BAR_PLACEHOLDER_ID;
-})
+});
 
 const onSubmit = async () => {
   errors.value = [];
@@ -99,7 +97,7 @@ const onSubmit = async () => {
     payload.value.type = newLiquorType.value;
   } else if (liquorTypeValue.value && liquorTypeValue.value !== NEW_LIQUOR_TYPE_VALUE) {
     payload.value.type = liquorTypeValue.value;
-  };
+  }
 
   const isNewBar = payload.value.barId === NEW_BAR_PLACEHOLDER_ID;
   if (isNewBar) {
@@ -120,7 +118,7 @@ const onSubmit = async () => {
   if (isNewBar) {
     requiredFields.push('barName');
     requiredFields.push('barAddress');
-  };
+  }
   errors.value = errors.value.concat(checkRequiredFields(requiredFields, payload));
 
   console.log(errors);
@@ -203,7 +201,13 @@ function resetImages() {
           <select id="cocktail-type" v-model="liquorTypeValue">
             <option v-for="type in liquorTypeList" :key="type" :value="type">{{ type }}</option>
           </select>
-          <input v-if="showNewLiquorTypeInput" class="subfield" type="text" v-model="newLiquorType" placeholder="new liquor type"></input>
+          <input
+            v-if="showNewLiquorTypeInput"
+            class="subfield"
+            type="text"
+            v-model="newLiquorType"
+            placeholder="new liquor type"
+          />
         </fieldset>
         <fieldset>
           <label for="bars">Bar</label>
@@ -212,8 +216,20 @@ function resetImages() {
               {{ bar.name }}
             </option>
           </select>
-          <input v-if="showNewBarInputs" class="subfield" type="text" v-model="newBarInfo.name" placeholder="new bar name"></input>
-          <input v-if="showNewBarInputs" class="subfield" type="text" v-model="newBarInfo.address" placeholder="new bar address"></input>
+          <input
+            v-if="showNewBarInputs"
+            class="subfield"
+            type="text"
+            v-model="newBarInfo.name"
+            placeholder="new bar name"
+          />
+          <input
+            v-if="showNewBarInputs"
+            class="subfield"
+            type="text"
+            v-model="newBarInfo.address"
+            placeholder="new bar address"
+          />
         </fieldset>
         <fieldset>
           <label>Ingredients</label>

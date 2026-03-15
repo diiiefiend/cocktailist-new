@@ -11,7 +11,7 @@ const checkRequiredFields = (requiredFields: string[], payload: Ref) => {
   });
 
   return errors;
-}
+};
 
 // constants
 export const FLOURISH_IMG = '/images/deco-flourish.jpg';
@@ -29,6 +29,4 @@ export const DATE_FORMATTING: any = {
   hour12: false,
 };
 
-export {
-  checkRequiredFields,
-};
+export { checkRequiredFields };

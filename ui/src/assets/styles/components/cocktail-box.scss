@@ -1,4 +1,4 @@
-@import "../_variables.scss";
+@import '../_variables.scss';
 
 .cocktail-box {
   position: relative;
@@ -20,13 +20,17 @@
 
     &.hovered {
       // color: $lighter-black;
-      text-shadow: 1px 1px 2px $white, 0px 0px 10px $white;
+      text-shadow:
+        1px 1px 2px $white,
+        0px 0px 10px $white;
     }
   }
 
   .details {
     color: $white;
-    font: $font-md "Montserrat", sans-serif;
+    font:
+      $font-md 'Montserrat',
+      sans-serif;
     list-style: none;
     min-height: 80px;
     padding: 10px;
@@ -34,7 +38,10 @@
     margin: 0;
 
     .rating {
-      font: italic $font-lg "LibreBaskerville", "Garamond", serif;
+      font:
+        italic $font-lg 'LibreBaskerville',
+        'Garamond',
+        serif;
     }
 
     .list-info {
@@ -44,7 +51,10 @@
     }
 
     .label {
-      font: $font-xl "LibreBaskerville", "Garamond", serif;
+      font:
+        $font-xl 'LibreBaskerville',
+        'Garamond',
+        serif;
       opacity: 0.3;
       position: absolute;
       bottom: 0;

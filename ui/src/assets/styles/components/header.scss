@@ -1,12 +1,12 @@
-@import "../_variables.scss";
+@import '../_variables.scss';
 
-header{
-  #logo{
+header {
+  #logo {
     grid-column-start: 1;
     grid-column-end: span 3;
   }
 
-  nav{
+  nav {
     grid-column-start: 6;
     grid-column-end: span 5;
     // the internal nav grid
@@ -19,7 +19,10 @@ header{
     a {
       color: $gold;
       display: block;
-      font: $font-lg "LibreBaskerville", "Garamond", serif;
+      font:
+        $font-lg 'LibreBaskerville',
+        'Garamond',
+        serif;
       padding: 15px 0;
       text-align: center;
       text-decoration: none;
@@ -28,7 +31,8 @@ header{
         color: $white;
       }
 
-      &.router-link-active, &.router-link-fuzzy-active {
+      &.router-link-active,
+      &.router-link-fuzzy-active {
         background: $dark-green;
         color: $white;
         font-weight: bold;

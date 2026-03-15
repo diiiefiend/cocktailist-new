@@ -1,6 +1,6 @@
-@import "../_variables.scss";
+@import '../_variables.scss';
 
-footer{
+footer {
   min-height: $footer-height;
   width: 100%;
 
@@ -12,7 +12,7 @@ footer{
   }
 
   &.grid {
-    grid-template-rows: .5fr;  // 2 "rows" possible
+    grid-template-rows: 0.5fr; // 2 "rows" possible
   }
 
   .credits {

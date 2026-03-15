@@ -1,4 +1,4 @@
-@import "../_variables.scss";
+@import '../_variables.scss';
 
 .rating {
   display: inline-block;
@@ -6,7 +6,7 @@
   min-width: 86px;
   margin: 5px 0 0;
   position: relative;
-  
+
   img {
     margin-top: 4px;
   }
@@ -21,7 +21,7 @@
   }
 
   .partial {
-    overflow-x: hidden; 
+    overflow-x: hidden;
     display: inline-block;
     position: absolute;
     top: -4px;

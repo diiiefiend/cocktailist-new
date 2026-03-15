@@ -1,4 +1,4 @@
-@import "../_variables.scss";
+@import '../_variables.scss';
 
 .bar-details-box {
   min-height: 180px;
@@ -16,7 +16,8 @@
     color: $light-black;
   }
 
-  .last-updated, .edit-bar-link{
+  .last-updated,
+  .edit-bar-link {
     font-size: $font-sm;
     font-style: italic;
   }

@@ -1,4 +1,4 @@
-@import "../_variables.scss";
+@import '../_variables.scss';
 
 h1 {
   color: $white;
@@ -34,12 +34,15 @@ fieldset {
     font-style: italic;
   }
 
-  label+* {
+  label + * {
     flex: 1;
   }
 
-  input{
-    font: $font-baseline "LibreBaskerville", "Garamond", serif;
+  input {
+    font:
+      $font-baseline 'LibreBaskerville',
+      'Garamond',
+      serif;
     border-bottom: 1px solid $light-emerald;
     padding: 10px 10px 5px 10px;
     outline: none;

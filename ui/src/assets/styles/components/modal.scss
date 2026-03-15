@@ -1,4 +1,4 @@
-@import "../_variables.scss";
+@import '../_variables.scss';
 
 // borrowed from the vue examples
 
@@ -27,7 +27,7 @@
   background-color: $white;
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
-  transition: all 0.3s ease;;
+  transition: all 0.3s ease;
 }
 
 button.close-modal {
@@ -69,27 +69,33 @@ button.close-modal {
       border: 0;
       margin: 0;
       padding: 0;
-    
+
       label {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-end;
-          width: 20%;
-          margin-right: 10px;
-          padding: 10px 10px 5px 10px;
-          border-bottom: 2px solid $light-gold;
-          font-style: italic;
-        }
-      
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        width: 20%;
+        margin-right: 10px;
+        padding: 10px 10px 5px 10px;
+        border-bottom: 2px solid $light-gold;
+        font-style: italic;
+      }
+
       label + * {
         flex: 1;
       }
 
-      input, select, textarea {
-        font: $font-baseline "LibreBaskerville", "Garamond", serif;
+      input,
+      select,
+      textarea {
+        font:
+          $font-baseline 'LibreBaskerville',
+          'Garamond',
+          serif;
       }
 
-      input[type="text"], select {
+      input[type='text'],
+      select {
         border-bottom: 1px solid $light-emerald;
         padding: 10px 10px 5px 10px;
         outline: none;
@@ -123,8 +129,8 @@ button.close-modal {
         border-bottom: 0;
         padding-top: 1em;
       }
-      
-      input[type="checkbox"] {
+
+      input[type='checkbox'] {
         -webkit-appearance: none;
         appearance: none;
         margin-left: 2.5em;

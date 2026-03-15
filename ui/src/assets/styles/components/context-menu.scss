@@ -1,9 +1,11 @@
-@import "../_variables.scss";
+@import '../_variables.scss';
 .context-menu {
   * {
-      color: $white;
-      font: $font-md "Montserrat", sans-serif;
-    }
+    color: $white;
+    font:
+      $font-md 'Montserrat',
+      sans-serif;
+  }
 
   .grid {
     height: $context-menu-height;

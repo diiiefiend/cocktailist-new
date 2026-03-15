@@ -1,4 +1,4 @@
-@import "../_variables.scss";
+@import '../_variables.scss';
 
 ul {
   padding: 0;
@@ -31,9 +31,10 @@ ul {
       font-size: $font-lg;
     }
 
-    &::before, &::after {
+    &::before,
+    &::after {
       display: block;
-      font-size: 64px;          // special case
+      font-size: 64px; // special case
       margin: 0 -30px;
       opacity: 0.3;
     }

@@ -1,4 +1,4 @@
-@import "_variables.scss";
+@import '_variables.scss';
 
 body {
   color: $black;
@@ -11,7 +11,10 @@ body {
   min-width: $app-min-width;
   max-width: $app-width;
   margin: 0 auto;
-  font: $font-baseline  "LibreBaskerville", "Garamond", serif;
+  font:
+    $font-baseline 'LibreBaskerville',
+    'Garamond',
+    serif;
 }
 
 #content {
@@ -21,7 +24,7 @@ body {
 .grid {
   max-width: $app-width;
   margin: 0 auto;
-  
+
   display: grid;
   grid-template-columns: repeat(10, 1fr);
 }
@@ -34,7 +37,7 @@ body {
     // background: $light-black;
     opacity: 0.8;
   }
-  
+
   &.gin {
     background: $navy;
 
@@ -42,7 +45,7 @@ body {
       // background: $light-navy;
     }
   }
-  
+
   &.vodka {
     background: $amethyst;
 
@@ -50,7 +53,7 @@ body {
       // background: $light-amethyst;
     }
   }
-  
+
   &.tequila {
     background: $ruby;
 
@@ -58,7 +61,7 @@ body {
       // background: $light-ruby;
     }
   }
-  
+
   &.whiskey {
     background: $russet;
 
@@ -66,7 +69,7 @@ body {
       // background: $light-russet;
     }
   }
-  
+
   &.rum {
     background: $marigold;
 
@@ -77,7 +80,7 @@ body {
 }
 
 button {
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   padding: 5px 15px;
   border: 0;
   margin: 10px;
@@ -86,7 +89,7 @@ button {
   &.primary {
     background: $gold;
     color: $dark-green;
-    
+
     &:hover {
       background: $light-gold;
     }
@@ -100,7 +103,7 @@ button {
   &.secondary {
     background: $emerald;
     color: $dark-green;
-    
+
     &:hover {
       background: $light-emerald;
     }
@@ -129,8 +132,8 @@ button {
     font-style: italic;
 
     &:hover {
-        color: $light-gold;
-      }
+      color: $light-gold;
+    }
   }
 }
 
@@ -159,12 +162,13 @@ button {
   }
 }
 
-.placeholder-box { // will prob become its own component soon
+.placeholder-box {
+  // will prob become its own component soon
   width: 200px;
   height: 180px;
-  background: rgb(238,238,238);
+  background: rgb(238, 238, 238);
   // eee -> transparent
-  background: radial-gradient(circle, rgba(238,238,238,1) 50%, rgba(255,255,255,0) 100%);
+  background: radial-gradient(circle, rgba(238, 238, 238, 1) 50%, rgba(255, 255, 255, 0) 100%);
   margin: 10px auto;
 }
 
@@ -195,7 +199,7 @@ button.remove-image-link.link-button {
 .pages-list {
   text-align: right;
   color: $gold;
-  
+
   ul {
     margin: 0;
     padding: 0;
@@ -221,22 +225,27 @@ button.remove-image-link.link-button {
 }
 
 // overrides
-input, select, textarea {
+input,
+select,
+textarea {
   background: transparent;
   border: 0;
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
-option, .context-menu option {
+option,
+.context-menu option {
   background-color: $emerald;
   color: $white;
 }
 
-a, button.link-button {
+a,
+button.link-button {
   color: $emerald;
   text-decoration: none;
 }
 
-a:hover, button.link-button:hover {
+a:hover,
+button.link-button:hover {
   text-decoration: underline;
 }
