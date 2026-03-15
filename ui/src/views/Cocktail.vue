@@ -57,7 +57,7 @@ const showEditCocktailModal = ref(false);
 const showDeleteReviewConfirmationModal = ref(false);
 
 const fetchReviewData = async () => {
-  reviews.value = await getCocktailReviews(props.id);
+  reviews.value = await getCocktailReviews(+props.id);
   // TODO: this is not re-rendering without a refresh
   scatterChartData.value = {
     xValues: reviews.value.map((review: ReviewItem) => review.scale_spirited),
@@ -81,12 +81,12 @@ async function fetchData() {
   isLoading.value = true;
 
   try {
-    cocktail.value = await getCocktail(props.id);
+    cocktail.value = await getCocktail(+props.id);
     bar.value = cocktail.value!.bar;
 
     if (isUserLoggedIn) {
       lists.value = await getLists();
-      selectedLists.value = await getListItemsForCocktail(props.id);
+      selectedLists.value = await getListItemsForCocktail(+props.id);
     }
 
     await fetchReviewData();

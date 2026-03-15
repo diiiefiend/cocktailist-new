@@ -199,7 +199,6 @@ app
   .put(isLoggedIn, validateCSRFToken, async (req: Request, res: Response) => {
     const barData = req.body;
 
-    // TODO: currently not called
     try {
       res.send(await bars.updateBar(req.params.id, barData));
     } catch (e) {

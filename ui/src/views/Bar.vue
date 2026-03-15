@@ -6,7 +6,7 @@ import { useAuthStore } from '../stores/auth.js';
 import type { BarDetails, CocktailItem } from '../models.js';
 import router from '../router/index.js';
 import { ALL_SPIRITS, FLOURISH_IMG, DATE_FORMATTING } from '../utils.js';
-import { getHours, getMap, getPlaceDetails } from '../google.js';
+import { getMap, getPlaceDetails } from '../google.js';
 
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
@@ -15,6 +15,7 @@ import CocktailBox from '../components/CocktailBox.vue';
 import SearchBox from '../components/SearchBox.vue';
 
 import AddEditCocktailModal from './modals/AddEditCocktailModal.vue';
+import EditBarModal from './modals/EditBarModal.vue';
 
 const authStore = useAuthStore();
 
@@ -44,7 +45,6 @@ const selectedLiquorFilter: Ref<null | string> = ref(ALL_SPIRITS);
 const filteredCocktails: Ref<null | undefined | Array<CocktailItem>> = ref(null);
 
 const isUserLoggedIn = authStore.checkIsUserLoggedIn();
-// TODO: implement edit bar modal
 const showEditBarModal = ref(false);
 
 const setLiquorTypes = () => {
@@ -52,7 +52,7 @@ const setLiquorTypes = () => {
 };
 
 const fetchBarCocktails = async (barId: number) => {
-  const barCocktails = await getBarCocktails('' + barId);
+  const barCocktails = await getBarCocktails(barId);
   cocktails.value = barCocktails;
 
   filteredCocktails.value = barCocktails;
@@ -132,6 +132,16 @@ function onCocktailCreate(createdCocktail: CocktailItem) {
   router.push(`/cocktails/${createdCocktail.id}`);
 }
 
+async function onBarDetailsUpdate(updatedBar: BarDetails) {
+  if (bar.value) {
+    if (bar.value.address !== updatedBar.address) {
+      fetchBarGoogleInfo(updatedBar);
+    }
+    // update bar in this scope
+    bar.value = updatedBar;
+  }
+}
+
 onMounted(async () => {
   await fetchData();
   if (bar.value) {
@@ -174,6 +184,11 @@ onMounted(async () => {
         </h2>
         <h2 v-else>{{ bar!.name }}</h2>
         <h3>{{ bar!.address }}</h3>
+        <div v-if="isUserLoggedIn" class="edit-bar-link">
+          <button class="link-button edit-bar-link" @click.stop="showEditBarModal = true">
+            Edit Bar Details
+          </button>
+        </div>
         <img class="divider" :src="FLOURISH_IMG" alt="" width="110" />
         {{ cocktails.length }} entries<br />
         <span class="last-updated">
@@ -185,7 +200,7 @@ onMounted(async () => {
         <div ref="googleMapEl" class="placeholder-box"></div>
       </grid-box>
       <grid-box :width="3" :startCol="8" :applyBoxStyle="true" class="bar-details-box">
-        <ul class="barHours">
+        <ul class="bar-hours">
           <li v-for="(day, index) in barDays" :key="day">
             <span class="day">{{ day }}</span>
             <span class="hours">{{ barHours[index] }}</span>
@@ -207,6 +222,15 @@ onMounted(async () => {
       :allBars="allBars ?? []"
       :onSubmitCallback="onCocktailCreate"
       @close="showAddCocktailModal = false"
+    />
+  </transition>
+  <transition name="modal">
+    <edit-bar-modal
+      v-if="showEditBarModal"
+      :existingBarInfo="bar"
+      :userId="+authStore.userId!"
+      :onSubmitCallback="onBarDetailsUpdate"
+      @close="showEditBarModal = false"
     />
   </transition>
 </template>

@@ -1,4 +1,4 @@
-import type { AddCocktailToListsSubmission, CocktailSubmission, CreateAccountSubmission, LoginSubmission, ReviewSubmission } from "./models";
+import type { AddCocktailToListsSubmission, BarDetails, CocktailSubmission, CreateAccountSubmission, LoginSubmission, ReviewSubmission } from "./models";
 
 let API_HOST: string;
 switch (window.location.hostname) {
@@ -42,19 +42,19 @@ const addCocktail = async (cocktailData: CocktailSubmission) => {
 
 // cocktail detail routes
 
-const getCocktail = async (id: string) => {
+const getCocktail = async (id: number) => {
   return makeCall(`${API_HOST}/cocktails/${id}`, {
     method: 'GET',
   });
 }
 
-const getCocktailReviews = async (cocktailId: string) => {
+const getCocktailReviews = async (cocktailId: number) => {
   return makeCall(`${API_HOST}/cocktails/${cocktailId}/reviews`, {
     method: 'GET',
   });
 }
 
-const getListItemsForCocktail = async (cocktailId: string) => {
+const getListItemsForCocktail = async (cocktailId: number) => {
   return makeCall(`${API_HOST}/cocktails/${cocktailId}/lists`, {
     method: 'GET',
   });
@@ -97,15 +97,22 @@ const deleteReview = async (reviewId: number) => {
 
 // bar routes
 
-const getBar = async (id: string) => {
+const getBar = async (id: number) => {
   return makeCall(`${API_HOST}/bars/${id}`, {
     method: 'GET',
   });
 }
 
-const getBarCocktails = async (id: string) => {
+const getBarCocktails = async (id: number) => {
   return makeCall(`${API_HOST}/bars/${id}/cocktails`, {
     method: 'GET',
+  });
+}
+
+const updateBar = async (id: number, barData: BarDetails) => {
+  return makeCall(`${API_HOST}/bars/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(barData),
   });
 }
 
@@ -219,6 +226,7 @@ export {
   deleteReview,
   getBar,
   getBarCocktails,
+  updateBar,
   getLists,
   getList,
   addList,

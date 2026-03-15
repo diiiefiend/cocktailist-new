@@ -39,6 +39,7 @@ const hovered = ref(false);
         <li v-if="!!props.addedToListDate" class="list-info">
           Added on {{ new Date(props.addedToListDate).toLocaleString('en-US', DATE_FORMATTING) }}
         </li>
+        <!-- TODO: maybe display spirited and composition rating too if available -->
         <li class="label">{{ props.cocktail.liquor }}</li>
       </ul>
     </router-link>

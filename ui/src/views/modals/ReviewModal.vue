@@ -61,7 +61,7 @@ const updateComment = (comment: string) => {
 const onSubmit = async () => {
   errors.value = [];
   isSubmitting.value = true;
-  console.log('hello ', payload.value);
+  console.trace('hello ', payload.value);
 
   const requiredFields = ['rating'];
   errors.value = errors.value.concat(checkRequiredFields(requiredFields, payload));

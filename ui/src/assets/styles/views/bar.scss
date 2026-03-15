@@ -16,7 +16,7 @@
     color: $light-black;
   }
 
-  .last-updated{
+  .last-updated, .edit-bar-link{
     font-size: $font-sm;
     font-style: italic;
   }
@@ -26,10 +26,11 @@
     padding: 0;
   }
 
-  ul.barHours {
+  ul.bar-hours {
     .day {
       text-transform: uppercase;
       font-size: $font-sm;
+      color: $navy;
     }
 
     .hours {

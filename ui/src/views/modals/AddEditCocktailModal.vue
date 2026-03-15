@@ -115,7 +115,7 @@ const onSubmit = async () => {
     }
   }
 
-  console.log('hello ', payload.value);
+  console.trace('hello ', payload.value);
   const requiredFields = ['name', 'type', 'barId', 'ingredients'];
   if (isNewBar) {
     requiredFields.push('barName');

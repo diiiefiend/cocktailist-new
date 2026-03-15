@@ -21,7 +21,7 @@ const onSubmit = async () => {
   isSubmitting.value = true;
 
   // validations
-  console.log('hello ', listName.value);
+  console.trace('hello ', listName.value);
   // make an artificial Payload ref to make "checkRequiredFields" happy
   const payload = {
     value: { name: listName.value },

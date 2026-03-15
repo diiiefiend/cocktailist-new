@@ -52,6 +52,8 @@ const updateBar = async (barId: string, barData: BarData) => {
 
   const { name, address, latitude, longitude } = barData;
 
+  // TODO: confirm that if lat/lng is undefined, it's not overwritten in the db
+
   return await models.bar.update(
     {
       name,
