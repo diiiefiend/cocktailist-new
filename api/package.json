@@ -5,9 +5,9 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "npm run format && npx tsc",
-    "start": "dotenvx run -f .env.production -- node dist/index.js 2>&1 >> app_log.txt &",
+    "start": "dotenvx run -f .env.production -- node dist/index.js 2>&1 >> app_log_$(date +%Y-%m-%d-%H_%M_%S).txt &",
     "stop": "kill -15 $(lsof -t -i:8005)",
-    "clean:log": "rm app_log.txt",
+    "clean:log": "rm app_log*.txt",
     "dev": "dotenvx run -f .env.local -- nodemon src/index.ts",
     "format": "prettier --write src/"
   },
@@ -31,6 +31,7 @@
     "mysql2": "^3.11.0",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
+    "pm2": "^6.0.14",
     "prettier": "^3.3.3",
     "sequelize": "^6.37.5",
     "sharp": "^0.34.1"
