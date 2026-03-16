@@ -1,4 +1,5 @@
 import { setOptions, importLibrary } from '@googlemaps/js-api-loader';
+import type { BarDetails } from './models';
 
 // google stuff
 setOptions({ key: import.meta.env.VITE_GOOGLE_API_KEY });
@@ -21,12 +22,14 @@ const addMarker = async (map: google.maps.Map, coordinates: google.maps.LatLng) 
 };
 
 // return a Google Map centered on 1 bar's address
-const getMap = async (anchorElement: HTMLElement, bar: Bar) => {
+const getMap = async (anchorElement: HTMLElement, bar: BarDetails) => {
   if (!MapsLib) {
     MapsLib = await importLibrary('maps');
   }
 
-  const coords = new google.maps.LatLng(bar.latitude, bar.longitude);
+  checkLatLongPresence(bar);
+
+  const coords = new google.maps.LatLng(bar.latitude!, bar.longitude!);
 
   const options: google.maps.MapOptions = {
     center: coords,
@@ -49,12 +52,14 @@ const getMap = async (anchorElement: HTMLElement, bar: Bar) => {
 };
 
 // just returns the place id. uses Google Text Search Essentials, so should be a free API lookup
-const getPlaceId = async (bar: Bar) => {
+const getPlaceId = async (bar: BarDetails) => {
   if (!PlacesLib) {
     PlacesLib = await importLibrary('places');
   }
 
-  const coords = new google.maps.LatLng(bar.latitude, bar.longitude);
+  checkLatLongPresence(bar);
+
+  const coords = new google.maps.LatLng(bar.latitude!, bar.longitude!);
 
   const searchRequest = {
     locationBias: coords,
@@ -69,7 +74,7 @@ const getPlaceId = async (bar: Bar) => {
 };
 
 // gets hours using the Place Details Enterprise API and a place ID. Free up to 5k calls in a month
-const getHours = async (bar: Bar, placeId?: string) => {
+const getHours = async (bar: BarDetails, placeId?: string) => {
   if (!PlacesLib) {
     PlacesLib = await importLibrary('places');
   }
@@ -90,12 +95,14 @@ const getHours = async (bar: Bar, placeId?: string) => {
 };
 
 // uses Google Text Search Enterprise API to get id, hours, and website. Free up to 5k calls in a month
-const getPlaceDetails = async (bar: Bar) => {
+const getPlaceDetails = async (bar: BarDetails) => {
   if (!PlacesLib) {
     PlacesLib = await importLibrary('places');
   }
 
-  const coords = new google.maps.LatLng(bar.latitude, bar.longitude);
+  checkLatLongPresence(bar);
+
+  const coords = new google.maps.LatLng(bar.latitude!, bar.longitude!);
 
   const searchRequest = {
     locationBias: coords,
@@ -132,5 +139,12 @@ const convertAddressToLatLng = async (address: string) => {
     return results[0].geometry.location;
   }
 };
+
+// private helper fns
+const checkLatLongPresence = (bar: BarDetails) => {
+  if (!bar.latitude || !bar.longitude) {
+    throw new Error('latitude and longitude required');
+  }
+}
 
 export { convertAddressToLatLng, getHours, getPlaceDetails, getMap };
