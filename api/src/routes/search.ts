@@ -7,10 +7,22 @@ const search = async (searchTerm: string) => {
   // search cocktails by name, ingredients
   const matchedCocktails: any = await models.cocktail.findAll({
     where: {
-      [Op.or] : [
-        { name: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('cocktail.name')), 'LIKE', '%' + searchTerm.toLowerCase() + '%') },
-        { ingredients: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('cocktail.ingredients')), 'LIKE', '%' + searchTerm.toLowerCase() + '%') },
-      ]
+      [Op.or]: [
+        {
+          name: Sequelize.where(
+            Sequelize.fn('LOWER', Sequelize.col('cocktail.name')),
+            'LIKE',
+            '%' + searchTerm.toLowerCase() + '%',
+          ),
+        },
+        {
+          ingredients: Sequelize.where(
+            Sequelize.fn('LOWER', Sequelize.col('cocktail.ingredients')),
+            'LIKE',
+            '%' + searchTerm.toLowerCase() + '%',
+          ),
+        },
+      ],
     },
     include: [
       {
@@ -38,15 +50,18 @@ const search = async (searchTerm: string) => {
   // search bars by name
   const matchedBars: any = await models.bar.findAll({
     where: {
-      name: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), 'LIKE', '%' + searchTerm.toLowerCase() + '%'),
+      name: Sequelize.where(
+        Sequelize.fn('LOWER', Sequelize.col('name')),
+        'LIKE',
+        '%' + searchTerm.toLowerCase() + '%',
+      ),
     },
   });
-
 
   return {
     matchedCocktails,
     matchedBars,
   };
-}
+};
 
 export default search;

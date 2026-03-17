@@ -327,38 +327,34 @@ app
   });
 
 // users
-app
-  .route('/users/:id')
-  .get(async (req: Request, res: Response) => {
-    try {
-      // TODO: currently not called
-      res.send(await auth.getUser(req.params.id));
-    } catch (e) {
-      errorHandler(e, res);
+app.route('/users/:id').get(async (req: Request, res: Response) => {
+  try {
+    // TODO: currently not called
+    res.send(await auth.getUser(req.params.id));
+  } catch (e) {
+    errorHandler(e, res);
+  }
+});
+
+app.route('/users').post(async (req: Request, res: Response, next: NextFunction) => {
+  console.trace(req.body);
+  const { user, error } = await auth.createUser(req.body);
+
+  if (error || !user) {
+    console.error(error);
+    return next(error || 'error');
+  }
+
+  // create new session
+  req.login(user, (err) => {
+    if (err) {
+      console.error(err);
+      return next(err);
     }
+
+    auth.doPostLoginActions(req, res, next);
   });
-
-app
-  .route('/users')
-  .post(async (req: Request, res: Response, next: NextFunction) => {
-    console.trace(req.body);
-    const { user, error } = await auth.createUser(req.body);
-
-    if (error || !user) {
-      console.error(error);
-      return next(error || 'error');
-    }
-
-    // create new session
-    req.login(user, (err) => {
-      if (err) {
-        console.error(err);
-        return next(err);
-      }
-
-      auth.doPostLoginActions(req, res, next);
-    });
-  });
+});
 
 // should we allow deleting accounts?
 
@@ -372,23 +368,19 @@ app
     auth.doPostLoginActions(req, res, next);
   });
 
-app
-  .route('/logout')
-  .post((req: Request, res: Response, next: NextFunction) => {
+app.route('/logout').post((req: Request, res: Response, next: NextFunction) => {
   auth.logout(req, res, next);
 });
 
 // search
-app
-  .route('/search')
-  .get(async (req: Request, res: Response) => {
-    try {
-      const { searchTerm = 'sample' } = req.query;
-      res.send(await search(searchTerm.toString()));
-    } catch (e) {
-      errorHandler(e, res);
-    }
-  })
+app.route('/search').get(async (req: Request, res: Response) => {
+  try {
+    const { searchTerm = 'sample' } = req.query;
+    res.send(await search(searchTerm.toString()));
+  } catch (e) {
+    errorHandler(e, res);
+  }
+});
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
