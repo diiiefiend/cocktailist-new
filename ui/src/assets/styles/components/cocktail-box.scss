@@ -1,5 +1,7 @@
 @import '../_variables.scss';
 
+// this styling is used for cocktail box component and for bars in the SearchResults view
+
 .cocktail-box {
   position: relative;
   grid-column-end: span 2;

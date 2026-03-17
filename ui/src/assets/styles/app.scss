@@ -77,6 +77,11 @@ body {
       // background: $light-marigold;
     }
   }
+
+  // special styling for bars in the search results
+  &.bar {
+    background: $emerald;
+  }
 }
 
 button {
@@ -174,7 +179,7 @@ button {
 
 .divider {
   opacity: 0.3;
-  display: inline-block;
+  display: block;
   margin: 0 auto;
 }
 

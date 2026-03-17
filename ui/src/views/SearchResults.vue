@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, type Ref } from 'vue';
 
-import type { Bar, CocktailItem } from '../models.js';
+import type { BarDetails, CocktailItem } from '../models.js';
 import { search } from '../api.js';
 
 import ContextMenu from '../components/ContextMenu.vue';
@@ -15,12 +15,16 @@ const props = defineProps<{
 
 const isLoading = ref(true);
 const error = ref(null);
+const hovered = ref(false);
 
+const currentSearchTerm: Ref<string> = ref(props.searchTerm);
 const matchedCocktails: Ref<null | Array<CocktailItem>> = ref(null);
-const matchedBars: Ref<null | Array<Bar>> = ref(null);
+const matchedBars: Ref<null | Array<BarDetails>> = ref(null);
 
 async function getSearchResults(searchTerm: string) {
-  const results = await search(searchTerm);
+  // TODO: update query param in route with updated search term
+  currentSearchTerm.value = searchTerm;
+  const results = await search(currentSearchTerm.value);
   matchedCocktails.value = results.matchedCocktails;
   matchedBars.value = results.matchedBars;
 }
@@ -30,7 +34,7 @@ async function fetchData() {
   isLoading.value = true;
 
   try {
-    await getSearchResults(props.searchTerm);
+    await getSearchResults(currentSearchTerm.value);
   } catch (err: any) {
     error.value = err.toString();
   } finally {
@@ -47,8 +51,9 @@ onMounted(async () => {
   <div id="browse">
     <context-menu>
       <div class="row-gap-1"></div>
-      <div class="span-2 justify-left"></div>
-      <div class="span-2"></div>
+      <div class="span-4 justify-left">
+        <h1>Search Results for "{{ currentSearchTerm }}"</h1>
+      </div>
       <div class="span-2"></div>
       <search-box :onSubmitCallback="getSearchResults" />
     </context-menu>
@@ -56,9 +61,28 @@ onMounted(async () => {
     <layout-container v-else>
       <cocktail-box v-for="cocktail in matchedCocktails" :key="cocktail.id" :cocktail="cocktail">
       </cocktail-box>
-      <!-- TODO: display matched bars -->
+      <!-- note: can pull this into own component if necessary to reuse -->
+      <div
+        class="cocktail-box"
+        v-for="bar in matchedBars"
+        :key="bar.name"
+        @mouseover="hovered = true"
+        @mouseleave="hovered = false"
+      >
+        <router-link :to="{ name: 'Bar', params: { id: bar.id } }">
+          <h3 :class="{ hovered }">{{ bar!.name }}</h3>
+          <ul class="details colored-by-type bar" :class="{ hovered }">
+            <li>{{ bar!.address }}</li>
+            <li class="label">bar</li>
+          </ul>
+        </router-link>
+      </div>
     </layout-container>
   </div>
-
-  <!-- modals -->
 </template>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+// since the bar cards look very similar to the cocktail cards, we can borrow the styling
+@import '../assets/styles/components/cocktail-box.scss';
+</style>
