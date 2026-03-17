@@ -129,7 +129,10 @@ function onFilterChange() {
 }
 
 function onCocktailCreate(createdCocktail: CocktailItem) {
-  router.push(`/cocktails/${createdCocktail.id}`);
+  router.push({
+    name: 'Cocktail',
+    params: { id: createdCocktail.id },
+  });
 }
 
 async function onBarDetailsUpdate(updatedBar: BarDetails) {

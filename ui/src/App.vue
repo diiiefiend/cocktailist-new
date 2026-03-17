@@ -7,7 +7,7 @@ import SiteFooter from './components/SiteFooter.vue';
   <site-header />
 
   <main id="content">
-    <router-view :key="$route.path" />
+    <router-view />
   </main>
 
   <site-footer />

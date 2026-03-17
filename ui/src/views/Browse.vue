@@ -109,7 +109,10 @@ function onFilterChange(filterKey: 'bar' | 'liquor') {
 }
 
 function onCocktailCreate(createdCocktail: CocktailItem) {
-  router.push(`/cocktails/${createdCocktail.id}`);
+  router.push({
+    name: 'Cocktail',
+    params: { id: createdCocktail.id },
+  });
 }
 
 async function fetchPage(pageNumber: number) {

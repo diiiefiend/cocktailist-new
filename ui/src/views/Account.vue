@@ -23,7 +23,9 @@ async function onLogout() {
       state.username = null;
     });
 
-    router.push('/');
+    router.push({
+      path: '/',
+    });
   } catch (e) {
     // @ts-ignore
     errors.value.push(e);
@@ -32,7 +34,9 @@ async function onLogout() {
 
 onMounted(() => {
   if (!isUserLoggedIn) {
-    router.push('/login');
+    router.push({
+      path: '/login',
+    });
   }
 });
 </script>

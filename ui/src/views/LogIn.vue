@@ -71,7 +71,9 @@ async function onSubmit() {
         state.userId = response.user.userId;
       });
 
-      router.push('/lists');
+      router.push({
+        path: '/lists',
+      });
     } catch (e) {
       // @ts-ignore
       errors.value.push(e);
@@ -84,12 +86,16 @@ async function onSubmit() {
 function onCancel() {
   reset();
 
-  router.push('/');
+  router.push({
+    path: '/',
+  });
 }
 
 onMounted(() => {
   if (isUserLoggedIn) {
-    router.push('/account');
+    router.push({
+      path: '/account',
+    });
   }
 });
 </script>

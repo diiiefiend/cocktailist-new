@@ -10,13 +10,13 @@ const searchTerm: Ref<null | string> = ref(null);
 
 async function submitSearch() {
   if (searchTerm.value) {
-    // navigate to "search" page and pass along searchTerm as prop
-    console.log(searchTerm.value);
-
     if (props.onSubmitCallback) {
       props.onSubmitCallback(searchTerm.value);
     } else {
-      router.push(`/search?searchTerm=${searchTerm.value}`);
+      router.push({
+        name: 'Search Results',
+        query: { searchTerm: searchTerm.value },
+      });
     }
   }
 }

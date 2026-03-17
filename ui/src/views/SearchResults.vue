@@ -16,6 +16,7 @@ const props = defineProps<{
 const isLoading = ref(true);
 const error = ref(null);
 const hovered = ref(false);
+const hasNoResults = ref(false);
 
 const currentSearchTerm: Ref<string> = ref(props.searchTerm);
 const matchedCocktails: Ref<null | Array<CocktailItem>> = ref(null);
@@ -27,6 +28,7 @@ async function getSearchResults(searchTerm: string) {
   const results = await search(currentSearchTerm.value);
   matchedCocktails.value = results.matchedCocktails;
   matchedBars.value = results.matchedBars;
+  hasNoResults.value = !results.matchedCocktails.length && !results.matchedBars.length;
 }
 
 async function fetchData() {
@@ -59,6 +61,8 @@ onMounted(async () => {
     </context-menu>
     <div v-if="isLoading" class="loader">LOADING</div>
     <layout-container v-else>
+      <!-- // TODO: fix this up later -->
+      <div v-if="hasNoResults">NO RESULTS!</div>
       <cocktail-box v-for="cocktail in matchedCocktails" :key="cocktail.id" :cocktail="cocktail">
       </cocktail-box>
       <!-- note: can pull this into own component if necessary to reuse -->
