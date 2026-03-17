@@ -5,8 +5,11 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "npm run format && npx tsc",
-    "start": "dotenvx run -f .env.production -- node dist/index.js 2>&1 >> app_log_$(date +%Y-%m-%d-%H_%M_%S).txt &",
-    "stop": "kill -15 $(lsof -t -i:8005)",
+    "run-app": "dotenvx run -f .env.production -- node dist/index.js",
+    "stop-app": "kill -15 $(lsof -t -i:8005)",
+    "start": "pm2 start npm --name=cocktailist --log=app_log_$(date +%Y-%m-%d-%H_%M_%S).txt --time -- run run-app",
+    "stop": "pm2 stop cocktailist",
+    "restart": "pm2 restart cocktailist",
     "clean:log": "rm app_log*.txt",
     "dev": "dotenvx run -f .env.local -- nodemon src/index.ts",
     "format": "prettier --write src/"

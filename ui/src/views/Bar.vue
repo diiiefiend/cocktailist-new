@@ -113,7 +113,7 @@ async function onBarUpdate() {
   if (bar.value) {
     fetchBarCocktails(bar.value.id);
     fetchBarGoogleInfo(bar.value);
-    // MAYBE LATER: push id & filters into router URL?
+    // TODO: push id & filters into router URL?
   }
 }
 

@@ -15,7 +15,6 @@ const authStore = useAuthStore();
 
 <template>
   <ul class="reviews">
-    <!-- TODO: handle no reviews case -->
     <li v-for="review in props.reviews" :key="review.id">
       <!-- TODO: this is not re-rendering based without a refresh -->
       <rating-item :rating-value="review.rating"></rating-item>

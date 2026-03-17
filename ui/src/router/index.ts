@@ -69,6 +69,14 @@ const router = createRouter({
       name: 'Account',
       component: () => import('../views/Account.vue'),
     },
+    {
+      path: '/search',
+      name: 'Search Results',
+      component: () => import('../views/SearchResults.vue'),
+      props: (route) => ({
+        searchTerm: route.query.searchTerm,
+      }),
+    },
     // {
     //   path: '/:pathMatch(.*)*',
     //   component: () => import('../views/Login.vue')

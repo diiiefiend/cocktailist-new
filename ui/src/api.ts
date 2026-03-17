@@ -186,6 +186,14 @@ const createAccount = async (createAccountData: CreateAccountSubmission) => {
   });
 };
 
+// search routes
+
+const search = async (searchTerm: string) => {
+  return makeCall(`${API_HOST}/search?${new URLSearchParams({ searchTerm })}`, {
+    method: 'GET',
+  });
+};
+
 const makeCall = async (endpoint: string, options: any, isFormData?: boolean) => {
   const csrfTokenMatcher = document.cookie.match(
     new RegExp('(^| )' + 'cocktailist.token' + '=([^;]+)'),
@@ -254,4 +262,5 @@ export {
   login,
   logout,
   createAccount,
+  search,
 };

@@ -46,7 +46,7 @@ const getCocktail = async (id: string) => {
       // @ts-ignore
       cocktail.imgUrl = await aws.getImageUrl(filePath);
     } catch (e) {
-      console.warn(`image not found, proceeding anyway: ${e}`);
+      console.trace(`image not found, proceeding anyway: ${e}`);
     }
   }
 
@@ -206,7 +206,13 @@ const uploadCocktailImages = async (cocktailId: number, cocktailImage: CocktailI
 
 // unexported private fns
 
-const addNewBarIfNeeded = async (barId?: string, barName?: string, barAddress?: string, barLat?: string, barLng?: string) => {
+const addNewBarIfNeeded = async (
+  barId?: string,
+  barName?: string,
+  barAddress?: string,
+  barLat?: string,
+  barLng?: string,
+) => {
   let resultId: any = -1;
 
   if (barId === '-1' && barName && barAddress) {

@@ -97,7 +97,7 @@ async function fetchData() {
 
 function onFilterChange(filterKey: 'bar' | 'liquor') {
   // TODO: add loading ux--maybe need a render lifecycle hook
-  // MAYBE LATER: push filters to route
+  // TODO: push filters to route
   switch (filterKey) {
     case 'bar':
       filteredCocktails.value = handleBarFilterUpdate(allCocktails.value ?? [], false);
