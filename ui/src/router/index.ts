@@ -8,9 +8,12 @@ const router = createRouter({
       alias: '/', // make the default view 'browse'
       children: [
         {
-          path: '',
+          path: '/:spirit?',
           name: 'Browse',
           component: () => import('../views/Browse.vue'),
+          props: (route) => ({
+            spirit: route.params.spirit,
+          }),
         },
         {
           path: ':id',
@@ -23,31 +26,22 @@ const router = createRouter({
     {
       path: '/bars',
       children: [
-        // TODO: figure out how organize this better
         {
-          path: '',
-          name: 'BarDefault',
-          component: () => import('../views/Bar.vue'),
-        },
-        {
-          path: ':id',
-          props: true,
+          path: ':id?/:spirit?',
           name: 'Bar',
           component: () => import('../views/Bar.vue'),
+          props: (route) => ({
+            spirit: route.params.spirit,
+            id: route.params.id,
+          }),
         },
       ],
     },
     {
       path: '/lists',
       children: [
-        // TODO: figure out how organize this better
         {
-          path: '',
-          name: 'ListDefault',
-          component: () => import('../views/List.vue'),
-        },
-        {
-          path: ':id',
+          path: ':id?',
           props: true,
           name: 'List',
           component: () => import('../views/List.vue'),

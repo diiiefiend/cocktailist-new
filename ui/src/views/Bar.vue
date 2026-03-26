@@ -22,9 +22,11 @@ const authStore = useAuthStore();
 const props = withDefaults(
   defineProps<{
     id?: string;
+    spirit?: string;
   }>(),
   {
     id: '1',
+    spirit: ALL_SPIRITS,
   },
 );
 
@@ -51,14 +53,15 @@ const setLiquorTypes = () => {
   liquorTypes.value = [...new Set(cocktails.value.map((cocktail) => cocktail.liquor).sort())];
 };
 
-const fetchBarCocktails = async (barId: number) => {
+const fetchBarCocktails = async (barId: number, spirit: string) => {
   const barCocktails = await getBarCocktails(barId);
   cocktails.value = barCocktails;
 
   filteredCocktails.value = barCocktails;
   setLiquorTypes();
 
-  selectedLiquorFilter.value = ALL_SPIRITS;
+  selectedLiquorFilter.value = spirit;
+  onLiquorFilterChange();
 };
 
 const fetchBarGoogleInfo = async (bar: BarDetails) => {
@@ -93,7 +96,9 @@ async function fetchData() {
     let barId;
     if (props.id === '' || props.id === undefined) {
       barId = '1';
-      // useRouter().push({ name: 'Bar', params: { id: barId } });
+      router.push({
+        params: { id: barId },
+      });
     } else {
       barId = props.id;
     }
@@ -101,7 +106,7 @@ async function fetchData() {
     allBars.value = await getBars();
     bar.value = allBars.value.find((bar: BarDetails) => bar.id === +barId) || null;
 
-    fetchBarCocktails(+barId);
+    fetchBarCocktails(+barId, props.spirit === '' ? ALL_SPIRITS : props.spirit);
   } catch (err: any) {
     error.value = err.toString();
   } finally {
@@ -111,17 +116,29 @@ async function fetchData() {
 
 async function onBarUpdate() {
   if (bar.value) {
-    fetchBarCocktails(bar.value.id);
+    router.push({
+      params: {
+        id: bar.value.id,
+        spirit: '',
+      },
+    });
+    fetchBarCocktails(bar.value.id, ALL_SPIRITS);
     fetchBarGoogleInfo(bar.value);
-    // TODO: push id & filters into router URL?
   }
 }
 
-function onFilterChange() {
+function onLiquorFilterChange() {
   let result: Array<CocktailItem> = cocktails.value;
 
   if (selectedLiquorFilter.value !== ALL_SPIRITS) {
+    router.push({
+      params: { spirit: selectedLiquorFilter.value },
+    });
     result = result.filter((cocktail) => cocktail.liquor === selectedLiquorFilter.value);
+  } else {
+    router.push({
+      params: { spirit: '' },
+    });
   }
 
   console.log('filtered for: ', selectedLiquorFilter.value);
@@ -172,7 +189,7 @@ onMounted(async () => {
         </select>
       </div>
       <div class="span-2">
-        <select :disabled="isLoading" v-model="selectedLiquorFilter" @change="onFilterChange">
+        <select :disabled="isLoading" v-model="selectedLiquorFilter" @change="onLiquorFilterChange">
           <option>{{ ALL_SPIRITS }}</option>
           <option v-for="type in liquorTypes" :key="type" :value="type">{{ type }}</option>
         </select>

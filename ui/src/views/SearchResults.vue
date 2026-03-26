@@ -8,6 +8,7 @@ import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
 import CocktailBox from '../components/CocktailBox.vue';
 import SearchBox from '../components/SearchBox.vue';
+import router from '@/router/index.js';
 
 const props = defineProps<{
   searchTerm: string;
@@ -23,7 +24,10 @@ const matchedCocktails: Ref<null | Array<CocktailItem>> = ref(null);
 const matchedBars: Ref<null | Array<BarDetails>> = ref(null);
 
 async function getSearchResults(searchTerm: string) {
-  // TODO: update query param in route with updated search term
+  router.push({
+    query: { searchTerm },
+  });
+
   currentSearchTerm.value = searchTerm;
   const results = await search(currentSearchTerm.value);
   matchedCocktails.value = results.matchedCocktails;
@@ -50,7 +54,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div id="browse">
+  <div id="search-results">
     <context-menu>
       <div class="row-gap-1"></div>
       <div class="span-4 justify-left">

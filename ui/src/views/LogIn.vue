@@ -72,7 +72,7 @@ async function onSubmit() {
       });
 
       router.push({
-        path: '/lists',
+        name: 'List',
       });
     } catch (e) {
       // @ts-ignore
@@ -87,14 +87,14 @@ function onCancel() {
   reset();
 
   router.push({
-    path: '/',
+    name: 'Browse',
   });
 }
 
 onMounted(() => {
   if (isUserLoggedIn) {
     router.push({
-      path: '/account',
+      name: 'Account',
     });
   }
 });

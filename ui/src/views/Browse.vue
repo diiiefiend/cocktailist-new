@@ -16,6 +16,15 @@ import AddEditCocktailModal from './modals/AddEditCocktailModal.vue';
 
 const authStore = useAuthStore();
 
+const props = withDefaults(
+  defineProps<{
+    spirit?: string;
+  }>(),
+  {
+    spirit: ALL_SPIRITS,
+  },
+);
+
 const isLoading = ref(true);
 const error = ref(null);
 
@@ -31,48 +40,35 @@ const selectedBarFilter: Ref<null | number | string> = ref(ALL_BARS);
 const selectedLiquorFilter: Ref<null | string> = ref(ALL_SPIRITS);
 const filteredCocktails: Ref<null | undefined | Array<CocktailItem>> = ref(null);
 
-const handleBarFilterUpdate = (
-  initialCocktailList: Array<CocktailItem>,
-  isInternalCall: boolean,
-) => {
-  let result: Array<CocktailItem> = initialCocktailList;
+const handleBarFilterUpdate = () => {
   if (selectedBarFilter.value !== ALL_BARS) {
-    result = initialCocktailList.filter(
-      // @ts-ignore
-      (cocktail) => cocktail.bar.id === selectedBarFilter.value,
-    );
+    router.push({
+      name: 'Bar',
+      params: { id: selectedBarFilter.value },
+    });
   }
-
-  if (!isInternalCall) {
-    result = handleLiquorFilterUpdate(result, true);
-  }
-
-  console.log('filtered for: ', selectedBarFilter.value, selectedLiquorFilter.value);
-
-  return result;
 };
 
-const handleLiquorFilterUpdate = (
-  initialCocktailList: Array<CocktailItem>,
-  isInternalCall: boolean,
-) => {
+// TODO: if selected liquor is different from current selection, this should trigger an API call (with pagination)
+const handleLiquorFilterUpdate = (initialCocktailList: Array<CocktailItem>) => {
   let result: Array<CocktailItem> = initialCocktailList;
 
   if (selectedLiquorFilter.value !== ALL_SPIRITS) {
+    router.push({
+      params: { spirit: selectedLiquorFilter.value },
+    });
+
     result = initialCocktailList.filter(
       (cocktail) => cocktail.liquor === selectedLiquorFilter.value,
     );
   }
 
-  if (!isInternalCall) {
-    result = handleBarFilterUpdate(result, true);
-  }
-
   console.log('filtered for: ', selectedBarFilter.value, selectedLiquorFilter.value);
-  return result;
+  filteredCocktails.value = result;
 };
 
 const fetchCocktailData = async (pageNumber?: number) => {
+  // TODO: Update this to check the "spirits" param. if defined, do that api call instead
   const apiRes = await getCocktailsWithBars(pageNumber);
   allCocktails.value = apiRes.cocktails;
   filteredCocktails.value = apiRes.cocktails;
@@ -92,19 +88,6 @@ async function fetchData() {
     error.value = err.toString();
   } finally {
     isLoading.value = false;
-  }
-}
-
-function onFilterChange(filterKey: 'bar' | 'liquor') {
-  // TODO: add loading ux--maybe need a render lifecycle hook
-  // TODO: push filters to route
-  switch (filterKey) {
-    case 'bar':
-      filteredCocktails.value = handleBarFilterUpdate(allCocktails.value ?? [], false);
-      break;
-    case 'liquor':
-      filteredCocktails.value = handleLiquorFilterUpdate(allCocktails.value ?? [], false);
-      break;
   }
 }
 
@@ -148,7 +131,7 @@ onMounted(async () => {
         </button>
       </div>
       <div class="span-2">
-        <select :disabled="isLoading" v-model="selectedBarFilter" @change="onFilterChange('bar')">
+        <select :disabled="isLoading" v-model="selectedBarFilter" @change="handleBarFilterUpdate()">
           <option>{{ ALL_BARS }}</option>
           <option v-for="bar in allBars" :key="bar.id" :value="bar.id">{{ bar.name }}</option>
         </select>
@@ -157,7 +140,7 @@ onMounted(async () => {
         <select
           :disabled="isLoading"
           v-model="selectedLiquorFilter"
-          @change="onFilterChange('liquor')"
+          @change="handleLiquorFilterUpdate(allCocktails ?? [])"
         >
           <option>{{ ALL_SPIRITS }}</option>
           <option v-for="type in liquorTypes" :key="type" :value="type">{{ type }}</option>

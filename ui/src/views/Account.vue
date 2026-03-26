@@ -24,7 +24,7 @@ async function onLogout() {
     });
 
     router.push({
-      path: '/',
+      name: 'Browse',
     });
   } catch (e) {
     // @ts-ignore
@@ -35,7 +35,7 @@ async function onLogout() {
 onMounted(() => {
   if (!isUserLoggedIn) {
     router.push({
-      path: '/login',
+      name: 'Log In',
     });
   }
 });

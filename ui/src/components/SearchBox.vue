@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, type Ref } from 'vue';
 import router from '../router/index.js';
 
 const props = defineProps<{
@@ -11,6 +11,7 @@ const searchTerm: Ref<null | string> = ref(null);
 async function submitSearch() {
   if (searchTerm.value) {
     if (props.onSubmitCallback) {
+      // means we're already on the Search Results page
       props.onSubmitCallback(searchTerm.value);
     } else {
       router.push({
