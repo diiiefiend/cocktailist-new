@@ -10,14 +10,14 @@ const search = async (searchTerm: string) => {
       [Op.or]: [
         {
           name: Sequelize.where(
-            Sequelize.fn('LOWER', Sequelize.col('cocktail.name')),
+            Sequelize.fn('LOWER', Sequelize.col('Cocktail.name')),
             'LIKE',
             '%' + searchTerm.toLowerCase() + '%',
           ),
         },
         {
           ingredients: Sequelize.where(
-            Sequelize.fn('LOWER', Sequelize.col('cocktail.ingredients')),
+            Sequelize.fn('LOWER', Sequelize.col('Cocktail.ingredients')),
             'LIKE',
             '%' + searchTerm.toLowerCase() + '%',
           ),
