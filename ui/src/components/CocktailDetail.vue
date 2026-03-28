@@ -16,8 +16,9 @@ const cocktailImage = props.cocktail.imgUrl ?? '/images/placeholder.png';
     <h1 class="colored-by-type" :class="props.cocktail.liquor">
       {{ props.cocktail.name }}
       <span class="type">
-        <!-- eslint-disable-next-line -->
-        (<a href="">{{ props.cocktail.liquor }}</a
+        (<router-link :to="{ name: 'Browse', params: { spirit: props.cocktail.liquor } }">{{
+          props.cocktail.liquor
+        }}</router-link
         >)
       </span>
     </h1>

@@ -53,10 +53,10 @@ const getCocktail = async (id: string) => {
   return cocktail;
 };
 
-const getCocktailsWithBars = async (page: number, limit: number) => {
+const getCocktailsWithBars = async (page: number, limit: number, liquor?: string) => {
   await dbConnect();
   // get a page of cocktails
-  const results = await models.cocktail.findAndCountAll({
+  const findParams = {
     include: [
       {
         association: 'bar',
@@ -66,7 +66,17 @@ const getCocktailsWithBars = async (page: number, limit: number) => {
     order: [['updated_at', 'DESC']],
     limit,
     offset: (page - 1) * limit,
-  });
+  };
+
+  if (liquor) {
+    // @ts-ignore
+    findParams.where = {
+      liquor,
+    }
+  };
+
+  // @ts-ignore
+  const results = await models.cocktail.findAndCountAll(findParams);
 
   const cocktails = await aws.addImgUrlToCocktails(results.rows);
 

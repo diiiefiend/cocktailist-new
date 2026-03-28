@@ -13,10 +13,11 @@ const router = createRouter({
           component: () => import('../views/Browse.vue'),
           props: (route) => ({
             spirit: route.params.spirit,
+            page: route.query.page,
           }),
         },
         {
-          path: ':id',
+          path: '/detail/:id',
           props: true,
           name: 'Cocktail',
           component: () => import('../views/Cocktail.vue'),

@@ -3,7 +3,7 @@ import { ref, onMounted, type Ref } from 'vue';
 
 import { getCocktailsWithBars, getBars, getSpiritList } from '../api.js';
 import { useAuthStore } from '../stores/auth.js';
-import type { Bar, CocktailItem } from '../models.js';
+import type { Bar, CocktailItem, DRINK_TYPES } from '../models.js';
 import router from '../router/index.js';
 import { ALL_BARS, ALL_SPIRITS } from '../utils.js';
 
@@ -14,16 +14,14 @@ import SearchBox from '../components/SearchBox.vue';
 
 import AddEditCocktailModal from './modals/AddEditCocktailModal.vue';
 
+type ValidSpiritFilterValue = DRINK_TYPES | typeof ALL_SPIRITS;
+
 const authStore = useAuthStore();
 
-const props = withDefaults(
-  defineProps<{
-    spirit?: string;
-  }>(),
-  {
-    spirit: ALL_SPIRITS,
-  },
-);
+const props = defineProps<{
+  spirit?: DRINK_TYPES;
+  page?: string; // really a number, but it's coming from a query param
+}>();
 
 const isLoading = ref(true);
 const error = ref(null);
@@ -37,7 +35,9 @@ const totalPages = ref(1);
 
 const showAddCocktailModal = ref(false);
 const selectedBarFilter: Ref<null | number | string> = ref(ALL_BARS);
-const selectedSpiritFilter: Ref<null | string> = ref(ALL_SPIRITS);
+const selectedSpiritFilter: Ref<ValidSpiritFilterValue> = ref(
+  props.spirit ? props.spirit : ALL_SPIRITS,
+);
 const filteredCocktails: Ref<null | undefined | Array<CocktailItem>> = ref(null);
 
 const handleBarFilterUpdate = () => {
@@ -49,39 +49,48 @@ const handleBarFilterUpdate = () => {
   }
 };
 
-// TODO: if selected liquor is different from current selection, this should trigger an API call (with pagination)
-const handleSpiritFilterUpdate = (initialCocktailList: Array<CocktailItem>) => {
-  let result: Array<CocktailItem> = initialCocktailList;
-
-  if (selectedSpiritFilter.value !== ALL_SPIRITS) {
+const handleSpiritFilterUpdate = async (spirit: ValidSpiritFilterValue) => {
+  if (spirit !== ALL_SPIRITS) {
     router.push({
       params: { spirit: selectedSpiritFilter.value },
     });
 
-    result = initialCocktailList.filter(
-      (cocktail) => cocktail.liquor === selectedSpiritFilter.value,
-    );
-  }
+    await fetchCocktailData(undefined, spirit);
+  } else {
+    router.push({
+      params: { spirit: undefined },
+    });
 
-  console.log('filtered for: ', selectedBarFilter.value, selectedSpiritFilter.value);
-  filteredCocktails.value = result;
+    await fetchCocktailData();
+  }
 };
 
-const fetchCocktailData = async (pageNumber?: number) => {
-  // TODO: Update this to check the "spirits" param. if defined, do that api call instead
-  const apiRes = await getCocktailsWithBars(pageNumber);
+const fetchCocktailData = async (pageNumber?: number, spirit?: DRINK_TYPES) => {
+  const additionalParams: {
+    page?: number;
+    liquor?: DRINK_TYPES;
+  } = {};
+  if (pageNumber) {
+    additionalParams.page = pageNumber;
+  }
+  if (spirit) {
+    // the api and DB calls "spirit" "liquor", annoyingly
+    additionalParams.liquor = spirit;
+  }
+
+  const apiRes = await getCocktailsWithBars(additionalParams);
   allCocktails.value = apiRes.cocktails;
   filteredCocktails.value = apiRes.cocktails;
   currentPage.value = apiRes.currentPage;
   totalPages.value = apiRes.totalPages;
 };
 
-async function fetchData() {
+async function fetchInitialData() {
   error.value = null;
   isLoading.value = true;
 
   try {
-    await fetchCocktailData();
+    await fetchCocktailData(props.page ? +props.page : undefined, props.spirit);
     allBars.value = await getBars();
     spiritTypes.value = await getSpiritList();
   } catch (err: any) {
@@ -98,12 +107,22 @@ function onCocktailCreate(createdCocktail: CocktailItem) {
   });
 }
 
-async function fetchPage(pageNumber: number) {
+async function fetchPage(
+  pageNumber: number,
+  selectedSpiritFilter?: DRINK_TYPES | typeof ALL_SPIRITS,
+) {
   isLoading.value = true;
   error.value = null;
 
+  const spirit = selectedSpiritFilter === ALL_SPIRITS ? undefined : selectedSpiritFilter;
+
+  router.push({
+    params: { spirit },
+    query: { page: pageNumber },
+  });
+
   try {
-    await fetchCocktailData(pageNumber);
+    await fetchCocktailData(pageNumber, spirit);
     currentPage.value = pageNumber;
   } catch (err: any) {
     error.value = err.toString();
@@ -113,7 +132,7 @@ async function fetchPage(pageNumber: number) {
 }
 
 onMounted(async () => {
-  await fetchData();
+  await fetchInitialData();
 });
 </script>
 
@@ -140,7 +159,7 @@ onMounted(async () => {
         <select
           :disabled="isLoading"
           v-model="selectedSpiritFilter"
-          @change="handleSpiritFilterUpdate(allCocktails ?? [])"
+          @change="handleSpiritFilterUpdate(selectedSpiritFilter)"
         >
           <option>{{ ALL_SPIRITS }}</option>
           <option v-for="type in spiritTypes" :key="type" :value="type">{{ type }}</option>
@@ -159,7 +178,7 @@ onMounted(async () => {
         <li v-for="pageNumber in totalPages" :key="pageNumber">
           <button
             :class="{ 'link-button': true, active: pageNumber === currentPage }"
-            @click.stop="fetchPage(pageNumber)"
+            @click.stop="fetchPage(pageNumber, selectedSpiritFilter)"
           >
             {{ pageNumber }}
           </button>

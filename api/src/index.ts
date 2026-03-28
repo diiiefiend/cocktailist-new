@@ -149,8 +149,8 @@ app
   .get(async (req: Request, res: Response) => {
     try {
       // PAGINATION DEFAULTS
-      const { page = 1, limit = PAGINATION_DEFAULT_ITEMS_PER_PAGE } = req.query;
-      res.send(await cocktails.getCocktailsWithBars(+page, +limit));
+      const { page = 1, limit = PAGINATION_DEFAULT_ITEMS_PER_PAGE, liquor } = req.query;
+      res.send(await cocktails.getCocktailsWithBars(+page, +limit, liquor?.toString()));
     } catch (e) {
       errorHandler(e, res);
     }

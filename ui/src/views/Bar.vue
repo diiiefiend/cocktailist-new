@@ -43,7 +43,7 @@ const barHours: Ref<string[]> = ref([]);
 const barSite: Ref<null | string> = ref(null);
 
 const showAddCocktailModal = ref(false);
-const selectedLiquorFilter: Ref<null | string> = ref(ALL_SPIRITS);
+const selectedSpiritFilter: Ref<null | string> = ref(ALL_SPIRITS);
 const filteredCocktails: Ref<null | undefined | Array<CocktailItem>> = ref(null);
 
 const isUserLoggedIn = authStore.checkIsUserLoggedIn();
@@ -60,7 +60,7 @@ const fetchBarCocktails = async (barId: number, spirit: string) => {
   filteredCocktails.value = barCocktails;
   setSpiritTypes();
 
-  selectedLiquorFilter.value = spirit;
+  selectedSpiritFilter.value = spirit;
   onSpiritFilterChange();
 };
 
@@ -130,18 +130,17 @@ async function onBarUpdate() {
 function onSpiritFilterChange() {
   let result: Array<CocktailItem> = cocktails.value;
 
-  if (selectedLiquorFilter.value !== ALL_SPIRITS) {
+  if (selectedSpiritFilter.value !== ALL_SPIRITS) {
     router.push({
-      params: { spirit: selectedLiquorFilter.value },
+      params: { spirit: selectedSpiritFilter.value },
     });
-    result = result.filter((cocktail) => cocktail.liquor === selectedLiquorFilter.value);
+    result = result.filter((cocktail) => cocktail.liquor === selectedSpiritFilter.value);
   } else {
     router.push({
       params: { spirit: '' },
     });
   }
 
-  console.log('filtered for: ', selectedLiquorFilter.value);
   filteredCocktails.value = result;
 }
 
@@ -189,7 +188,7 @@ onMounted(async () => {
         </select>
       </div>
       <div class="span-2">
-        <select :disabled="isLoading" v-model="selectedLiquorFilter" @change="onSpiritFilterChange">
+        <select :disabled="isLoading" v-model="selectedSpiritFilter" @change="onSpiritFilterChange">
           <option>{{ ALL_SPIRITS }}</option>
           <option v-for="type in spiritTypes" :key="type" :value="type">{{ type }}</option>
         </select>
