@@ -42,14 +42,19 @@ const filteredCocktails: Ref<null | undefined | Array<CocktailItem>> = ref(null)
 
 const handleBarFilterUpdate = () => {
   if (selectedBarFilter.value !== ALL_BARS) {
+    isLoading.value = true;
     router.push({
       name: 'Bar',
       params: { id: selectedBarFilter.value },
     });
+
+    isLoading.value = false;
   }
 };
 
 const handleSpiritFilterUpdate = async (spirit: ValidSpiritFilterValue) => {
+  isLoading.value = true;
+
   if (spirit !== ALL_SPIRITS) {
     router.push({
       params: { spirit: selectedSpiritFilter.value },
@@ -63,6 +68,8 @@ const handleSpiritFilterUpdate = async (spirit: ValidSpiritFilterValue) => {
 
     await fetchCocktailData();
   }
+
+  isLoading.value = false;
 };
 
 const fetchCocktailData = async (pageNumber?: number, spirit?: DRINK_TYPES) => {

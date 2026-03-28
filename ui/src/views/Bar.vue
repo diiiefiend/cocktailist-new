@@ -128,6 +128,7 @@ async function onBarUpdate() {
 }
 
 function onSpiritFilterChange() {
+  isLoading.value = true;
   let result: Array<CocktailItem> = cocktails.value;
 
   if (selectedSpiritFilter.value !== ALL_SPIRITS) {
@@ -142,6 +143,7 @@ function onSpiritFilterChange() {
   }
 
   filteredCocktails.value = result;
+  isLoading.value = false;
 }
 
 function onCocktailCreate(createdCocktail: CocktailItem) {

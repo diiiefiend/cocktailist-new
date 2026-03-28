@@ -5,6 +5,7 @@ import type { List, ListInfo, ListItem } from '../models';
 import { deleteItemFromList, deleteList, getList, getLists } from '../api';
 import { useAuthStore } from '../stores/auth';
 import { DATE_FORMATTING } from '../utils';
+import router from '../router';
 
 import ContextMenu from '../components/ContextMenu.vue';
 import LayoutContainer from '../components/LayoutContainer.vue';
@@ -58,9 +59,15 @@ async function fetchData(activeListId?: string) {
 }
 
 async function getAndSetListData() {
-  // TODO: push id into router URL?
   if (currentList.value) {
+    isLoading.value = true;
+    router.push({
+      params: { id: currentList.value.id },
+    });
+
     listInfo.value = await getList(currentList.value.id);
+
+    isLoading.value = false;
   }
 }
 
