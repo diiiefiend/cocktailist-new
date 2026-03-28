@@ -171,7 +171,7 @@ app
     },
   );
 
-app.route('/liquors').get(async (req: Request, res: Response) => {
+app.route('/spirits').get(async (req: Request, res: Response) => {
   try {
     res.send(await cocktails.getLiquors());
   } catch (e) {

@@ -37,7 +37,7 @@ const googleMapEl = useTemplateRef('googleMapEl');
 const allBars: Ref<Array<BarDetails>> = ref([]);
 const bar: Ref<null | BarDetails> = ref(null);
 const cocktails: Ref<Array<CocktailItem>> = ref([]);
-const liquorTypes: Ref<null | string[]> = ref(null);
+const spiritTypes: Ref<null | string[]> = ref(null);
 const barDays: Ref<string[]> = ref([]);
 const barHours: Ref<string[]> = ref([]);
 const barSite: Ref<null | string> = ref(null);
@@ -49,8 +49,8 @@ const filteredCocktails: Ref<null | undefined | Array<CocktailItem>> = ref(null)
 const isUserLoggedIn = authStore.checkIsUserLoggedIn();
 const showEditBarModal = ref(false);
 
-const setLiquorTypes = () => {
-  liquorTypes.value = [...new Set(cocktails.value.map((cocktail) => cocktail.liquor).sort())];
+const setSpiritTypes = () => {
+  spiritTypes.value = [...new Set(cocktails.value.map((cocktail) => cocktail.liquor).sort())];
 };
 
 const fetchBarCocktails = async (barId: number, spirit: string) => {
@@ -58,10 +58,10 @@ const fetchBarCocktails = async (barId: number, spirit: string) => {
   cocktails.value = barCocktails;
 
   filteredCocktails.value = barCocktails;
-  setLiquorTypes();
+  setSpiritTypes();
 
   selectedLiquorFilter.value = spirit;
-  onLiquorFilterChange();
+  onSpiritFilterChange();
 };
 
 const fetchBarGoogleInfo = async (bar: BarDetails) => {
@@ -127,7 +127,7 @@ async function onBarUpdate() {
   }
 }
 
-function onLiquorFilterChange() {
+function onSpiritFilterChange() {
   let result: Array<CocktailItem> = cocktails.value;
 
   if (selectedLiquorFilter.value !== ALL_SPIRITS) {
@@ -189,9 +189,9 @@ onMounted(async () => {
         </select>
       </div>
       <div class="span-2">
-        <select :disabled="isLoading" v-model="selectedLiquorFilter" @change="onLiquorFilterChange">
+        <select :disabled="isLoading" v-model="selectedLiquorFilter" @change="onSpiritFilterChange">
           <option>{{ ALL_SPIRITS }}</option>
-          <option v-for="type in liquorTypes" :key="type" :value="type">{{ type }}</option>
+          <option v-for="type in spiritTypes" :key="type" :value="type">{{ type }}</option>
         </select>
       </div>
       <search-box />

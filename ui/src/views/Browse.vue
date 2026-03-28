@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, type Ref } from 'vue';
 
-import { getCocktailsWithBars, getBars, getLiquorList } from '../api.js';
+import { getCocktailsWithBars, getBars, getSpiritList } from '../api.js';
 import { useAuthStore } from '../stores/auth.js';
 import type { Bar, CocktailItem } from '../models.js';
 import router from '../router/index.js';
@@ -31,13 +31,13 @@ const error = ref(null);
 const isUserLoggedIn = authStore.checkIsUserLoggedIn();
 const allCocktails: Ref<null | Array<CocktailItem>> = ref(null);
 const allBars: Ref<null | Array<Bar>> = ref(null);
-const liquorTypes: Ref<null | string[]> = ref(null);
+const spiritTypes: Ref<null | string[]> = ref(null);
 const currentPage = ref(1);
 const totalPages = ref(1);
 
 const showAddCocktailModal = ref(false);
 const selectedBarFilter: Ref<null | number | string> = ref(ALL_BARS);
-const selectedLiquorFilter: Ref<null | string> = ref(ALL_SPIRITS);
+const selectedSpiritFilter: Ref<null | string> = ref(ALL_SPIRITS);
 const filteredCocktails: Ref<null | undefined | Array<CocktailItem>> = ref(null);
 
 const handleBarFilterUpdate = () => {
@@ -50,20 +50,20 @@ const handleBarFilterUpdate = () => {
 };
 
 // TODO: if selected liquor is different from current selection, this should trigger an API call (with pagination)
-const handleLiquorFilterUpdate = (initialCocktailList: Array<CocktailItem>) => {
+const handleSpiritFilterUpdate = (initialCocktailList: Array<CocktailItem>) => {
   let result: Array<CocktailItem> = initialCocktailList;
 
-  if (selectedLiquorFilter.value !== ALL_SPIRITS) {
+  if (selectedSpiritFilter.value !== ALL_SPIRITS) {
     router.push({
-      params: { spirit: selectedLiquorFilter.value },
+      params: { spirit: selectedSpiritFilter.value },
     });
 
     result = initialCocktailList.filter(
-      (cocktail) => cocktail.liquor === selectedLiquorFilter.value,
+      (cocktail) => cocktail.liquor === selectedSpiritFilter.value,
     );
   }
 
-  console.log('filtered for: ', selectedBarFilter.value, selectedLiquorFilter.value);
+  console.log('filtered for: ', selectedBarFilter.value, selectedSpiritFilter.value);
   filteredCocktails.value = result;
 };
 
@@ -83,7 +83,7 @@ async function fetchData() {
   try {
     await fetchCocktailData();
     allBars.value = await getBars();
-    liquorTypes.value = await getLiquorList();
+    spiritTypes.value = await getSpiritList();
   } catch (err: any) {
     error.value = err.toString();
   } finally {
@@ -139,11 +139,11 @@ onMounted(async () => {
       <div class="span-2">
         <select
           :disabled="isLoading"
-          v-model="selectedLiquorFilter"
-          @change="handleLiquorFilterUpdate(allCocktails ?? [])"
+          v-model="selectedSpiritFilter"
+          @change="handleSpiritFilterUpdate(allCocktails ?? [])"
         >
           <option>{{ ALL_SPIRITS }}</option>
-          <option v-for="type in liquorTypes" :key="type" :value="type">{{ type }}</option>
+          <option v-for="type in spiritTypes" :key="type" :value="type">{{ type }}</option>
         </select>
       </div>
       <search-box />

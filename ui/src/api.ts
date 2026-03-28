@@ -27,8 +27,8 @@ const getCocktailsWithBars = async (pageNumber?: number) => {
   });
 };
 
-const getLiquorList = async () => {
-  return makeCall(`${API_HOST}/liquors`, {
+const getSpiritList = async () => {
+  return makeCall(`${API_HOST}/spirits`, {
     method: 'GET',
   });
 };
@@ -240,7 +240,8 @@ const makeCall = async (endpoint: string, options: any, isFormData?: boolean) =>
 
 export {
   getCocktailsWithBars,
-  getLiquorList,
+  getSpiritList
+,
   getBars,
   addCocktail,
   getCocktail,

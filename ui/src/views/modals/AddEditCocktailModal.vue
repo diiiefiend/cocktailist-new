@@ -8,7 +8,7 @@ import { convertAddressToLatLng } from '../../google.js';
 
 import SiteModal from '../../components/SiteModal.vue';
 
-const NEW_LIQUOR_TYPE_VALUE = '--Add new liquor type--';
+const NEW_SPIRIT_TYPE_VALUE = '--Add new spirit type--';
 const NEW_BAR_PLACEHOLDER_ID = -1;
 
 const props = defineProps<{
@@ -21,9 +21,9 @@ const props = defineProps<{
 const emit = defineEmits(['close']);
 
 const isEdit = computed(() => !!props.existingCocktailInfo);
-const liquorTypeList = computed(() => {
+const spiritTypeList = computed(() => {
   // TODO: new drink types don't show up in this dropdown until DRINK_TYPES is updated!
-  return [NEW_LIQUOR_TYPE_VALUE, ...Object.values(DRINK_TYPES).sort()];
+  return [NEW_SPIRIT_TYPE_VALUE, ...Object.values(DRINK_TYPES).sort()];
 });
 const barList = computed(() => {
   // TODO: if this is in "edit" mode, only "add new bar" and the existing bar are provided as choices
@@ -75,14 +75,14 @@ const newBarInfo: Ref<{
 
 const errors: Ref<string[]> = ref([]);
 const isSubmitting = ref(false);
-const liquorTypeValue: Ref<string | null> = ref(null);
-const newLiquorType: Ref<string | null> = ref(null);
+const spiritTypeValue: Ref<string | null> = ref(null);
+const newSpiritType: Ref<string | null> = ref(null);
 const fileInput: Ref<any> = ref(null);
 const imageFile = ref(null);
 const previewImage: Ref<string | null> = ref(null);
 
-const showNewLiquorTypeInput = computed(() => {
-  return liquorTypeValue.value === NEW_LIQUOR_TYPE_VALUE;
+const showNewSpiritInput = computed(() => {
+  return spiritTypeValue.value === NEW_SPIRIT_TYPE_VALUE;
 });
 const showNewBarInputs = computed(() => {
   return payload.value.barId === NEW_BAR_PLACEHOLDER_ID;
@@ -93,10 +93,10 @@ const onSubmit = async () => {
   isSubmitting.value = true;
 
   // validations
-  if (newLiquorType.value && newLiquorType.value.trim() !== '') {
-    payload.value.type = newLiquorType.value;
-  } else if (liquorTypeValue.value && liquorTypeValue.value !== NEW_LIQUOR_TYPE_VALUE) {
-    payload.value.type = liquorTypeValue.value;
+  if (newSpiritType.value && newSpiritType.value.trim() !== '') {
+    payload.value.type = newSpiritType.value;
+  } else if (spiritTypeValue.value && spiritTypeValue.value !== NEW_SPIRIT_TYPE_VALUE) {
+    payload.value.type = spiritTypeValue.value;
   }
 
   const isNewBar = payload.value.barId === NEW_BAR_PLACEHOLDER_ID;
@@ -198,15 +198,15 @@ function resetImages() {
         </fieldset>
         <fieldset>
           <label for="cocktail-types">Type</label>
-          <select id="cocktail-type" v-model="liquorTypeValue">
-            <option v-for="type in liquorTypeList" :key="type" :value="type">{{ type }}</option>
+          <select id="cocktail-type" v-model="spiritTypeValue">
+            <option v-for="type in spiritTypeList" :key="type" :value="type">{{ type }}</option>
           </select>
           <input
-            v-if="showNewLiquorTypeInput"
+            v-if="showNewSpiritInput"
             class="subfield"
             type="text"
-            v-model="newLiquorType"
-            placeholder="new liquor type"
+            v-model="newSpiritType"
+            placeholder="new spirit type"
           />
         </fieldset>
         <fieldset>
