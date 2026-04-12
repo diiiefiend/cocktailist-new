@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 
 import { useAuthStore } from '../stores/auth';
+import router from '@/router';
 
 const hovered = ref(false);
 const authStore = useAuthStore();
@@ -24,9 +25,36 @@ authStore.$subscribe((mutation, state) => {
     </div>
     <nav>
       <li v-if="!isUserLoggedIn"></li>
-      <li><router-link to="/">Cocktails</router-link></li>
-      <li><router-link to="/bars">Bars</router-link></li>
-      <li v-if="isUserLoggedIn"><router-link to="/lists">Lists</router-link></li>
+      <li>
+        <router-link
+          to="/"
+          :class="{
+            // @ts-ignore
+            'router-link-active': ['Browse', 'Cocktail'].includes(router.currentRoute.value.name),
+          }"
+          >Cocktails</router-link
+        >
+      </li>
+      <li>
+        <router-link
+          to="/bars"
+          :class="{
+            // @ts-ignore
+            'router-link-active': ['Bar'].includes(router.currentRoute.value.name),
+          }"
+          >Bars</router-link
+        >
+      </li>
+      <li v-if="isUserLoggedIn">
+        <router-link
+          to="/lists"
+          :class="{
+            // @ts-ignore
+            'router-link-active': ['List'].includes(router.currentRoute.value.name),
+          }"
+          >Lists</router-link
+        >
+      </li>
       <li><router-link to="/data">Data</router-link></li>
       <li>
         <router-link v-if="!isUserLoggedIn" to="/login">Login</router-link>

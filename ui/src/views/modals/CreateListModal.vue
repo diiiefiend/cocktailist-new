@@ -59,8 +59,8 @@ const onSubmit = async () => {
     <template #body>
       <form @submit.prevent>
         <fieldset>
-          <label>List Name</label>
-          <input v-model="listName" type="text" />
+          <label for="name">List Name</label>
+          <input id="name" v-model="listName" type="text" />
         </fieldset>
       </form>
     </template>

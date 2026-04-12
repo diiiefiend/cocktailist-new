@@ -115,16 +115,16 @@ onMounted(() => {
         <h1>{{ mode }}</h1>
         <form @submit.prevent>
           <fieldset>
-            <label>Username</label>
-            <input type="text" v-model="payload.username" />
+            <label for="username">Username</label>
+            <input id="username" type="text" v-model="payload.username" />
           </fieldset>
           <fieldset v-if="mode == 'Create Account'">
-            <label>Email</label>
-            <input type="text" v-model="payload.email" />
+            <label for="email">Email</label>
+            <input id="email" type="text" v-model="payload.email" />
           </fieldset>
           <fieldset>
-            <label>Password</label>
-            <input type="password" v-model="payload.password" />
+            <label for="password">Password</label>
+            <input id="password" type="password" v-model="payload.password" />
           </fieldset>
         </form>
         <div v-if="errors.length" class="form-error">

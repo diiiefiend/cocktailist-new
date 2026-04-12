@@ -193,8 +193,8 @@ function resetImages() {
     <template #body>
       <form @submit.prevent>
         <fieldset>
-          <label>Name</label>
-          <input type="text" v-model="payload.name" />
+          <label for="name">Name</label>
+          <input id="name" type="text" v-model="payload.name" />
         </fieldset>
         <fieldset>
           <label for="cocktail-types">Type</label>
@@ -232,12 +232,17 @@ function resetImages() {
           />
         </fieldset>
         <fieldset>
-          <label>Ingredients</label>
-          <input type="text" v-model="payload.ingredients" placeholder="(comma-delimited)" />
+          <label for="ingredients">Ingredients</label>
+          <input
+            id="ingredients"
+            type="text"
+            v-model="payload.ingredients"
+            placeholder="(comma-delimited)"
+          />
         </fieldset>
         <fieldset>
-          <label>Image</label>
-          <input type="file" @change="onUpdateImage" accept="image/*" ref="fileInput" />
+          <label for="image">Image</label>
+          <input id="image" type="file" @change="onUpdateImage" accept="image/*" ref="fileInput" />
           <button v-if="imageFile" class="link-button remove-image-link" @click.stop="resetImages">
             X
           </button>

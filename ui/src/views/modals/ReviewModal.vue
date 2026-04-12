@@ -103,7 +103,7 @@ const onSubmit = async () => {
     <template #body>
       <form @submit.prevent>
         <fieldset>
-          <label>Rating</label>
+          <label for="rating">Rating</label>
           <rating-item
             :rating-value="payload.rating"
             :is-interactive="true"
@@ -111,7 +111,7 @@ const onSubmit = async () => {
           />
         </fieldset>
         <fieldset>
-          <label>Spirited</label>
+          <label for="spirited-slider">Spirited</label>
           <rating-slider
             :slider-value="'' + payload.scaleSpirited"
             type="spirited"
@@ -119,7 +119,7 @@ const onSubmit = async () => {
           />
         </fieldset>
         <fieldset>
-          <label>Innovative</label>
+          <label for="innovative-slider">Innovative</label>
           <rating-slider
             :slider-value="'' + payload.scaleComposition"
             type="innovation"
@@ -127,7 +127,7 @@ const onSubmit = async () => {
           />
         </fieldset>
         <fieldset>
-          <label>Comments</label>
+          <label for="comments">Comments</label>
           <text-area-input :existingComment="payload.body" @comment-set="updateComment" />
         </fieldset>
       </form>

@@ -94,12 +94,12 @@ const onSubmit = async () => {
     <template #body>
       <form @submit.prevent>
         <fieldset>
-          <label>Bar Name</label>
-          <input v-model="payload.name" type="text" />
+          <label for="name">Bar Name</label>
+          <input id="name" v-model="payload.name" type="text" />
         </fieldset>
         <fieldset>
-          <label>Bar Address</label>
-          <input v-model="payload.address" type="text" />
+          <label for="address">Bar Address</label>
+          <input id="address" v-model="payload.address" type="text" />
         </fieldset>
       </form>
     </template>
